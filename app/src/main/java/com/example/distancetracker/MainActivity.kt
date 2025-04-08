@@ -2,6 +2,7 @@ package com.example.distancetracker
 
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.view.View.OnClickListener
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+import java.util.Timer
+import java.util.TimerTask
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,15 +20,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sessionDurationTV: TextView
     private lateinit var averageSpeedTV: TextView
 
+    private lateinit var sessionTimer: Timer
+    private var sessionTime: Int = 0
     private var totalDistance: Double = 0.0
-    private var sessionDuration: Double = 0.0
     private var averageSpeed: Double = 0.0
 
     private lateinit var listBtn: ImageButton
-    private lateinit var recordBtn: ImageButton
-    private lateinit var resetBtn: ImageButton
+    private lateinit var startSessionBtn: ImageButton
+    private lateinit var resetSessionBtn: ImageButton
 
     private lateinit var map: MapView
+
+    private var recording: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +40,12 @@ class MainActivity : AppCompatActivity() {
         initializeMap()
 
         initializeSessionInformation()
+        initializeSessionTimer()
         initializeButtons()
+    }
+
+    private fun initializeSessionTimer() {
+        sessionTimer = Timer()
     }
 
     private fun initializeMap() {
@@ -68,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeButtons() {
-        initializeRecordBtn()
+        initializeStartSessionBtn()
         initializeResetBtn()
         initializeListBtn()
     }
@@ -77,11 +88,27 @@ class MainActivity : AppCompatActivity() {
         listBtn = findViewById(R.id.listBtn)
     }
 
-    private fun initializeRecordBtn() {
-        recordBtn = findViewById(R.id.recordBtn)
+    private fun initializeStartSessionBtn() {
+        startSessionBtn = findViewById(R.id.recordBtn)
+        startSessionBtn.setOnClickListener {
+            startSession()
+            recording = true
+        }
+    }
+
+    private fun startSession() {
+        val timerTask = createTimerTask()
+        sessionTimer.schedule(timerTask, 0, 1000)
     }
 
     private fun initializeResetBtn() {
-        resetBtn = findViewById(R.id.resetBtn)
+        resetSessionBtn = findViewById(R.id.resetBtn)
+    }
+
+    private fun createTimerTask() = object : TimerTask() {
+        override fun run() {
+            sessionTime++
+            runOnUiThread { sessionDurationTV.text = sessionTime.toString() }
+        }
     }
 }
