@@ -1,21 +1,34 @@
 package com.example.distancetracker
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.view.View.OnClickListener
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import android.Manifest
+import android.location.LocationManager
+import android.os.Looper
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
+
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import org.osmdroid.views.overlay.Marker
+
 import java.util.Timer
 import java.util.TimerTask
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
 
     private lateinit var totalDistanceTV: TextView
     private lateinit var sessionDurationTV: TextView
@@ -28,10 +41,15 @@ class MainActivity : AppCompatActivity() {
     private var totalDistance: Double = 0.0
     private var averageSpeed: Double = 0.0
 
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
+
     private lateinit var listBtn: ImageButton
 
     private lateinit var startSessionBtn: ImageButton
-    private lateinit var startSessionBtnDescription:TextView
+    private lateinit var startSessionBtnDescription: TextView
 
     private lateinit var resetSessionBtn: ImageButton
 
@@ -48,10 +66,86 @@ class MainActivity : AppCompatActivity() {
         initializeSessionInformation()
         initializeSessionTimer()
         initializeButtons()
+
+        setFusedLocationClient()
+        createLocationRequest()
+        getCurrentLocation()
+    }
+
+    private fun getCurrentLocation() {
+        if (checkPermissions()) {
+            if (isLocationEnabled()) {
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions()
+                    return
+                }
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        currentLocation.latitude = location.latitude
+                        currentLocation.longitude = location.longitude
+                    }
+                    addMarker()
+                }
+            }
+        } else {
+            requestPermissions()
+        }
+    }
+
+    private fun addMarker() {
+        val marker = Marker(map)
+        marker.position = currentLocation
+        map.overlays.add(marker)
+    }
+
+    private fun checkPermissions(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
+    private fun requestPermissions() {
+        val LOCATION_REQUEST = 44
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            LOCATION_REQUEST
+        )
+    }
+
+    private fun setFusedLocationClient() {
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(applicationContext)
     }
 
     private fun initializeSessionTimer() {
         sessionTimer = Timer()
+    }
+
+    private fun createLocationRequest() {
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000).build()
     }
 
     private fun initializeMap() {
@@ -100,7 +194,8 @@ class MainActivity : AppCompatActivity() {
 
         startSessionBtn.setOnClickListener {
             startSession()
-            startSessionBtnDescription.text= ContextCompat.getString(applicationContext,R.string.recording)
+            startSessionBtnDescription.text =
+                ContextCompat.getString(applicationContext, R.string.recording)
             startSessionBtn.setImageResource(R.drawable.record_icon)
             recording = true
         }
@@ -131,5 +226,36 @@ class MainActivity : AppCompatActivity() {
                     String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
             }
         }
+    }
+
+    private var locationCallback: LocationCallback = object : LocationCallback() {
+        override fun onLocationResult(p0: LocationResult) {
+            super.onLocationResult(p0)
+            val locations = p0.locations
+            currentLocation = GeoPoint(locations[0].latitude, locations[0].longitude)
+        }
+    }
+
+    override fun onResume(){
+        super.onResume()
+        if(checkPermissions()){
+            startLocationsUpdates()
+        }
+    }
+
+    override fun onPause(){
+        super.onPause()
+        stopLocationUpdates()
+    }
+
+    private fun startLocationsUpdates(){
+        if(ActivityCompat.checkSelfPermission(applicationContext,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(applicationContext,Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback,
+                Looper.getMainLooper())
+        }
+    }
+
+    private fun stopLocationUpdates(){
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 }
