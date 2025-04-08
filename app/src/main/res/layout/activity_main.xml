@@ -8,10 +8,23 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
-        android:gravity="center_vertical|end"
+        android:gravity="center_vertical"
         android:padding="15dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/distance_tracker"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
         <ImageButton
+            android:id="@+id/listBtn"
             style="@style/buttonLayout"
             android:contentDescription="@string/open_saved_tracks_list"
             android:src="@drawable/open_menu_icon" />
@@ -78,7 +91,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/recordingTime"
+                    android:id="@+id/sessionDuration"
                     style="@style/textLayout"
                     android:text="@string/_00_00_00" />
             </LinearLayout>
