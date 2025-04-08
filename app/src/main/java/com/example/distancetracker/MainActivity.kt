@@ -21,7 +21,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var averageSpeedTV: TextView
 
     private lateinit var sessionTimer: Timer
-    private var sessionTime: Int = 0
+    private var sessionHours: Int = 0
+    private var sessionMinutes: Int = 0
+    private var sessionSeconds: Int = 0
     private var totalDistance: Double = 0.0
     private var averageSpeed: Double = 0.0
 
@@ -107,8 +109,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun createTimerTask() = object : TimerTask() {
         override fun run() {
-            sessionTime++
-            runOnUiThread { sessionDurationTV.text = sessionTime.toString() }
+            sessionSeconds++
+            if (sessionSeconds > 0 && sessionSeconds % 60 == 0) {
+                sessionSeconds = 0
+                sessionMinutes++
+            }
+            if (sessionMinutes > 0 && sessionMinutes % 60 == 0) {
+                sessionMinutes = 0
+                sessionHours++
+            }
+            runOnUiThread {
+                sessionDurationTV.text =
+                    String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
+            }
         }
     }
 }
