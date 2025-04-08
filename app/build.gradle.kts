@@ -36,8 +36,13 @@ android {
 }
 
 dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.android.gms:play-services-maps:9.6.0")
+    implementation("com.google.maps.android:android-maps-utils:0.6.2")
+    implementation("org.osmdroid:osmdroid-android:6.1.10")
 
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     testImplementation("junit:junit:4.13.2")
