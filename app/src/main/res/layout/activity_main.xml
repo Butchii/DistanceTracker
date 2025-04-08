@@ -12,12 +12,12 @@
         android:gravity="center_vertical|end"
         android:padding="15dp">
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@color/white"
             android:scaleType="centerCrop"
-            android:text="ListBtn" />
+            android:src="@drawable/open_menu_icon" />
     </LinearLayout>
 
     <View
@@ -79,11 +79,11 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatButton
+            <ImageButton
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:background="@color/white"
-                android:text="RecordBtn" />
+                android:src="@drawable/record_icon" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,18 +91,20 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center">
 
-                <androidx.appcompat.widget.AppCompatButton
+                <ImageButton
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginEnd="20dp"
                     android:background="@color/white"
-                    android:text="ResetBtn" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/reset_icon" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <ImageButton
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:background="@color/white"
-                    android:text="SaveBtn" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/save_icon" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
