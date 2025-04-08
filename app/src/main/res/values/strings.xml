@@ -9,4 +9,6 @@
     <string name="_0_0km">0,0km</string>
     <string name="_0_0_km_h">0,0 km/h</string>
     <string name="_00_00_00">00:00:00</string>
+    <string name="open_saved_tracks_list">open saved tracks list</string>
+    <string name="record">Record</string>
 </resources>

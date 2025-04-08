@@ -13,6 +13,7 @@
 
         <ImageButton
             style="@style/buttonLayout"
+            android:contentDescription="@string/open_saved_tracks_list"
             android:src="@drawable/open_menu_icon" />
     </LinearLayout>
 
@@ -35,7 +36,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2.5"
+        android:layout_weight="3"
         android:background="@color/white">
 
         <LinearLayout
@@ -54,7 +55,8 @@
 
                 <TextView
                     style="@style/textLayout"
-                    android:text="@string/total_distance" />
+                    android:text="@string/total_distance"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/totalDistance"
@@ -65,14 +67,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
                     style="@style/textLayout"
-                    android:text="@string/recording_time" />
+                    android:text="@string/recording_time"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/recordingTime"
@@ -88,10 +91,11 @@
 
                 <TextView
                     style="@style/textLayout"
-                    android:text="@string/average_speed" />
+                    android:text="@string/average_speed"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="averageSpeed"
+                    android:id="@+id/averageSpeed"
                     style="@style/textLayout"
                     android:text="@string/_0_0_km_h" />
             </LinearLayout>
@@ -110,28 +114,33 @@
             android:orientation="vertical">
 
             <ImageButton
+                android:id="@+id/resetBtn"
                 style="@style/buttonLayout"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:contentDescription="@string/button_to_start_recording"
-                android:src="@drawable/record_icon" />
+                android:layout_marginBottom="15dp"
+                android:contentDescription="@string/button_to_reset_session"
+                android:src="@drawable/reset_icon"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <ImageButton
+                    android:id="@+id/recordBtn"
                     style="@style/buttonLayout"
-                    android:layout_marginEnd="20dp"
-                    android:contentDescription="@string/button_to_reset_session"
-                    android:src="@drawable/reset_icon" />
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:contentDescription="@string/button_to_start_recording"
+                    android:src="@drawable/record_icon" />
 
-                <ImageButton
-                    style="@style/buttonLayout"
-                    android:contentDescription="@string/button_to_save_session"
-                    android:src="@drawable/save_icon" />
+                <TextView
+                    android:id="@+id/recordBtnDescription"
+                    style="@style/textLayout"
+                    android:text="@string/record"
+                    android:textSize="14sp"
+                    android:textStyle="italic" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
