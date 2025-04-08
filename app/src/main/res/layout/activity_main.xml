@@ -6,8 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="60dp"
         android:background="@color/white"
         android:gravity="center_vertical|end"
         android:padding="15dp">
@@ -36,32 +35,66 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="2.5"
         android:background="@color/white">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="15dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="test" />
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:text="test1" />
+                <TextView
+                    style="@style/textLayout"
+                    android:text="@string/total_distance" />
 
-            <TextView
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/totalDistance"
+                    style="@style/textLayout"
+                    android:text="@string/_0_0km" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="test2" />
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/textLayout"
+                    android:text="@string/recording_time" />
+
+                <TextView
+                    android:id="@+id/recordingTime"
+                    style="@style/textLayout"
+                    android:text="@string/_00_00_00" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/textLayout"
+                    android:text="@string/average_speed" />
+
+                <TextView
+                    android:id="averageSpeed"
+                    style="@style/textLayout"
+                    android:text="@string/_0_0_km_h" />
+            </LinearLayout>
         </LinearLayout>
 
         <View
@@ -80,8 +113,8 @@
                 style="@style/buttonLayout"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/record_icon"
-                android:contentDescription="@string/button_to_start_recording" />
+                android:contentDescription="@string/button_to_start_recording"
+                android:src="@drawable/record_icon" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,14 +124,14 @@
 
                 <ImageButton
                     style="@style/buttonLayout"
-                    android:src="@drawable/reset_icon"
                     android:layout_marginEnd="20dp"
-                    android:contentDescription="@string/button_to_reset_session" />
+                    android:contentDescription="@string/button_to_reset_session"
+                    android:src="@drawable/reset_icon" />
 
                 <ImageButton
                     style="@style/buttonLayout"
-                    android:src="@drawable/save_icon"
-                    android:contentDescription="@string/button_to_save_session" />
+                    android:contentDescription="@string/button_to_save_session"
+                    android:src="@drawable/save_icon" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

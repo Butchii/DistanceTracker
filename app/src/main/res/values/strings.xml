@@ -3,4 +3,10 @@
     <string name="button_to_start_recording">button to start recording</string>
     <string name="button_to_reset_session">button to reset session</string>
     <string name="button_to_save_session">button to save session</string>
+    <string name="total_distance">Total distance</string>
+    <string name="recording_time">Recording time</string>
+    <string name="average_speed">Average speed</string>
+    <string name="_0_0km">0,0km</string>
+    <string name="_0_0_km_h">0,0 km/h</string>
+    <string name="_00_00_00">00:00:00</string>
 </resources>
