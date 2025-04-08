@@ -6,6 +6,7 @@ import android.view.View.OnClickListener
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -28,7 +29,10 @@ class MainActivity : AppCompatActivity() {
     private var averageSpeed: Double = 0.0
 
     private lateinit var listBtn: ImageButton
+
     private lateinit var startSessionBtn: ImageButton
+    private lateinit var startSessionBtnDescription:TextView
+
     private lateinit var resetSessionBtn: ImageButton
 
     private lateinit var map: MapView
@@ -92,8 +96,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeStartSessionBtn() {
         startSessionBtn = findViewById(R.id.recordBtn)
+        startSessionBtnDescription = findViewById(R.id.recordBtnDescription)
+
         startSessionBtn.setOnClickListener {
             startSession()
+            startSessionBtnDescription.text= ContextCompat.getString(applicationContext,R.string.recording)
+            startSessionBtn.setImageResource(R.drawable.record_icon)
             recording = true
         }
     }

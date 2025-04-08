@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">DistanceTracker</string>
-    <string name="button_to_start_recording">button to start recording</string>
+    <string name="button_to_start_recording">btn to start recording</string>
     <string name="button_to_reset_session">button to reset session</string>
     <string name="button_to_save_session">button to save session</string>
     <string name="total_distance">Total distance</string>
@@ -10,7 +10,8 @@
     <string name="_0_0_km_h">0,0 km/h</string>
     <string name="_00_00_00">00:00:00</string>
     <string name="open_saved_tracks_list">open saved tracks list</string>
-    <string name="record">Record</string>
+    <string name="record">Start recording</string>
     <string name="distance_tracker"><i><b>Distance Tracker</b></i></string>
     <string name="_0h_0m_0s">0h 0m 0s</string>
+    <string name="recording"><u>Recording..</u></string>
 </resources>

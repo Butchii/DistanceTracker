@@ -143,16 +143,17 @@
                 <ImageButton
                     android:id="@+id/recordBtn"
                     style="@style/buttonLayout"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:scaleType="centerCrop"
                     android:contentDescription="@string/button_to_start_recording"
-                    android:src="@drawable/record_icon" />
+                    android:src="@drawable/start_icon" />
 
                 <TextView
                     android:id="@+id/recordBtnDescription"
                     style="@style/textLayout"
                     android:text="@string/record"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="italic" />
             </LinearLayout>
         </LinearLayout>
