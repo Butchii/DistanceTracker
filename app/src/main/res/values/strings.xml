@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">DistanceTracker</string>
+    <string name="button_to_start_recording">button to start recording</string>
+    <string name="button_to_reset_session">button to reset session</string>
+    <string name="button_to_save_session">button to save session</string>
 </resources>
