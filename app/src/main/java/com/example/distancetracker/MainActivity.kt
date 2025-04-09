@@ -14,6 +14,7 @@ import org.osmdroid.util.GeoPoint
 import android.Manifest
 import android.location.LocationManager
 import android.os.Looper
+import android.widget.Toast
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 
@@ -193,11 +194,19 @@ open class MainActivity : AppCompatActivity() {
         startSessionBtnDescription = findViewById(R.id.recordBtnDescription)
 
         startSessionBtn.setOnClickListener {
-            startSession()
-            startSessionBtnDescription.text =
-                ContextCompat.getString(applicationContext, R.string.recording)
-            startSessionBtn.setImageResource(R.drawable.record_icon)
-            recording = true
+            if (isLocationEnabled()) {
+                if (!recording) {
+                    startSession()
+                    startSessionBtnDescription.text =
+                        ContextCompat.getString(applicationContext, R.string.recording)
+                    startSessionBtn.setImageResource(R.drawable.record_icon)
+                    recording = true
+                }
+            } else {
+                Toast.makeText(applicationContext, "Please enable your GPS!", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
         }
     }
 
@@ -236,26 +245,35 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume(){
+    override fun onResume() {
         super.onResume()
-        if(checkPermissions()){
+        if (checkPermissions()) {
             startLocationsUpdates()
         }
     }
 
-    override fun onPause(){
+    override fun onPause() {
         super.onPause()
         stopLocationUpdates()
     }
 
-    private fun startLocationsUpdates(){
-        if(ActivityCompat.checkSelfPermission(applicationContext,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(applicationContext,Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback,
-                Looper.getMainLooper())
+    private fun startLocationsUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationProviderClient.requestLocationUpdates(
+                locationRequest, locationCallback,
+                Looper.getMainLooper()
+            )
         }
     }
 
-    private fun stopLocationUpdates(){
+    private fun stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 }
