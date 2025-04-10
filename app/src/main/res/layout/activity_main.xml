@@ -93,7 +93,7 @@
                 <TextView
                     android:id="@+id/sessionDuration"
                     style="@style/textLayout"
-                    android:text="@string/_0h_0m_0s"/>
+                    android:text="@string/_0h_0m_0s" />
             </LinearLayout>
 
             <LinearLayout
@@ -126,13 +126,27 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/resetBtn"
-                style="@style/buttonLayout"
-                android:layout_marginBottom="10dp"
-                android:contentDescription="@string/button_to_reset_session"
-                android:visibility="gone"
-                android:src="@drawable/reset_icon" />
+            <LinearLayout
+                android:id="@+id/buttonBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:visibility="gone">
+
+                <ImageButton
+                    android:id="@+id/resetBtn"
+                    style="@style/buttonLayout"
+                    android:layout_marginEnd="30dp"
+                    android:contentDescription="@string/button_to_reset_session"
+                    android:src="@drawable/reset_icon" />
+
+                <ImageButton
+                    android:id="@+id/saveBtn"
+                    style="@style/buttonLayout"
+                    android:alpha="0.2"
+                    android:contentDescription="@string/button_to_reset_session"
+                    android:src="@drawable/save_icon" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -145,8 +159,8 @@
                     style="@style/buttonLayout"
                     android:layout_width="108dp"
                     android:layout_height="108dp"
-                    android:scaleType="centerCrop"
                     android:contentDescription="@string/button_to_start_recording"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/start_icon" />
 
                 <TextView
