@@ -198,6 +198,12 @@ open class MainActivity : AppCompatActivity() {
                     startSessionBtn.setImageResource(R.drawable.record_icon)
                     recording = true
                     showResetButton()
+                } else {
+                    //pauseSession()
+                    recording = false
+                    startSessionBtnDescription.text = "Paused.."
+                    startSessionBtn.setImageResource(R.drawable.pause_icon)
+                    //show save button
                 }
             } else {
                 Toast.makeText(applicationContext, "Please enable your GPS!", Toast.LENGTH_SHORT)
@@ -221,18 +227,55 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun resetSession() {
-        sessionTimer.cancel()
-        recording = false
-        sessionSeconds = 0
-        sessionMinutes = 0
-        sessionHours = 0
+        stopRecording()
+        resetSessionTimes()
+        setSessionDurationDisplay()
+        changeMainButtonDescription(R.string.start_session)
+        changeMainButtonIcon(R.drawable.start_icon)
+        hideResetButton()
+    }
+
+    private fun setSessionDurationDisplay() {
+        //set the textview, which displays session duration, to hours,minutes,
+        // seconds saved in sessionHours, sessionMinutes and sessionSeconds
         sessionDurationTV.text =
             String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
+    }
 
+    private fun stopRecording() {
+        stopTimer()
+        recording = false
+    }
+
+    private fun changeMainButtonIcon(iconId: Int) {
+        startSessionBtn.setImageResource(iconId)
+    }
+
+    private fun changeMainButtonDescription(stringId: Int) {
         startSessionBtnDescription.text =
-            ContextCompat.getString(applicationContext, R.string.start_session)
-        startSessionBtn.setImageResource(R.drawable.start_icon)
-        hideResetButton()
+            ContextCompat.getString(applicationContext, stringId)
+    }
+
+    private fun resetSessionTimes() {
+        resetSessionSeconds()
+        resetSessionMinutes()
+        resetSessionHours()
+    }
+
+    private fun resetSessionHours() {
+        sessionHours = 0
+    }
+
+    private fun resetSessionMinutes() {
+        sessionMinutes = 0
+    }
+
+    private fun resetSessionSeconds() {
+        sessionSeconds = 0
+    }
+
+    private fun stopTimer() {
+        sessionTimer.cancel()
     }
 
     private fun showResetButton() {
@@ -255,8 +298,7 @@ open class MainActivity : AppCompatActivity() {
                 sessionHours++
             }
             runOnUiThread {
-                sessionDurationTV.text =
-                    String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
+                setSessionDurationDisplay()
             }
         }
     }
