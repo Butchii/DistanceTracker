@@ -12,10 +12,12 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import android.Manifest
+import android.content.DialogInterface
 import android.location.LocationManager
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 
@@ -37,9 +39,11 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var averageSpeedTV: TextView
 
     private lateinit var sessionTimer: Timer
+
     private var sessionHours: Int = 0
     private var sessionMinutes: Int = 0
     private var sessionSeconds: Int = 0
+
     private var totalDistance: Double = 0.0
     private var averageSpeed: Double = 0.0
 
@@ -66,7 +70,6 @@ open class MainActivity : AppCompatActivity() {
         initializeMap()
 
         initializeSessionInformation()
-        initializeSessionTimer()
         initializeButtons()
 
         setFusedLocationClient()
@@ -138,10 +141,6 @@ open class MainActivity : AppCompatActivity() {
             LocationServices.getFusedLocationProviderClient(applicationContext)
     }
 
-    private fun initializeSessionTimer() {
-        sessionTimer = Timer()
-    }
-
     private fun createLocationRequest() {
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000).build()
     }
@@ -210,27 +209,37 @@ open class MainActivity : AppCompatActivity() {
 
     private fun startSession() {
         val timerTask = createTimerTask()
+        sessionTimer = Timer()
         sessionTimer.schedule(timerTask, 0, 1000)
     }
 
     private fun initializeResetBtn() {
         resetSessionBtn = findViewById(R.id.resetBtn)
         resetSessionBtn.setOnClickListener {
-            sessionTimer.cancel()
-            recording = false
-            sessionSeconds = 0
-            sessionMinutes = 0
-            sessionHours = 0
-            startSessionBtn.setImageResource(R.drawable.start_icon)
-            hideResetButton()
+            showResetDialog()
         }
     }
 
-    private fun showResetButton(){
+    private fun resetSession() {
+        sessionTimer.cancel()
+        recording = false
+        sessionSeconds = 0
+        sessionMinutes = 0
+        sessionHours = 0
+        sessionDurationTV.text =
+            String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
+
+        startSessionBtnDescription.text =
+            ContextCompat.getString(applicationContext, R.string.start_session)
+        startSessionBtn.setImageResource(R.drawable.start_icon)
+        hideResetButton()
+    }
+
+    private fun showResetButton() {
         resetSessionBtn.visibility = View.VISIBLE
     }
 
-    private fun hideResetButton(){
+    private fun hideResetButton() {
         resetSessionBtn.visibility = View.GONE
     }
 
@@ -290,5 +299,17 @@ open class MainActivity : AppCompatActivity() {
 
     private fun stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun showResetDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            setTitle("Reset session")
+            setMessage("Are you sure you want to reset the current session?")
+            setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
+                resetSession()
+            }
+            setNegativeButton("Cancel") { _, _ -> }
+        }.create().show()
     }
 }

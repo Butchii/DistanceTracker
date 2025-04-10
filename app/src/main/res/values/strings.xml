@@ -10,8 +10,8 @@
     <string name="_0_0_km_h">0,0 km/h</string>
     <string name="_00_00_00">00:00:00</string>
     <string name="open_saved_tracks_list">open saved tracks list</string>
-    <string name="record">Start session</string>
+    <string name="start_session">Start session</string>
     <string name="distance_tracker"><i><b>Distance Tracker</b></i></string>
-    <string name="_0h_0m_0s">0h 0m 0s</string>
+    <string name="_0h_0m_0s">0 h 0 m 0 s</string>
     <string name="recording"><u>Recording..</u></string>
 </resources>
