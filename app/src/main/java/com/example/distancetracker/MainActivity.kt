@@ -64,6 +64,8 @@ open class MainActivity : AppCompatActivity() {
 
     private lateinit var map: MapView
 
+    private var geoPointList: ArrayList<GeoPoint> = ArrayList()
+
     private var recording: Boolean = false
     private var startedSession: Boolean = false
 
@@ -195,7 +197,16 @@ open class MainActivity : AppCompatActivity() {
         saveSessionBtn = findViewById(R.id.saveBtn)
 
         saveSessionBtn.setOnClickListener {
-            showSaveDialog()
+            if (!recording) {
+                showSaveDialog()
+            } else {
+                Toast.makeText(
+                    applicationContext,
+                    "Please pause the recording before saving!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
         }
     }
 
@@ -214,7 +225,7 @@ open class MainActivity : AppCompatActivity() {
         sessionBtn.setOnClickListener {
             if (isLocationEnabled()) {
                 if (!startedSession) {
-                    //now session started yet
+                    //no session started yet
                     startSession()
                     changeMainButtonDescription(R.string.recording)
                     changeMainButtonIcon(R.drawable.record_icon)
