@@ -129,10 +129,10 @@
             <ImageButton
                 android:id="@+id/resetBtn"
                 style="@style/buttonLayout"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="10dp"
                 android:contentDescription="@string/button_to_reset_session"
-                android:src="@drawable/reset_icon"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:src="@drawable/reset_icon" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -143,8 +143,8 @@
                 <ImageButton
                     android:id="@+id/recordBtn"
                     style="@style/buttonLayout"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
+                    android:layout_width="108dp"
+                    android:layout_height="108dp"
                     android:scaleType="centerCrop"
                     android:contentDescription="@string/button_to_start_recording"
                     android:src="@drawable/start_icon" />

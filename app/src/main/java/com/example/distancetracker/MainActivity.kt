@@ -14,6 +14,7 @@ import org.osmdroid.util.GeoPoint
 import android.Manifest
 import android.location.LocationManager
 import android.os.Looper
+import android.view.View
 import android.widget.Toast
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
@@ -74,29 +75,25 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun getCurrentLocation() {
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
-                if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    requestPermissions()
-                    return
-                }
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-                    if (location != null) {
-                        currentLocation.latitude = location.latitude
-                        currentLocation.longitude = location.longitude
-                    }
-                    addMarker()
-                }
+        if (isLocationEnabled()) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions()
+                return
             }
-        } else {
-            requestPermissions()
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    currentLocation.latitude = location.latitude
+                    currentLocation.longitude = location.longitude
+                }
+                addMarker()
+            }
         }
     }
 
@@ -201,6 +198,7 @@ open class MainActivity : AppCompatActivity() {
                         ContextCompat.getString(applicationContext, R.string.recording)
                     startSessionBtn.setImageResource(R.drawable.record_icon)
                     recording = true
+                    showResetButton()
                 }
             } else {
                 Toast.makeText(applicationContext, "Please enable your GPS!", Toast.LENGTH_SHORT)
@@ -217,6 +215,23 @@ open class MainActivity : AppCompatActivity() {
 
     private fun initializeResetBtn() {
         resetSessionBtn = findViewById(R.id.resetBtn)
+        resetSessionBtn.setOnClickListener {
+            sessionTimer.cancel()
+            recording = false
+            sessionSeconds = 0
+            sessionMinutes = 0
+            sessionHours = 0
+            startSessionBtn.setImageResource(R.drawable.start_icon)
+            hideResetButton()
+        }
+    }
+
+    private fun showResetButton(){
+        resetSessionBtn.visibility = View.VISIBLE
+    }
+
+    private fun hideResetButton(){
+        resetSessionBtn.visibility = View.GONE
     }
 
     private fun createTimerTask() = object : TimerTask() {
