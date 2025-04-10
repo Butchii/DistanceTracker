@@ -16,6 +16,7 @@ import android.content.DialogInterface
 import android.location.LocationManager
 import android.os.Looper
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import org.osmdroid.views.CustomZoomButtonsController
@@ -54,15 +55,17 @@ open class MainActivity : AppCompatActivity() {
 
     private lateinit var listBtn: ImageButton
 
-    private lateinit var startSessionBtn: ImageButton
-    private lateinit var startSessionBtnDescription: TextView
+    private lateinit var sessionBtn: ImageButton
+    private lateinit var sessionBtnDescription: TextView
 
+    private lateinit var buttonBar: LinearLayout
     private lateinit var resetSessionBtn: ImageButton
+    private lateinit var saveSessionBtn: ImageButton
 
     private lateinit var map: MapView
 
     private var recording: Boolean = false
-    private var startedSession : Boolean = false
+    private var startedSession: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -177,54 +180,100 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeButtons() {
+        initializeButtonBar()
         initializeStartSessionBtn()
         initializeResetBtn()
         initializeListBtn()
+        initializeSaveBtn()
+    }
+
+    private fun initializeButtonBar() {
+        buttonBar = findViewById(R.id.buttonBar)
+    }
+
+    private fun initializeSaveBtn() {
+        saveSessionBtn = findViewById(R.id.saveBtn)
+
+        saveSessionBtn.setOnClickListener {
+            showSaveDialog()
+        }
     }
 
     private fun initializeListBtn() {
         listBtn = findViewById(R.id.listBtn)
+
+        listBtn.setOnClickListener {
+            //TODO
+        }
     }
 
     private fun initializeStartSessionBtn() {
-        startSessionBtn = findViewById(R.id.recordBtn)
-        startSessionBtnDescription = findViewById(R.id.recordBtnDescription)
+        sessionBtn = findViewById(R.id.recordBtn)
+        sessionBtnDescription = findViewById(R.id.recordBtnDescription)
 
-        startSessionBtn.setOnClickListener {
+        sessionBtn.setOnClickListener {
             if (isLocationEnabled()) {
                 if (!startedSession) {
+                    //now session started yet
                     startSession()
-                    startSessionBtnDescription.text =
-                        ContextCompat.getString(applicationContext, R.string.recording)
-                    startSessionBtn.setImageResource(R.drawable.record_icon)
-                    recording = true
+                    changeMainButtonDescription(R.string.recording)
+                    changeMainButtonIcon(R.drawable.record_icon)
                     showResetButton()
                 } else {
-                    if(recording){
-                        //pauseSession()
-                        recording = false
-                        startSessionBtnDescription.text = ContextCompat.getString(applicationContext, R.string.paused)
-                        startSessionBtn.setImageResource(R.drawable.pause_icon)
-                        //change save button alpha to 1
-                    }else{
-                        //not recording
-                        //recording = true
-                        //change save button alpha to 0.5
+                    //session already exists
+                    if (recording) {
+                        pauseSession()
+                        changeMainButtonDescription(R.string.paused)
+                        changeMainButtonIcon(R.drawable.pause_icon)
+                        activateSaveBtn()
+                    } else {
+                        resumeSession()
+                        changeMainButtonDescription(R.string.recording)
+                        changeMainButtonIcon(R.drawable.record_icon)
+                        deactivateSaveBtn()
                     }
                 }
             } else {
                 Toast.makeText(applicationContext, "Please enable your GPS!", Toast.LENGTH_SHORT)
                     .show()
             }
-
         }
+    }
+
+    private fun resumeSession() {
+        recording = true
+        restartTimer()
+    }
+
+    private fun restartTimer() {
+        val timerTask = createTimerTask()
+        sessionTimer = Timer()
+        sessionTimer.schedule(timerTask, 0, 1000)
+    }
+
+    private fun activateSaveBtn() {
+        saveSessionBtn.alpha = 1f
+    }
+
+    private fun deactivateSaveBtn() {
+        saveSessionBtn.alpha = 0.2f
     }
 
     private fun startSession() {
         startedSession = true
+        recording = true
+        showButtonBar()
         val timerTask = createTimerTask()
         sessionTimer = Timer()
         sessionTimer.schedule(timerTask, 0, 1000)
+    }
+
+    private fun showButtonBar() {
+        buttonBar.visibility = View.VISIBLE
+    }
+
+    private fun hideButtonBar() {
+        buttonBar.visibility = View.GONE
     }
 
     private fun initializeResetBtn() {
@@ -240,7 +289,7 @@ open class MainActivity : AppCompatActivity() {
         setSessionDurationDisplay()
         changeMainButtonDescription(R.string.start_session)
         changeMainButtonIcon(R.drawable.start_icon)
-        hideResetButton()
+        hideButtonBar()
     }
 
     private fun setSessionDurationDisplay() {
@@ -250,6 +299,11 @@ open class MainActivity : AppCompatActivity() {
             String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
     }
 
+    private fun pauseSession() {
+        stopTimer()
+        recording = false
+    }
+
     private fun stopSession() {
         stopTimer()
         startedSession = false
@@ -257,11 +311,11 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun changeMainButtonIcon(iconId: Int) {
-        startSessionBtn.setImageResource(iconId)
+        sessionBtn.setImageResource(iconId)
     }
 
     private fun changeMainButtonDescription(stringId: Int) {
-        startSessionBtnDescription.text =
+        sessionBtnDescription.text =
             ContextCompat.getString(applicationContext, stringId)
     }
 
@@ -289,10 +343,6 @@ open class MainActivity : AppCompatActivity() {
 
     private fun showResetButton() {
         resetSessionBtn.visibility = View.VISIBLE
-    }
-
-    private fun hideResetButton() {
-        resetSessionBtn.visibility = View.GONE
     }
 
     private fun createTimerTask() = object : TimerTask() {
@@ -348,6 +398,12 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveSession() {
+        Toast.makeText(applicationContext, "Session saved", Toast.LENGTH_SHORT).show()
+        //save on firestore TODO
+        resetSession()
+    }
+
     private fun stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
@@ -359,6 +415,18 @@ open class MainActivity : AppCompatActivity() {
             setMessage("Are you sure you want to reset the current session?")
             setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
                 resetSession()
+            }
+            setNegativeButton("Cancel") { _, _ -> }
+        }.create().show()
+    }
+
+    private fun showSaveDialog() {
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.apply {
+            setTitle("Save session")
+            setMessage("Save the current session and reset?")
+            setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
+                saveSession()
             }
             setNegativeButton("Cancel") { _, _ -> }
         }.create().show()
