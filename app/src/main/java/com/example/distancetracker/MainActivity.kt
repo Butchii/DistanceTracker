@@ -62,6 +62,7 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var map: MapView
 
     private var recording: Boolean = false
+    private var startedSession : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -191,7 +192,7 @@ open class MainActivity : AppCompatActivity() {
 
         startSessionBtn.setOnClickListener {
             if (isLocationEnabled()) {
-                if (!recording) {
+                if (!startedSession) {
                     startSession()
                     startSessionBtnDescription.text =
                         ContextCompat.getString(applicationContext, R.string.recording)
@@ -199,11 +200,17 @@ open class MainActivity : AppCompatActivity() {
                     recording = true
                     showResetButton()
                 } else {
-                    //pauseSession()
-                    recording = false
-                    startSessionBtnDescription.text = "Paused.."
-                    startSessionBtn.setImageResource(R.drawable.pause_icon)
-                    //show save button
+                    if(recording){
+                        //pauseSession()
+                        recording = false
+                        startSessionBtnDescription.text = ContextCompat.getString(applicationContext, R.string.paused)
+                        startSessionBtn.setImageResource(R.drawable.pause_icon)
+                        //change save button alpha to 1
+                    }else{
+                        //not recording
+                        //recording = true
+                        //change save button alpha to 0.5
+                    }
                 }
             } else {
                 Toast.makeText(applicationContext, "Please enable your GPS!", Toast.LENGTH_SHORT)
@@ -214,6 +221,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun startSession() {
+        startedSession = true
         val timerTask = createTimerTask()
         sessionTimer = Timer()
         sessionTimer.schedule(timerTask, 0, 1000)
@@ -227,7 +235,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun resetSession() {
-        stopRecording()
+        stopSession()
         resetSessionTimes()
         setSessionDurationDisplay()
         changeMainButtonDescription(R.string.start_session)
@@ -242,8 +250,9 @@ open class MainActivity : AppCompatActivity() {
             String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
     }
 
-    private fun stopRecording() {
+    private fun stopSession() {
         stopTimer()
+        startedSession = false
         recording = false
     }
 
