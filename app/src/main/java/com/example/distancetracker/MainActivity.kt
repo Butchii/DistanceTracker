@@ -52,6 +52,8 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
+    private lateinit var lastLocation: GeoPoint
+    private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
     private lateinit var listBtn: ImageButton
 
@@ -63,8 +65,6 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var saveSessionBtn: ImageButton
 
     private lateinit var map: MapView
-
-    private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
     private var startedSession: Boolean = false
