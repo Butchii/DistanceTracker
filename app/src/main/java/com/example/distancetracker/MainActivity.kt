@@ -266,9 +266,9 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun startSession() {
-        // set lastlocation to currentLocation TODO
+        lastLocation = currentLocation
+        geoPointList.add(lastLocation)
         //create start marker on map TODO
-        //add start location to geopoint arraylist TODO
 
         startedSession = true
         startRecording()
@@ -323,7 +323,7 @@ open class MainActivity : AppCompatActivity() {
         stopRecording()
     }
 
-    private fun stopRecording(){
+    private fun stopRecording() {
         recording = false
     }
 
