@@ -5,9 +5,9 @@ import java.util.Timer
 import java.util.TimerTask
 
 class CustomTimer(private val sessionDurationTV: TextView, private val activity: MainActivity) {
-    private var sessionSeconds: Int = 0
-    private var sessionMinutes: Int = 0
-    private var sessionHours: Int = 0
+    var sessionSeconds: Int = 0
+    var sessionMinutes: Int = 0
+    var sessionHours: Int = 0
 
     private var sessionTimer: Timer = Timer()
 

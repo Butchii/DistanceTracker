@@ -74,10 +74,6 @@ open class MainActivity : AppCompatActivity() {
         startLocationsUpdates()
     }
 
-    private fun initializeTimer() {
-        sessionTimer = CustomTimer(findViewById(R.id.sessionDuration), this)
-    }
-
     private fun getCurrentLocation() {
         if (isLocationEnabled()) {
             if (ActivityCompat.checkSelfPermission(
@@ -144,29 +140,12 @@ open class MainActivity : AppCompatActivity() {
         mapHelper = MapHelper(applicationContext, findViewById(R.id.map))
     }
 
-    private fun initializeSessionInformation() {
-        initializeTotalDistance()
-        initializeAverageSpeed()
-    }
-
-    private fun initializeTotalDistance() {
-        totalDistanceTV = findViewById(R.id.totalDistance)
-    }
-
-    private fun initializeAverageSpeed() {
-        averageSpeedTV = findViewById(R.id.averageSpeed)
-    }
-
     private fun initializeButtons() {
         initializeButtonBar()
         initializeStartSessionBtn()
         initializeResetBtn()
         initializeListBtn()
         initializeSaveBtn()
-    }
-
-    private fun initializeButtonBar() {
-        buttonBar = findViewById(R.id.buttonBar)
     }
 
     private fun initializeSaveBtn() {
@@ -320,21 +299,38 @@ open class MainActivity : AppCompatActivity() {
                 val newLocation = Location("")
                 newLocation.latitude = currentLocation.latitude
                 newLocation.longitude = currentLocation.longitude
-                if (locations[0].distanceTo(newLocation) > 1.0 && locations[0].distanceTo(
-                        newLocation
-                    ) < 6 && recording
-                ) {
-                    Log.d(
-                        "myTag",
-                        locations[0].distanceTo(newLocation).toString()
-                    )
-                    updateCurrentLocation(GeoPoint(locations[0].latitude, locations[0].longitude))
-                    mapHelper.addMarker(currentLocation)
-                    updateTotalDistance(locations[0].distanceTo(newLocation))
+                if (recording) {
+                    if (locations[0].distanceTo(newLocation) > 1.0 && locations[0].distanceTo(
+                            newLocation
+                        ) < 6
+                    ) {
+                        Log.d(
+                            "myTag",
+                            locations[0].distanceTo(newLocation).toString()
+                        )
+                        updateCurrentLocation(
+                            GeoPoint(
+                                locations[0].latitude,
+                                locations[0].longitude
+                            )
+                        )
+                        mapHelper.addMarker(currentLocation)
+                        updateTotalDistance(locations[0].distanceTo(newLocation))
+                    }
+                    updateAverageSpeed()
                 }
+
             }
+        }
+    }
 
-
+    private fun updateAverageSpeed() {
+        if (totalDistance > 0) {
+            averageSpeed = (totalDistance / (sessionTimer.sessionSeconds + (sessionTimer.sessionMinutes * 60) + (sessionTimer.sessionHours * 3600))) * 3.6
+            Log.d("myTag", totalDistance.toString())
+            Log.d("myTag", sessionTimer.sessionSeconds.toString())
+            Log.d("myTag", averageSpeed.toString())
+            averageSpeedTV.text = String.format("%.2f km/h", averageSpeed)
         }
     }
 
@@ -345,7 +341,7 @@ open class MainActivity : AppCompatActivity() {
     private fun updateTotalDistance(distanceWalked: Float) {
         totalDistance += distanceWalked
         val totalDistanceMetres = totalDistance / 1000
-        totalDistanceTV.text = String.format("%.2f  km", totalDistanceMetres)
+        totalDistanceTV.text = String.format("%.2f km", totalDistanceMetres)
     }
 
     override fun onResume() {
@@ -408,5 +404,26 @@ open class MainActivity : AppCompatActivity() {
             }
             setNegativeButton("Cancel") { _, _ -> }
         }.create().show()
+    }
+
+    private fun initializeTotalDistance() {
+        totalDistanceTV = findViewById(R.id.totalDistance)
+    }
+
+    private fun initializeAverageSpeed() {
+        averageSpeedTV = findViewById(R.id.averageSpeed)
+    }
+
+    private fun initializeTimer() {
+        sessionTimer = CustomTimer(findViewById(R.id.sessionDuration), this)
+    }
+
+    private fun initializeSessionInformation() {
+        initializeTotalDistance()
+        initializeAverageSpeed()
+    }
+
+    private fun initializeButtonBar() {
+        buttonBar = findViewById(R.id.buttonBar)
     }
 }
