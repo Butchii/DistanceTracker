@@ -10,8 +10,10 @@ import androidx.core.content.ContextCompat
 import org.osmdroid.util.GeoPoint
 import android.Manifest
 import android.content.DialogInterface
+import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -23,9 +25,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-
-import java.util.Timer
-import java.util.TimerTask
 
 open class MainActivity : AppCompatActivity() {
 
@@ -72,10 +71,11 @@ open class MainActivity : AppCompatActivity() {
         setFusedLocationClient()
         createLocationRequest()
         getCurrentLocation()
+        startLocationsUpdates()
     }
 
     private fun initializeTimer() {
-        sessionTimer = CustomTimer(findViewById(R.id.sessionDuration),this)
+        sessionTimer = CustomTimer(findViewById(R.id.sessionDuration), this)
     }
 
     private fun getCurrentLocation() {
@@ -312,8 +312,40 @@ open class MainActivity : AppCompatActivity() {
         override fun onLocationResult(p0: LocationResult) {
             super.onLocationResult(p0)
             val locations = p0.locations
-            currentLocation = GeoPoint(locations[0].latitude, locations[0].longitude)
+
+            if (!startedSession) {
+                currentLocation = GeoPoint(locations[0].latitude, locations[0].longitude)
+                mapHelper.updateCurrentLocationMarker(currentLocation)
+            } else {
+                val newLocation = Location("")
+                newLocation.latitude = currentLocation.latitude
+                newLocation.longitude = currentLocation.longitude
+                if (locations[0].distanceTo(newLocation) > 1.0 && locations[0].distanceTo(
+                        newLocation
+                    ) < 6 && recording
+                ) {
+                    Log.d(
+                        "myTag",
+                        locations[0].distanceTo(newLocation).toString()
+                    )
+                    updateCurrentLocation(GeoPoint(locations[0].latitude, locations[0].longitude))
+                    mapHelper.addMarker(currentLocation)
+                    updateTotalDistance(locations[0].distanceTo(newLocation))
+                }
+            }
+
+
         }
+    }
+
+    private fun updateCurrentLocation(newLocation: GeoPoint) {
+        currentLocation = newLocation
+    }
+
+    private fun updateTotalDistance(distanceWalked: Float) {
+        totalDistance += distanceWalked
+        val totalDistanceMetres = totalDistance / 1000
+        totalDistanceTV.text = String.format("%.2f  km", totalDistanceMetres)
     }
 
     override fun onResume() {

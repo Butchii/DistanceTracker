@@ -1,6 +1,7 @@
 package com.example.distancetracker
 
 import android.content.Context
+import android.location.Location
 import android.preference.PreferenceManager
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -8,8 +9,11 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 
 class MapHelper(context: Context, private val map: MapView) {
+
+    private var route: Polyline = Polyline()
 
     init {
         Configuration.getInstance()
@@ -25,9 +29,20 @@ class MapHelper(context: Context, private val map: MapView) {
         map.controller.animateTo(GeoPoint(50.5532715, 7.1045565))
     }
 
-    fun addMarker(location:GeoPoint){
+    fun addMarker(location: GeoPoint) {
         val marker = Marker(map)
         marker.position = location
         map.overlays.add(marker)
+        route.addPoint(location)
+        map.overlays.add(route)
+        map.invalidate()
+    }
+
+    fun updateCurrentLocationMarker(currentLocation: GeoPoint) {
+        map.overlays.clear()
+        val currentLocationMarker = Marker(map)
+        currentLocationMarker.position = currentLocation
+        map.overlays.add(currentLocationMarker)
+        map.invalidate()
     }
 }
