@@ -9,7 +9,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
-class MapHelper(context: Context, val map: MapView) {
+class MapHelper(context: Context, private val map: MapView) {
 
     init {
         Configuration.getInstance()

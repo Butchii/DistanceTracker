@@ -2,14 +2,11 @@ package com.example.distancetracker
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import org.osmdroid.config.Configuration
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import android.Manifest
 import android.content.DialogInterface
@@ -19,8 +16,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import org.osmdroid.views.CustomZoomButtonsController
-import org.osmdroid.views.MapView
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -28,7 +23,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import org.osmdroid.views.overlay.Marker
 
 import java.util.Timer
 import java.util.TimerTask
@@ -36,14 +30,7 @@ import java.util.TimerTask
 open class MainActivity : AppCompatActivity() {
 
     private lateinit var totalDistanceTV: TextView
-    private lateinit var sessionDurationTV: TextView
     private lateinit var averageSpeedTV: TextView
-
-    private lateinit var sessionTimer: Timer
-
-    private var sessionHours: Int = 0
-    private var sessionMinutes: Int = 0
-    private var sessionSeconds: Int = 0
 
     private var totalDistance: Double = 0.0
     private var averageSpeed: Double = 0.0
@@ -67,6 +54,8 @@ open class MainActivity : AppCompatActivity() {
 
     private lateinit var mapHelper: MapHelper
 
+    private lateinit var sessionTimer: CustomTimer
+
     private var recording: Boolean = false
     private var startedSession: Boolean = false
 
@@ -75,6 +64,7 @@ open class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initializeMapHelper()
+        initializeTimer()
 
         initializeSessionInformation()
         initializeButtons()
@@ -82,6 +72,10 @@ open class MainActivity : AppCompatActivity() {
         setFusedLocationClient()
         createLocationRequest()
         getCurrentLocation()
+    }
+
+    private fun initializeTimer() {
+        sessionTimer = CustomTimer(findViewById(R.id.sessionDuration),this)
     }
 
     private fun getCurrentLocation() {
@@ -152,16 +146,11 @@ open class MainActivity : AppCompatActivity() {
 
     private fun initializeSessionInformation() {
         initializeTotalDistance()
-        initializeRecordingTime()
         initializeAverageSpeed()
     }
 
     private fun initializeTotalDistance() {
         totalDistanceTV = findViewById(R.id.totalDistance)
-    }
-
-    private fun initializeRecordingTime() {
-        sessionDurationTV = findViewById(R.id.sessionDuration)
     }
 
     private fun initializeAverageSpeed() {
@@ -240,7 +229,7 @@ open class MainActivity : AppCompatActivity() {
 
     private fun resumeSession() {
         startRecording()
-        createTimer()
+        sessionTimer.createTimer()
     }
 
     private fun activateSaveBtn() {
@@ -259,18 +248,12 @@ open class MainActivity : AppCompatActivity() {
         startedSession = true
         startRecording()
         showButtonBar()
-        createTimer()
+        sessionTimer.createTimer()
     }
 
 
     private fun startRecording() {
         recording = true
-    }
-
-    private fun createTimer() {
-        val timerTask = createTimerTask()
-        sessionTimer = Timer()
-        sessionTimer.schedule(timerTask, 0, 1000)
     }
 
     private fun showButtonBar() {
@@ -290,22 +273,15 @@ open class MainActivity : AppCompatActivity() {
 
     private fun resetSession() {
         stopSession()
-        resetSessionTimes()
-        setSessionDurationDisplay()
+        sessionTimer.resetSessionTimes()
+        sessionTimer.setSessionDurationDisplay()
         changeMainButtonDescription(R.string.start_session)
         changeMainButtonIcon(R.drawable.start_icon)
         hideButtonBar()
     }
 
-    private fun setSessionDurationDisplay() {
-        //set the textview, which displays session duration, to hours,minutes,
-        // seconds saved in sessionHours, sessionMinutes and sessionSeconds
-        sessionDurationTV.text =
-            String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
-    }
-
     private fun pauseSession() {
-        stopTimer()
+        sessionTimer.stopTimer()
         stopRecording()
     }
 
@@ -314,7 +290,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun stopSession() {
-        stopTimer()
+        sessionTimer.stopTimer()
         startedSession = false
         stopRecording()
     }
@@ -328,47 +304,8 @@ open class MainActivity : AppCompatActivity() {
             ContextCompat.getString(applicationContext, stringId)
     }
 
-    private fun resetSessionTimes() {
-        resetSessionSeconds()
-        resetSessionMinutes()
-        resetSessionHours()
-    }
-
-    private fun resetSessionHours() {
-        sessionHours = 0
-    }
-
-    private fun resetSessionMinutes() {
-        sessionMinutes = 0
-    }
-
-    private fun resetSessionSeconds() {
-        sessionSeconds = 0
-    }
-
-    private fun stopTimer() {
-        sessionTimer.cancel()
-    }
-
     private fun showResetButton() {
         resetSessionBtn.visibility = View.VISIBLE
-    }
-
-    private fun createTimerTask() = object : TimerTask() {
-        override fun run() {
-            sessionSeconds++
-            if (sessionSeconds > 0 && sessionSeconds % 60 == 0) {
-                sessionSeconds = 0
-                sessionMinutes++
-            }
-            if (sessionMinutes > 0 && sessionMinutes % 60 == 0) {
-                sessionMinutes = 0
-                sessionHours++
-            }
-            runOnUiThread {
-                setSessionDurationDisplay()
-            }
-        }
     }
 
     private var locationCallback: LocationCallback = object : LocationCallback() {
