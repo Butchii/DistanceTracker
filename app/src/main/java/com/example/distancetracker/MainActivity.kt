@@ -254,9 +254,21 @@ open class MainActivity : AppCompatActivity() {
         stopSession()
         sessionTimer.resetSessionTimes()
         sessionTimer.setSessionDurationDisplay()
+        resetTotalDistance()
+        resetAverageSpeed()
         changeMainButtonDescription(R.string.start_session)
         changeMainButtonIcon(R.drawable.start_icon)
         hideButtonBar()
+    }
+
+    private fun resetTotalDistance() {
+        totalDistance = 0.0
+        totalDistanceTV.text = ContextCompat.getString(applicationContext, R.string.total_distance)
+    }
+
+    private fun resetAverageSpeed() {
+        averageSpeed = 0.0
+        averageSpeedTV.text = ContextCompat.getString(applicationContext, R.string.average_speed)
     }
 
     private fun pauseSession() {
@@ -326,7 +338,8 @@ open class MainActivity : AppCompatActivity() {
 
     private fun updateAverageSpeed() {
         if (totalDistance > 0) {
-            averageSpeed = (totalDistance / (sessionTimer.sessionSeconds + (sessionTimer.sessionMinutes * 60) + (sessionTimer.sessionHours * 3600))) * 3.6
+            averageSpeed =
+                (totalDistance / (sessionTimer.sessionSeconds + (sessionTimer.sessionMinutes * 60) + (sessionTimer.sessionHours * 3600))) * 3.6
             Log.d("myTag", totalDistance.toString())
             Log.d("myTag", sessionTimer.sessionSeconds.toString())
             Log.d("myTag", averageSpeed.toString())
