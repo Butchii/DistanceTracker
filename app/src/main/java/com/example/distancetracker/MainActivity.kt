@@ -263,12 +263,12 @@ open class MainActivity : AppCompatActivity() {
 
     private fun resetTotalDistance() {
         totalDistance = 0.0
-        totalDistanceTV.text = ContextCompat.getString(applicationContext, R.string.total_distance)
+        totalDistanceTV.text = ContextCompat.getString(applicationContext, R.string._0_0km)
     }
 
     private fun resetAverageSpeed() {
         averageSpeed = 0.0
-        averageSpeedTV.text = ContextCompat.getString(applicationContext, R.string.average_speed)
+        averageSpeedTV.text = ContextCompat.getString(applicationContext, R.string._0_0_km_h)
     }
 
     private fun pauseSession() {
