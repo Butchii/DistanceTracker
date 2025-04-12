@@ -62,7 +62,7 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var resetSessionBtn: ImageButton
     private lateinit var saveSessionBtn: ImageButton
 
-    private lateinit var map: MapView
+    private lateinit var mapHelper: MapHelper
 
     private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
@@ -73,7 +73,7 @@ open class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initializeMap()
+        initializeMapHelper()
 
         initializeSessionInformation()
         initializeButtons()
@@ -101,15 +101,9 @@ open class MainActivity : AppCompatActivity() {
                     currentLocation.latitude = location.latitude
                     currentLocation.longitude = location.longitude
                 }
-                addMarker()
+                mapHelper.addMarker(currentLocation)
             }
         }
-    }
-
-    private fun addMarker() {
-        val marker = Marker(map)
-        marker.position = currentLocation
-        map.overlays.add(marker)
     }
 
     private fun checkPermissions(): Boolean {
@@ -151,16 +145,8 @@ open class MainActivity : AppCompatActivity() {
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000).build()
     }
 
-    private fun initializeMap() {
-        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
-
-        map = findViewById(R.id.map)
-
-        map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-        map.setMultiTouchControls(true)
-        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        map.controller.setZoom(15)
-        map.controller.animateTo(GeoPoint(50.5532715, 7.1045565))
+    private fun initializeMapHelper() {
+        mapHelper = MapHelper(applicationContext, findViewById(R.id.map))
     }
 
     private fun initializeSessionInformation() {
