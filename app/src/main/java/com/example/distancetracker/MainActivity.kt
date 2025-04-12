@@ -52,6 +52,9 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
+    private lateinit var lastLocation: GeoPoint
+
+    private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
     private lateinit var listBtn: ImageButton
 
@@ -63,8 +66,6 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var saveSessionBtn: ImageButton
 
     private lateinit var mapHelper: MapHelper
-
-    private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
     private var startedSession: Boolean = false
@@ -238,14 +239,8 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun resumeSession() {
-        recording = true
-        restartTimer()
-    }
-
-    private fun restartTimer() {
-        val timerTask = createTimerTask()
-        sessionTimer = Timer()
-        sessionTimer.schedule(timerTask, 0, 1000)
+        startRecording()
+        createTimer()
     }
 
     private fun activateSaveBtn() {
@@ -257,9 +252,22 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun startSession() {
+        lastLocation = currentLocation
+        geoPointList.add(lastLocation)
+        //create start marker on map TODO
+
         startedSession = true
-        recording = true
+        startRecording()
         showButtonBar()
+        createTimer()
+    }
+
+
+    private fun startRecording() {
+        recording = true
+    }
+
+    private fun createTimer() {
         val timerTask = createTimerTask()
         sessionTimer = Timer()
         sessionTimer.schedule(timerTask, 0, 1000)
@@ -298,13 +306,17 @@ open class MainActivity : AppCompatActivity() {
 
     private fun pauseSession() {
         stopTimer()
+        stopRecording()
+    }
+
+    private fun stopRecording() {
         recording = false
     }
 
     private fun stopSession() {
         stopTimer()
         startedSession = false
-        recording = false
+        stopRecording()
     }
 
     private fun changeMainButtonIcon(iconId: Int) {
