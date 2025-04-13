@@ -42,6 +42,8 @@ open class MainActivity : AppCompatActivity() {
 
     private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
+    private var routeList: ArrayList<Route> = ArrayList()
+
     private lateinit var listBtn: ImageButton
 
     private lateinit var sessionBtn: ImageButton
@@ -68,6 +70,7 @@ open class MainActivity : AppCompatActivity() {
         initializeSessionInformation()
         initializeButtons()
 
+        FireStore.getRoutes(routeList, this)
         setFusedLocationClient()
         createLocationRequest()
         getCurrentLocation()
@@ -95,6 +98,10 @@ open class MainActivity : AppCompatActivity() {
                 mapHelper.updateStartMarker(currentLocation)
             }
         }
+    }
+
+    fun addRoutestoList(){
+        Log.d("myTag", routeList.toString())
     }
 
     private fun checkPermissions(): Boolean {
@@ -382,7 +389,7 @@ open class MainActivity : AppCompatActivity() {
 
     private fun saveSession() {
         Toast.makeText(applicationContext, "Session saved", Toast.LENGTH_SHORT).show()
-        FireStore.uploadRoute(Route("test","10",ArrayList(),"0","0"))
+        FireStore.uploadRoute(Route("test", "10", ArrayList(), "0", "0"))
         resetSession()
     }
 
