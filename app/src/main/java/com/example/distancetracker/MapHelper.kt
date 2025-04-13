@@ -1,7 +1,6 @@
 package com.example.distancetracker
 
 import android.content.Context
-import android.location.Location
 import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
 import org.osmdroid.config.Configuration
@@ -14,12 +13,27 @@ import org.osmdroid.views.overlay.Polyline
 
 class MapHelper(private val context: Context, private val map: MapView) {
 
-    private var route: Polyline = Polyline()
+    var route: Polyline = Polyline()
+
+    private var startMarker: Marker = Marker(map)
+    private var endMarker: Marker = Marker(map)
 
     init {
         Configuration.getInstance()
             .load(context, PreferenceManager.getDefaultSharedPreferences(context))
         setupMap()
+        configureMarkers()
+        map.overlays.add(route)
+    }
+
+    private fun configureMarkers() {
+        startMarker.setAnchor(0.175f, 0.35f)
+        startMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker)
+        map.overlays.add(startMarker)
+
+        endMarker.setAnchor(0.175f, 0.35f)
+        endMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker)
+        map.overlays.add(endMarker)
     }
 
     private fun setupMap() {
@@ -30,24 +44,14 @@ class MapHelper(private val context: Context, private val map: MapView) {
         map.controller.animateTo(GeoPoint(50.5532715, 7.1045565))
     }
 
-    fun addMarker(location: GeoPoint) {
-        val marker = Marker(map)
-        marker.icon = ContextCompat.getDrawable(context,R.drawable.map_marker)
-        marker.setAnchor(0.175f, 0.35f)
-        marker.position = location
-        map.overlays.add(marker)
-        route.addPoint(location)
-        map.overlays.add(route)
+    fun updateStartMarker(location: GeoPoint) {
+        startMarker.position = location
         map.invalidate()
     }
 
-    fun updateCurrentLocationMarker(currentLocation: GeoPoint) {
-        map.overlays.clear()
-        val currentLocationMarker = Marker(map)
-        currentLocationMarker.setAnchor(0.175f, 0.35f)
-        currentLocationMarker.icon = ContextCompat.getDrawable(context,R.drawable.map_marker)
-        currentLocationMarker.position = currentLocation
-        map.overlays.add(currentLocationMarker)
+    fun updateEndMarker(location: GeoPoint) {
+        endMarker.position = location
+        route.addPoint(location)
         map.invalidate()
     }
 }

@@ -92,7 +92,7 @@ open class MainActivity : AppCompatActivity() {
                     currentLocation.latitude = location.latitude
                     currentLocation.longitude = location.longitude
                 }
-                mapHelper.addMarker(currentLocation)
+                mapHelper.updateStartMarker(currentLocation)
             }
         }
     }
@@ -222,7 +222,8 @@ open class MainActivity : AppCompatActivity() {
     private fun startSession() {
         lastLocation = currentLocation
         geoPointList.add(lastLocation)
-        //create start marker on map TODO
+        mapHelper.updateStartMarker(lastLocation)
+        mapHelper.route.addPoint(lastLocation)
 
         startedSession = true
         startRecording()
@@ -306,28 +307,26 @@ open class MainActivity : AppCompatActivity() {
 
             if (!startedSession) {
                 currentLocation = GeoPoint(locations[0].latitude, locations[0].longitude)
-                mapHelper.updateCurrentLocationMarker(currentLocation)
+                mapHelper.updateStartMarker(currentLocation)
             } else {
                 val newLocation = Location("")
                 newLocation.latitude = currentLocation.latitude
                 newLocation.longitude = currentLocation.longitude
                 if (recording) {
+                    val newGeoPoint =
+                        GeoPoint(locations[0].latitude, locations[0].longitude)
                     if (locations[0].distanceTo(newLocation) > 1.0 && locations[0].distanceTo(
                             newLocation
                         ) < 6
                     ) {
-                        Log.d(
-                            "myTag",
-                            locations[0].distanceTo(newLocation).toString()
-                        )
                         updateCurrentLocation(
-                            GeoPoint(
-                                locations[0].latitude,
-                                locations[0].longitude
-                            )
+                            newGeoPoint
                         )
-                        mapHelper.addMarker(currentLocation)
                         updateTotalDistance(locations[0].distanceTo(newLocation))
+                        mapHelper.updateEndMarker(
+                            newGeoPoint
+                        )
+                        geoPointList.add(newGeoPoint)
                     }
                     updateAverageSpeed()
                 }
@@ -337,14 +336,9 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun updateAverageSpeed() {
-        if (totalDistance > 0) {
-            averageSpeed =
-                (totalDistance / (sessionTimer.sessionSeconds + (sessionTimer.sessionMinutes * 60) + (sessionTimer.sessionHours * 3600))) * 3.6
-            Log.d("myTag", totalDistance.toString())
-            Log.d("myTag", sessionTimer.sessionSeconds.toString())
-            Log.d("myTag", averageSpeed.toString())
-            averageSpeedTV.text = String.format("%.2f km/h", averageSpeed)
-        }
+        averageSpeed =
+            (totalDistance / (sessionTimer.sessionSeconds + (sessionTimer.sessionMinutes * 60) + (sessionTimer.sessionHours * 3600))) * 3.6
+        averageSpeedTV.text = String.format("%.2f km/h", averageSpeed)
     }
 
     private fun updateCurrentLocation(newLocation: GeoPoint) {
@@ -354,6 +348,7 @@ open class MainActivity : AppCompatActivity() {
     private fun updateTotalDistance(distanceWalked: Float) {
         totalDistance += distanceWalked
         val totalDistanceMetres = totalDistance / 1000
+        Log.d("myTag", totalDistanceMetres.toString())
         totalDistanceTV.text = String.format("%.2f km", totalDistanceMetres)
     }
 
