@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -38,6 +39,7 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-firestore")
+
     implementation("com.google.android.gms:play-services-maps:9.6.0")
     implementation("com.google.maps.android:android-maps-utils:0.6.2")
     implementation("org.osmdroid:osmdroid-android:6.1.10")

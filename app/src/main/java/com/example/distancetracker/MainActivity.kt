@@ -382,7 +382,7 @@ open class MainActivity : AppCompatActivity() {
 
     private fun saveSession() {
         Toast.makeText(applicationContext, "Session saved", Toast.LENGTH_SHORT).show()
-        //save on firestore TODO
+        FireStore.uploadRoute(Route("test","10",ArrayList(),"0","0"))
         resetSession()
     }
 
