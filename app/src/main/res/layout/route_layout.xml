@@ -19,10 +19,9 @@
 
     <ImageButton
         android:id="@+id/showOnMapBtn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@color/white"
         android:scaleType="centerCrop"
         android:src="@drawable/inspect_icon" />
-
 </LinearLayout>

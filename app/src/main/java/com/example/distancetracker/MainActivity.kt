@@ -40,6 +40,8 @@ open class MainActivity : AppCompatActivity() {
     private var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
     private lateinit var lastLocation: GeoPoint
 
+    private lateinit var distance: TextView
+
     private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
     private var routeList: ArrayList<Route> = ArrayList()
@@ -69,6 +71,8 @@ open class MainActivity : AppCompatActivity() {
 
         initializeSessionInformation()
         initializeButtons()
+
+        distance = findViewById(R.id.distance)
 
         FireStore.getRoutes(routeList, this)
         setFusedLocationClient()
@@ -100,7 +104,7 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun addRoutestoList(){
+    fun addRoutestoList() {
         Log.d("myTag", routeList.toString())
     }
 
@@ -227,17 +231,16 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun startSession() {
-        lastLocation = currentLocation
-        geoPointList.add(lastLocation)
-        mapHelper.updateStartMarker(lastLocation)
-        mapHelper.route.addPoint(lastLocation)
+        geoPointList.add(currentLocation)
+        mapHelper.updateStartMarker(currentLocation)
+        mapHelper.updateEndMarker(currentLocation)
+        mapHelper.route.addPoint(currentLocation)
 
         startedSession = true
         startRecording()
         showButtonBar()
         sessionTimer.createTimer()
     }
-
 
     private fun startRecording() {
         recording = true
@@ -311,20 +314,20 @@ open class MainActivity : AppCompatActivity() {
         override fun onLocationResult(p0: LocationResult) {
             super.onLocationResult(p0)
             val locations = p0.locations
-
+            val newGeoPoint =
+                GeoPoint(locations[0].latitude, locations[0].longitude)
             if (!startedSession) {
-                currentLocation = GeoPoint(locations[0].latitude, locations[0].longitude)
+                updateCurrentLocation(newGeoPoint)
                 mapHelper.updateStartMarker(currentLocation)
             } else {
-                val newLocation = Location("")
-                newLocation.latitude = currentLocation.latitude
-                newLocation.longitude = currentLocation.longitude
                 if (recording) {
-                    val newGeoPoint =
-                        GeoPoint(locations[0].latitude, locations[0].longitude)
-                    if (locations[0].distanceTo(newLocation) > 1.0 && locations[0].distanceTo(
-                            newLocation
-                        ) < 6
+                    val newLocation = Location("")
+                    newLocation.latitude = mapHelper.endMarker.position.latitude
+                    newLocation.longitude = mapHelper.endMarker.position.longitude
+                    Log.d("myTag", String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres"))
+                    distance.text = String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
+                    if (locations[0].distanceTo(newLocation) > 1 &&
+                        locations[0].distanceTo(newLocation) < 6
                     ) {
                         updateCurrentLocation(
                             newGeoPoint
@@ -334,10 +337,12 @@ open class MainActivity : AppCompatActivity() {
                             newGeoPoint
                         )
                         geoPointList.add(newGeoPoint)
+                        Log.d("myTag", "Distance ACCEPTED by threshhold and updated")
+                    } else {
+                        Log.d("myTag", "Distance NOT ACCEPTED by threshhold")
                     }
                     updateAverageSpeed()
                 }
-
             }
         }
     }
@@ -355,7 +360,6 @@ open class MainActivity : AppCompatActivity() {
     private fun updateTotalDistance(distanceWalked: Float) {
         totalDistance += distanceWalked
         val totalDistanceMetres = totalDistance / 1000
-        Log.d("myTag", totalDistanceMetres.toString())
         totalDistanceTV.text = String.format("%.2f km", totalDistanceMetres)
     }
 

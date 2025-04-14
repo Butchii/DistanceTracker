@@ -3,6 +3,7 @@ package com.example.distancetracker
 import android.content.Context
 import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
+import android.util.Log
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -16,7 +17,7 @@ class MapHelper(private val context: Context, private val map: MapView) {
     var route: Polyline = Polyline()
 
     private var startMarker: Marker = Marker(map)
-    private var endMarker: Marker = Marker(map)
+    var endMarker: Marker = Marker(map)
 
     init {
         Configuration.getInstance()
@@ -45,11 +46,19 @@ class MapHelper(private val context: Context, private val map: MapView) {
     }
 
     fun updateStartMarker(location: GeoPoint) {
+        Log.d(
+            "myTag",
+            String.format("Updated STARTMARKER position from ${startMarker.position} to $location")
+        )
         startMarker.position = location
         map.invalidate()
     }
 
     fun updateEndMarker(location: GeoPoint) {
+        Log.d(
+            "myTag",
+            String.format("Updated ENDMARKER position from ${endMarker.position} to $location")
+        )
         endMarker.position = location
         route.addPoint(location)
         map.invalidate()

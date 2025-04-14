@@ -5,9 +5,8 @@ import com.google.firebase.ktx.Firebase
 import org.osmdroid.util.GeoPoint
 
 class FireStore {
-
     companion object {
-        fun getRoutes(routeList: ArrayList<Route>, activity: MainActivity) {
+        fun getRoutes(routes: ArrayList<Route>, activity: MainActivity) {
             val db = Firebase.firestore
             db.collection("routeList").get().addOnSuccessListener { documents ->
                 for (document in documents) {
@@ -19,7 +18,7 @@ class FireStore {
                         document.get("totalDistance") as String,
                         document.get("routeId") as String
                     )
-                    routeList.add(route)
+                    routes.add(route)
                 }
                 activity.addRoutestoList()
             }
