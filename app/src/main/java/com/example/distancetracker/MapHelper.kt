@@ -42,7 +42,10 @@ class MapHelper(private val context: Context, private val map: MapView) {
         map.setMultiTouchControls(true)
         map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         map.controller.setZoom(15)
-        map.controller.animateTo(GeoPoint(50.5532715, 7.1045565))
+    }
+
+    fun centerOnPoint(geoPoint: GeoPoint){
+        map.controller.animateTo(geoPoint)
     }
 
     fun updateStartMarker(location: GeoPoint) {

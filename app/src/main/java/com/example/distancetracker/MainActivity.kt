@@ -38,7 +38,6 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
-    private lateinit var lastLocation: GeoPoint
 
     private lateinit var distance: TextView
 
@@ -78,6 +77,7 @@ open class MainActivity : AppCompatActivity() {
         setFusedLocationClient()
         createLocationRequest()
         getCurrentLocation()
+        mapHelper.centerOnPoint(currentLocation)
         startLocationsUpdates()
     }
 
@@ -324,8 +324,12 @@ open class MainActivity : AppCompatActivity() {
                     val newLocation = Location("")
                     newLocation.latitude = mapHelper.endMarker.position.latitude
                     newLocation.longitude = mapHelper.endMarker.position.longitude
-                    Log.d("myTag", String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres"))
-                    distance.text = String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
+                    Log.d(
+                        "myTag",
+                        String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
+                    )
+                    distance.text =
+                        String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
                     if (locations[0].distanceTo(newLocation) > 1) {
                         updateCurrentLocation(
                             newGeoPoint
