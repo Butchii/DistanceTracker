@@ -43,9 +43,13 @@ open class MainActivity : AppCompatActivity() {
 
     private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
+    private var showingRouteList:Boolean = false
+
     private var routeList: ArrayList<Route> = ArrayList()
 
     private lateinit var listBtn: ImageButton
+
+    private lateinit var routeListLayout: LinearLayout
 
     private lateinit var sessionBtn: ImageButton
     private lateinit var sessionBtnDescription: TextView
@@ -104,7 +108,7 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun addRoutestoList() {
+    fun addRoutesToList() {
         Log.d("myTag", routeList.toString())
     }
 
@@ -178,9 +182,16 @@ open class MainActivity : AppCompatActivity() {
 
     private fun initializeListBtn() {
         listBtn = findViewById(R.id.listBtn)
+        routeListLayout = findViewById(R.id.routeList)
 
         listBtn.setOnClickListener {
-            //TODO
+            if(!showingRouteList){
+                routeListLayout.visibility = View.VISIBLE
+                mapHelper.map.visibility = View.GONE
+            }else{
+                routeListLayout.visibility = View.GONE
+                mapHelper.map.visibility = View.VISIBLE
+            }
         }
     }
 

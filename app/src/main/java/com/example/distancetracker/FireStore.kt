@@ -20,7 +20,7 @@ class FireStore {
                     )
                     routes.add(route)
                 }
-                activity.addRoutestoList()
+                activity.addRoutesToList()
             }
         }
 

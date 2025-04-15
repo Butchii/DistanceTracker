@@ -12,7 +12,7 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 
-class MapHelper(private val context: Context, private val map: MapView) {
+class MapHelper(private val context: Context, val map: MapView) {
 
     var route: Polyline = Polyline()
 
