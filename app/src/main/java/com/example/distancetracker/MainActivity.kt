@@ -326,9 +326,7 @@ open class MainActivity : AppCompatActivity() {
                     newLocation.longitude = mapHelper.endMarker.position.longitude
                     Log.d("myTag", String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres"))
                     distance.text = String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
-                    if (locations[0].distanceTo(newLocation) > 1 &&
-                        locations[0].distanceTo(newLocation) < 6
-                    ) {
+                    if (locations[0].distanceTo(newLocation) > 1) {
                         updateCurrentLocation(
                             newGeoPoint
                         )
