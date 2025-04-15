@@ -9,12 +9,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.osmdroid.util.GeoPoint
 import android.Manifest
+import android.app.ActionBar.LayoutParams
 import android.content.DialogInterface
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -43,13 +45,14 @@ open class MainActivity : AppCompatActivity() {
 
     private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
-    private var showingRouteList:Boolean = false
+    private var showingRouteList: Boolean = false
 
     private var routeList: ArrayList<Route> = ArrayList()
 
     private lateinit var listBtn: ImageButton
 
     private lateinit var routeListLayout: LinearLayout
+    private lateinit var topBarLayout: LinearLayout
 
     private lateinit var sessionBtn: ImageButton
     private lateinit var sessionBtnDescription: TextView
@@ -74,8 +77,6 @@ open class MainActivity : AppCompatActivity() {
 
         initializeSessionInformation()
         initializeButtons()
-
-        distance = findViewById(R.id.distance)
 
         FireStore.getRoutes(routeList, this)
         setFusedLocationClient()
@@ -160,6 +161,7 @@ open class MainActivity : AppCompatActivity() {
         initializeStartSessionBtn()
         initializeResetBtn()
         initializeListBtn()
+        initializeCloseListBtn()
         initializeSaveBtn()
     }
 
@@ -182,16 +184,37 @@ open class MainActivity : AppCompatActivity() {
 
     private fun initializeListBtn() {
         listBtn = findViewById(R.id.listBtn)
-        routeListLayout = findViewById(R.id.routeList)
+        routeListLayout = findViewById(R.id.routeListLayout)
+        topBarLayout = findViewById(R.id.topBarLayout)
 
         listBtn.setOnClickListener {
-            if(!showingRouteList){
+            if (!showingRouteList) {
                 routeListLayout.visibility = View.VISIBLE
                 mapHelper.map.visibility = View.GONE
-            }else{
+                showingRouteList = true
+
+                topBarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0 , 8f)
+                mapHelper.map.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+            } else {
                 routeListLayout.visibility = View.GONE
                 mapHelper.map.visibility = View.VISIBLE
+                showingRouteList = false
+
+                topBarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0 , 1f)
+                mapHelper.map.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
             }
+        }
+    }
+
+    private fun initializeCloseListBtn() {
+        val closeListBtn = findViewById<ImageButton>(R.id.closeListBtn)
+        closeListBtn.setOnClickListener {
+            routeListLayout.visibility = View.GONE
+            mapHelper.map.visibility = View.VISIBLE
+            showingRouteList = true
+
+            topBarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0 , 1f)
+            mapHelper.map.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
         }
     }
 
