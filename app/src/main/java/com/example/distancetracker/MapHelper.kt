@@ -34,7 +34,6 @@ class MapHelper(private val context: Context, val map: MapView) {
 
         endMarker.setAnchor(0.175f, 0.35f)
         endMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker)
-        map.overlays.add(endMarker)
     }
 
     private fun setupMap() {
@@ -71,5 +70,14 @@ class MapHelper(private val context: Context, val map: MapView) {
         map.overlays.remove(route)
         route = Polyline()
         map.overlays.add(route)
+    }
+
+    fun removeEndMarker(){
+        map.overlays.remove(endMarker)
+    }
+
+    fun addEndMarker(location:GeoPoint){
+        endMarker.position = location
+        map.overlays.add(endMarker)
     }
 }

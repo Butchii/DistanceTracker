@@ -9,14 +9,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.osmdroid.util.GeoPoint
 import android.Manifest
-import android.app.ActionBar.LayoutParams
 import android.content.DialogInterface
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -27,7 +25,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import org.osmdroid.views.overlay.Polyline
 
 open class MainActivity : AppCompatActivity() {
 
@@ -262,7 +259,7 @@ open class MainActivity : AppCompatActivity() {
     private fun startSession() {
         geoPointList.add(currentLocation)
         mapHelper.updateStartMarker(currentLocation)
-        mapHelper.updateEndMarker(currentLocation)
+        mapHelper.addEndMarker(currentLocation)
         mapHelper.route.addPoint(currentLocation)
 
         startedSession = true
@@ -299,6 +296,7 @@ open class MainActivity : AppCompatActivity() {
         changeMainButtonDescription(R.string.start_session)
         changeMainButtonIcon(R.drawable.start_icon)
         mapHelper.removeRouteFromMap()
+        mapHelper.removeEndMarker()
         hideButtonBar()
     }
 
