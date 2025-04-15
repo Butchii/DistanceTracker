@@ -66,4 +66,10 @@ class MapHelper(private val context: Context, val map: MapView) {
         route.addPoint(location)
         map.invalidate()
     }
+
+    fun removeRouteFromMap(){
+        map.overlays.remove(route)
+        route = Polyline()
+        map.overlays.add(route)
+    }
 }

@@ -27,6 +27,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import org.osmdroid.views.overlay.Polyline
 
 open class MainActivity : AppCompatActivity() {
 
@@ -40,8 +41,6 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
-
-    private lateinit var distance: TextView
 
     private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
@@ -111,16 +110,6 @@ open class MainActivity : AppCompatActivity() {
 
     fun addRoutesToList() {
         Log.d("myTag", routeList.toString())
-    }
-
-    private fun checkPermissions(): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun isLocationEnabled(): Boolean {
@@ -193,15 +182,19 @@ open class MainActivity : AppCompatActivity() {
                 mapHelper.map.visibility = View.GONE
                 showingRouteList = true
 
-                topBarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0 , 8f)
-                mapHelper.map.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+                topBarLayout.layoutParams =
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 8f)
+                mapHelper.map.layoutParams =
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
             } else {
                 routeListLayout.visibility = View.GONE
                 mapHelper.map.visibility = View.VISIBLE
                 showingRouteList = false
 
-                topBarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0 , 1f)
-                mapHelper.map.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
+                topBarLayout.layoutParams =
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+                mapHelper.map.layoutParams =
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
             }
         }
     }
@@ -213,8 +206,10 @@ open class MainActivity : AppCompatActivity() {
             mapHelper.map.visibility = View.VISIBLE
             showingRouteList = true
 
-            topBarLayout.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0 , 1f)
-            mapHelper.map.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
+            topBarLayout.layoutParams =
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+            mapHelper.map.layoutParams =
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
         }
     }
 
@@ -303,6 +298,7 @@ open class MainActivity : AppCompatActivity() {
         resetAverageSpeed()
         changeMainButtonDescription(R.string.start_session)
         changeMainButtonIcon(R.drawable.start_icon)
+        mapHelper.removeRouteFromMap()
         hideButtonBar()
     }
 
@@ -362,8 +358,7 @@ open class MainActivity : AppCompatActivity() {
                         "myTag",
                         String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
                     )
-                    distance.text =
-                        String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
+
                     if (locations[0].distanceTo(newLocation) > 1) {
                         updateCurrentLocation(
                             newGeoPoint
@@ -401,14 +396,16 @@ open class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (checkPermissions()) {
-            startLocationsUpdates()
-        }
+        Log.d("myTag", "Resuming tracking")
+        startLocationsUpdates()
     }
 
     override fun onPause() {
         super.onPause()
-        stopLocationUpdates()
+        if (!recording) {
+            Log.d("myTag", "Stopped tracking")
+            stopLocationUpdates()
+        }
     }
 
     private fun startLocationsUpdates() {
@@ -429,7 +426,17 @@ open class MainActivity : AppCompatActivity() {
 
     private fun saveSession() {
         Toast.makeText(applicationContext, "Session saved", Toast.LENGTH_SHORT).show()
-        FireStore.uploadRoute(Route("test", "10", ArrayList(), "0", "0"))
+        FireStore.uploadRoute(
+            Route(
+                "route_name",
+                String.format(
+                    "${sessionTimer.sessionSeconds + sessionTimer.sessionMinutes * 60 + sessionTimer.sessionHours * 3600}"
+                ),
+                geoPointList,
+                averageSpeed.toString(),
+                totalDistance.toString()
+            )
+        )
         resetSession()
     }
 
