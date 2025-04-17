@@ -9,12 +9,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import org.osmdroid.util.GeoPoint
 import android.Manifest
+import android.app.Dialog
 import android.content.DialogInterface
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -455,15 +457,25 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun showSaveDialog() {
-        val alertDialog = AlertDialog.Builder(this)
-        alertDialog.apply {
-            setTitle("Save session")
-            setMessage("Save the current session and reset?")
-            setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                saveSession()
-            }
-            setNegativeButton("Cancel") { _, _ -> }
-        }.create().show()
+        val dialog = Dialog(this)
+
+        dialog.setContentView(R.layout.dialog_save_route)
+
+        val totalDistanceDialog = dialog.findViewById<TextView>(R.id.totalDistance)
+        totalDistanceDialog.text = totalDistance.toString()
+
+        val sessionTimeDialog = dialog.findViewById<TextView>(R.id.sessionTime)
+        sessionTimeDialog.text = sessionTimer.sessionSeconds.toString()
+
+        val averageSpeedDialog = dialog.findViewById<TextView>(R.id.averageSpeed)
+        averageSpeedDialog.text = averageSpeed.toString()
+
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.setCancelable(false)
+        dialog.show()
     }
 
     private fun initializeTotalDistance() {

@@ -8,7 +8,7 @@
     <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            style="@style/save_dialog_text"
+            style="@style/save_dialog_section_title"
             android:text="@string/route_name" />
 
         <EditText
@@ -29,7 +29,7 @@
     <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            style="@style/save_dialog_text"
+            style="@style/save_dialog_section_title"
             android:text="@string/total_distance" />
 
         <TextView
@@ -42,7 +42,7 @@
     <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            style="@style/save_dialog_text"
+            style="@style/save_dialog_section_title"
             android:text="@string/session_time" />
 
         <TextView
@@ -55,7 +55,7 @@
     <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            style="@style/save_dialog_text"
+            style="@style/save_dialog_section_title"
             android:text="@string/average_speed" />
 
         <TextView
@@ -80,6 +80,7 @@
         <Button
             android:id="@+id/saveBtn"
             style="@style/save_dialog_button"
+            android:alpha="0.3"
             android:text="@string/save_session" />
     </LinearLayout>
 </LinearLayout>
