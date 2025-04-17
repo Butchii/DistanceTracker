@@ -41,6 +41,10 @@ class CustomTimer(private val sessionDurationTV: TextView, private val activity:
             String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
     }
 
+    fun getFormattedSessionDuration():String{
+        return String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
+    }
+
     fun stopTimer() {
         sessionTimer.cancel()
     }

@@ -467,17 +467,24 @@ open class MainActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_save_route)
 
         val totalDistanceDialog = dialog.findViewById<TextView>(R.id.totalDistance)
-        totalDistanceDialog.text = totalDistance.toString()
+        val totalDistanceMetres = totalDistance / 1000
+        totalDistanceDialog.text = String.format("%.2f km", totalDistanceMetres)
 
         val sessionTimeDialog = dialog.findViewById<TextView>(R.id.sessionTime)
-        sessionTimeDialog.text = sessionTimer.sessionSeconds.toString()
+        sessionTimeDialog.text = sessionTimer.getFormattedSessionDuration()
 
         val averageSpeedDialog = dialog.findViewById<TextView>(R.id.averageSpeed)
-        averageSpeedDialog.text = averageSpeed.toString()
+        averageSpeedDialog.text = String.format("%.2f km/h", averageSpeed)
 
         val saveBtn = dialog.findViewById<Button>(R.id.saveBtn)
         saveBtn.setOnClickListener {
-            saveSession()
+            if (saveBtn.alpha == 1f) {
+                saveSession()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(applicationContext, "Route name is not valid!", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
 
         val routeNameEntry = dialog.findViewById<EditText>(R.id.routeNameEntry)
@@ -508,6 +515,8 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun isInputValid(saveBtn: Button, input: String) {
+        //check if value of edittext on save dialog has 3 or more characters
+        //changes save button alpha depending on the result
         if (input.length >= 3) {
             saveBtn.alpha = 1f
         } else {
