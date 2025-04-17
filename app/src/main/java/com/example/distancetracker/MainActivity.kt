@@ -14,12 +14,17 @@ import android.content.DialogInterface
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -470,12 +475,44 @@ open class MainActivity : AppCompatActivity() {
         val averageSpeedDialog = dialog.findViewById<TextView>(R.id.averageSpeed)
         averageSpeedDialog.text = averageSpeed.toString()
 
+        val saveBtn = dialog.findViewById<Button>(R.id.saveBtn)
+        saveBtn.setOnClickListener {
+            saveSession()
+        }
+
+        val routeNameEntry = dialog.findViewById<EditText>(R.id.routeNameEntry)
+        routeNameEntry.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                isInputValid(saveBtn, p0.toString())
+            }
+        })
+
+        val cancelBtn = dialog.findViewById<Button>(R.id.cancelBtn)
+        cancelBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog.setCancelable(false)
         dialog.show()
+    }
+
+    private fun isInputValid(saveBtn: Button, input: String) {
+        if (input.length >= 3) {
+            saveBtn.alpha = 1f
+        } else {
+            saveBtn.alpha = 0.3f
+        }
     }
 
     private fun initializeTotalDistance() {
