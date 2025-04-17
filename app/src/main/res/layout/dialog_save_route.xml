@@ -2,125 +2,75 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_input"
+    android:background="@drawable/border"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+    <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/route_name"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            style="@style/save_dialog_text"
+            android:text="@string/route_name" />
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:autofillHints="route name"
             android:gravity="center"
             android:hint="@string/enter_route_name"
+            android:inputType="text"
             android:textColor="@color/black"
             android:textColorHint="@color/grey"
             android:textSize="15sp" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/border_grey" />
+    <View style="@style/save_dialog_divider" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+    <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/total_distance"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            style="@style/save_dialog_text"
+            android:text="@string/total_distance" />
 
         <TextView
             android:id="@+id/totalDistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            style="@style/save_dialog_text" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/border_grey" />
+    <View style="@style/save_dialog_divider" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+    <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/session_time"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            style="@style/save_dialog_text"
+            android:text="@string/session_time" />
 
         <TextView
             android:id="@+id/sessionTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            style="@style/save_dialog_text" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/border_grey" />
+    <View style="@style/save_dialog_divider" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+    <LinearLayout style="@style/save_dialog_section_layout">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/average_speed"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            style="@style/save_dialog_text"
+            android:text="@string/average_speed" />
 
         <TextView
             android:id="@+id/averageSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp" />
+            style="@style/save_dialog_text" />
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/border_grey" />
+    <View style="@style/save_dialog_divider" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+    <LinearLayout style="@style/save_dialog_section_layout">
 
         <Button
             android:id="@+id/cancelBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:text="@string/cancel"
-            android:textAllCaps="false"
-            android:textColor="@color/black" />
+            style="@style/save_dialog_button"
+            android:text="@string/cancel" />
 
         <View
             android:layout_width="0dp"
@@ -129,11 +79,7 @@
 
         <Button
             android:id="@+id/saveBtn"
-            android:textAllCaps="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:text="@string/save_session"
-            android:textColor="@color/black"/>
+            style="@style/save_dialog_button"
+            android:text="@string/save_session" />
     </LinearLayout>
 </LinearLayout>
