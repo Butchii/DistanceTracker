@@ -100,7 +100,7 @@ open class MainActivity : AppCompatActivity() {
                     currentLocation.latitude = location.latitude
                     currentLocation.longitude = location.longitude
                 }
-                mapHelper.updateStartMarker(currentLocation)
+                mapHelper.updateStartMarkerLocation(currentLocation)
             }
         }
     }
@@ -258,7 +258,7 @@ open class MainActivity : AppCompatActivity() {
 
     private fun startSession() {
         geoPointList.add(currentLocation)
-        mapHelper.updateStartMarker(currentLocation)
+        mapHelper.updateStartMarkerLocation(currentLocation)
         mapHelper.addEndMarker(currentLocation)
         mapHelper.route.addPoint(currentLocation)
 
@@ -346,7 +346,7 @@ open class MainActivity : AppCompatActivity() {
                 GeoPoint(locations[0].latitude, locations[0].longitude)
             if (!startedSession) {
                 updateCurrentLocation(newGeoPoint)
-                mapHelper.updateStartMarker(currentLocation)
+                mapHelper.updateStartMarkerLocation(currentLocation)
             } else {
                 if (recording) {
                     val newLocation = Location("")
@@ -362,7 +362,7 @@ open class MainActivity : AppCompatActivity() {
                             newGeoPoint
                         )
                         updateTotalDistance(locations[0].distanceTo(newLocation))
-                        mapHelper.updateEndMarker(
+                        mapHelper.updateEndMarkerLocation(
                             newGeoPoint
                         )
                         geoPointList.add(newGeoPoint)

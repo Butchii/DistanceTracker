@@ -47,7 +47,7 @@ class MapHelper(private val context: Context, val map: MapView) {
         map.controller.animateTo(geoPoint)
     }
 
-    fun updateStartMarker(location: GeoPoint) {
+    fun updateStartMarkerLocation(location: GeoPoint) {
         Log.d(
             "myTag",
             String.format("Updated STARTMARKER position from ${startMarker.position} to $location")
@@ -56,7 +56,7 @@ class MapHelper(private val context: Context, val map: MapView) {
         map.invalidate()
     }
 
-    fun updateEndMarker(location: GeoPoint) {
+    fun updateEndMarkerLocation(location: GeoPoint) {
         Log.d(
             "myTag",
             String.format("Updated ENDMARKER position from ${endMarker.position} to $location")
