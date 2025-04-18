@@ -87,19 +87,15 @@
         android:layout_height="1dp"
         android:background="@color/black" />
 
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black" />
-
     <LinearLayout
+        android:id="@+id/controlPanelLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
         android:background="@color/white">
 
         <LinearLayout
+            android:id="@+id/infoSectionLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"
@@ -167,6 +163,7 @@
             android:background="@color/black" />
 
         <LinearLayout
+            android:id="@+id/buttonSectionLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"

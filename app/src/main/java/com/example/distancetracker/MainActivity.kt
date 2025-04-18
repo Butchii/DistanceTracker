@@ -52,6 +52,9 @@ open class MainActivity : AppCompatActivity() {
 
     private var routeList: ArrayList<Route> = ArrayList()
 
+    private var locationAverage:ArrayList<GeoPoint> = ArrayList()
+    private var locationCounter:Int = 0
+
     private lateinit var listBtn: ImageButton
 
     private lateinit var routeListLayout: LinearLayout
