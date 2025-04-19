@@ -14,10 +14,13 @@ import org.osmdroid.views.overlay.Polyline
 
 class MapHelper(private val context: Context, val map: MapView) {
 
-    var route: Polyline = Polyline()
+    private var route: Polyline = Polyline()
 
     private var startMarker: Marker = Marker(map)
     var endMarker: Marker = Marker(map)
+
+    private var locationAverage: ArrayList<GeoPoint> = ArrayList()
+    private var locationCounter: Int = 0
 
     init {
         Configuration.getInstance()

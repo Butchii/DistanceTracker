@@ -3,9 +3,10 @@ package com.example.distancetracker.topbar
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.R
 
-class TopBar(private val topBarLayout: LinearLayout) {
+class TopBar(private val topBarLayout: LinearLayout, private val distanceTracker: DistanceTracker) {
 
     private lateinit var listBtn: ImageButton
     private lateinit var routeListLayout: LinearLayout
@@ -29,21 +30,21 @@ class TopBar(private val topBarLayout: LinearLayout) {
         listBtn.setOnClickListener {
             if (!showingRouteList) {
                 routeListLayout.visibility = View.VISIBLE
-                mapHelper.map.visibility = View.GONE
+                distanceTracker.mapHelper.map.visibility = View.GONE
                 showingRouteList = true
 
                 topBarLayout.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 8f)
-                mapHelper.map.layoutParams =
+                distanceTracker.mapHelper.map.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
             } else {
                 routeListLayout.visibility = View.GONE
-                mapHelper.map.visibility = View.VISIBLE
+                distanceTracker.mapHelper.map.visibility = View.VISIBLE
                 showingRouteList = false
 
                 topBarLayout.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-                mapHelper.map.layoutParams =
+                distanceTracker.mapHelper.map.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
 
             }
@@ -54,13 +55,17 @@ class TopBar(private val topBarLayout: LinearLayout) {
         val closeListBtn = topBarLayout.findViewById<ImageButton>(R.id.closeListBtn)
         closeListBtn.setOnClickListener {
             routeListLayout.visibility = View.GONE
-            mapHelper.map.visibility = View.VISIBLE
+            distanceTracker.mapHelper.map.visibility = View.VISIBLE
             showingRouteList = true
 
             topBarLayout.layoutParams =
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-            mapHelper.map.layoutParams =
+            distanceTracker.mapHelper.map.layoutParams =
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
         }
+    }
+
+    fun addRoutesToList() {
+        TODO()
     }
 }
