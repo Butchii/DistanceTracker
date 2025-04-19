@@ -1,16 +1,17 @@
 package com.example.distancetracker
 
 import android.content.Context
-import android.util.Log
 import android.widget.LinearLayout
 import com.example.distancetracker.controlpanel.ControlPanel
 import com.example.distancetracker.topbar.TopBar
+import com.google.android.gms.location.LocationCallback
 import org.osmdroid.util.GeoPoint
 
 class DistanceTracker(
     private val distanceTrackerLayout: LinearLayout,
     private val context: Context,
-    private val mainActivity: MainActivity
+    private val mainActivity: MainActivity,
+    private val locationCallback: LocationCallback
 ) {
     private lateinit var topBar: TopBar
     lateinit var mapHelper: MapHelper
@@ -30,18 +31,24 @@ class DistanceTracker(
 
     init {
         initializeTopBar()
-        initializeMap()
+        initializeMapHelper()
         initializeTimer()
         initializeControlPanel()
-        FireStore.getRoutes(routeList, mainActivity)
+        FireStore.getRoutes(routeList)
     }
 
     private fun initializeTopBar() {
         topBar = TopBar(distanceTrackerLayout.findViewById(R.id.distanceTrackerLayout), this)
     }
 
-    private fun initializeMap() {
-        mapHelper = MapHelper(context, distanceTrackerLayout.findViewById(R.id.map))
+    private fun initializeMapHelper() {
+        mapHelper = MapHelper(
+            context,
+            mainActivity,
+            distanceTrackerLayout.findViewById(R.id.map),
+            this,
+            locationCallback
+        )
     }
 
     private fun initializeControlPanel() {
@@ -68,7 +75,7 @@ class DistanceTracker(
             CustomTimer(distanceTrackerLayout.findViewById(R.id.sessionDuration), mainActivity)
     }
 
-     fun stopSession() {
+    fun stopSession() {
         sessionTimer.stopTimer()
         startedSession = false
         stopRecording()
