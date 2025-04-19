@@ -24,7 +24,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.widget.addTextChangedListener
+import com.example.distancetracker.controlpanel.ControlPanel
+import com.example.distancetracker.topbar.TopBar
 
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -48,14 +49,10 @@ open class MainActivity : AppCompatActivity() {
 
     private var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
-    private var showingRouteList: Boolean = false
-
     private var routeList: ArrayList<Route> = ArrayList()
 
-    private var locationAverage:ArrayList<GeoPoint> = ArrayList()
-    private var locationCounter:Int = 0
-
-    private lateinit var listBtn: ImageButton
+    private var locationAverage: ArrayList<GeoPoint> = ArrayList()
+    private var locationCounter: Int = 0
 
     private lateinit var routeListLayout: LinearLayout
     private lateinit var topBarLayout: LinearLayout
@@ -74,6 +71,9 @@ open class MainActivity : AppCompatActivity() {
     private var recording: Boolean = false
     private var startedSession: Boolean = false
 
+    private lateinit var topBar: TopBar
+    private lateinit var controlPanel: ControlPanel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -84,12 +84,23 @@ open class MainActivity : AppCompatActivity() {
         initializeSessionInformation()
         initializeButtons()
 
+        initializeTopBar()
+        initializeControlPanel()
+
         FireStore.getRoutes(routeList, this)
         setFusedLocationClient()
         createLocationRequest()
         getCurrentLocation()
         mapHelper.centerOnPoint(currentLocation)
         startLocationsUpdates()
+    }
+
+    private fun initializeTopBar() {
+        topBar = TopBar(findViewById(R.id.topBarLayout))
+    }
+
+    private fun initializeControlPanel() {
+        controlPanel = ControlPanel(findViewById(R.id.controlPanelLayout))
     }
 
     private fun getCurrentLocation() {
@@ -156,8 +167,6 @@ open class MainActivity : AppCompatActivity() {
         initializeButtonBar()
         initializeStartSessionBtn()
         initializeResetBtn()
-        initializeListBtn()
-        initializeCloseListBtn()
         initializeSaveBtn()
     }
 
@@ -178,51 +187,9 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initializeListBtn() {
-        listBtn = findViewById(R.id.listBtn)
-        routeListLayout = findViewById(R.id.routeListLayout)
-        topBarLayout = findViewById(R.id.topBarLayout)
-
-        listBtn.setOnClickListener {
-            if (!showingRouteList) {
-                routeListLayout.visibility = View.VISIBLE
-                mapHelper.map.visibility = View.GONE
-                showingRouteList = true
-
-                topBarLayout.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 8f)
-                mapHelper.map.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-            } else {
-                routeListLayout.visibility = View.GONE
-                mapHelper.map.visibility = View.VISIBLE
-                showingRouteList = false
-
-                topBarLayout.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-                mapHelper.map.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
-            }
-        }
-    }
-
-    private fun initializeCloseListBtn() {
-        val closeListBtn = findViewById<ImageButton>(R.id.closeListBtn)
-        closeListBtn.setOnClickListener {
-            routeListLayout.visibility = View.GONE
-            mapHelper.map.visibility = View.VISIBLE
-            showingRouteList = true
-
-            topBarLayout.layoutParams =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-            mapHelper.map.layoutParams =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
-        }
-    }
-
     private fun initializeStartSessionBtn() {
-        sessionBtn = findViewById(R.id.recordBtn)
-        sessionBtnDescription = findViewById(R.id.recordBtnDescription)
+        sessionBtn = findViewById(R.id.sessionBtn)
+        sessionBtnDescription = findViewById(R.id.sessionBtnDescription)
 
         sessionBtn.setOnClickListener {
             if (isLocationEnabled()) {

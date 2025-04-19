@@ -199,7 +199,7 @@
                 android:orientation="vertical">
 
                 <ImageButton
-                    android:id="@+id/recordBtn"
+                    android:id="@+id/sessionBtn"
                     style="@style/buttonLayout"
                     android:layout_width="108dp"
                     android:layout_height="108dp"
@@ -208,7 +208,7 @@
                     android:src="@drawable/start_icon" />
 
                 <TextView
-                    android:id="@+id/recordBtnDescription"
+                    android:id="@+id/sessionBtnDescription"
                     style="@style/textLayout"
                     android:text="@string/start_session"
                     android:textSize="14sp"

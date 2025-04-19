@@ -1,10 +1,9 @@
 package com.example.distancetracker.controlpanel
 
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
 import com.example.distancetracker.R
 
-class ControlPanel(private val controlPanelLayout: LinearLayout) : AppCompatActivity() {
+class ControlPanel(private val controlPanelLayout: LinearLayout){
     private lateinit var infoSection: InfoSection
     private lateinit var buttonSection: ButtonSection
 
