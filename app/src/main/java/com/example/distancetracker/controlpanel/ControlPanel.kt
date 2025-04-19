@@ -12,8 +12,8 @@ class ControlPanel(
     private val controlPanelLayout: LinearLayout,
     private val distanceTracker: DistanceTracker
 ) {
-    private lateinit var infoSection: InfoSection
-    private lateinit var buttonSection: ButtonSection
+    lateinit var infoSection: InfoSection
+    lateinit var buttonSection: ButtonSection
 
     init {
         initializeInfoSection()

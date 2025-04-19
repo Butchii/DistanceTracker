@@ -22,8 +22,6 @@ open class MainActivity : AppCompatActivity() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
-
     private lateinit var distanceTracker: DistanceTracker
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +31,7 @@ open class MainActivity : AppCompatActivity() {
         setFusedLocationClient()
         createLocationRequest()
         getCurrentLocation()
-        distanceTracker.mapHelper.centerOnPoint(currentLocation)
+        distanceTracker.mapHelper.centerOnPoint()
         startLocationsUpdates()
     }
 
@@ -43,7 +41,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private fun getCurrentLocation() {
-        if (isLocationEnabled()) {
+        if (distanceTracker.mapHelper.isLocationEnabled()) {
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -57,20 +55,12 @@ open class MainActivity : AppCompatActivity() {
             }
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
-                    currentLocation.latitude = location.latitude
-                    currentLocation.longitude = location.longitude
+                    distanceTracker.mapHelper.currentLocation.latitude = location.latitude
+                    distanceTracker.mapHelper. currentLocation.longitude = location.longitude
                 }
-                distanceTracker.mapHelper.updateStartMarkerLocation(currentLocation)
+                distanceTracker.mapHelper.updateStartMarkerLocation(distanceTracker.mapHelper.currentLocation)
             }
         }
-    }
-
-    private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager =
-            applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
-        )
     }
 
     private fun requestPermissions() {
@@ -102,8 +92,8 @@ open class MainActivity : AppCompatActivity() {
             val newGeoPoint =
                 GeoPoint(locations[0].latitude, locations[0].longitude)
             if (!distanceTracker.startedSession) {
-                updateCurrentLocation(newGeoPoint)
-                distanceTracker.mapHelper.updateStartMarkerLocation(currentLocation)
+                distanceTracker.mapHelper.updateCurrentLocation(newGeoPoint)
+                distanceTracker.mapHelper.updateStartMarkerLocation(distanceTracker.mapHelper.currentLocation)
             } else {
                 if (distanceTracker.recording) {
                     val newLocation = Location("")
@@ -115,10 +105,10 @@ open class MainActivity : AppCompatActivity() {
                     )
 
                     if (locations[0].distanceTo(newLocation) > 1) {
-                        updateCurrentLocation(
+                        distanceTracker.mapHelper.updateCurrentLocation(
                             newGeoPoint
                         )
-                        updateTotalDistance(locations[0].distanceTo(newLocation))
+                        distanceTracker.controlPanel.infoSection.updateTotalDistance(locations[0].distanceTo(newLocation))
                         distanceTracker.mapHelper.updateEndMarkerLocation(
                             newGeoPoint
                         )
@@ -127,14 +117,10 @@ open class MainActivity : AppCompatActivity() {
                     } else {
                         Log.d("myTag", "Distance NOT ACCEPTED by threshhold")
                     }
-                    updateAverageSpeed()
+                    distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 }
             }
         }
-    }
-
-    private fun updateCurrentLocation(newLocation: GeoPoint) {
-        currentLocation = newLocation
     }
 
     override fun onResume() {
@@ -145,7 +131,7 @@ open class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (!recording) {
+        if (!distanceTracker.recording) {
             Log.d("myTag", "Stopped tracking")
             stopLocationUpdates()
         }

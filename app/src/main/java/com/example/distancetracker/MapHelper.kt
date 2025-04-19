@@ -1,9 +1,12 @@
 package com.example.distancetracker
 
+import android.app.Activity
 import android.content.Context
+import android.location.LocationManager
 import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -14,13 +17,15 @@ import org.osmdroid.views.overlay.Polyline
 
 class MapHelper(private val context: Context, val map: MapView) {
 
-    private var route: Polyline = Polyline()
+    var route: Polyline = Polyline()
 
     private var startMarker: Marker = Marker(map)
     var endMarker: Marker = Marker(map)
 
     private var locationAverage: ArrayList<GeoPoint> = ArrayList()
     private var locationCounter: Int = 0
+
+    var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
     init {
         Configuration.getInstance()
@@ -46,8 +51,16 @@ class MapHelper(private val context: Context, val map: MapView) {
         map.controller.setZoom(15)
     }
 
-    fun centerOnPoint(geoPoint: GeoPoint){
-        map.controller.animateTo(geoPoint)
+    fun centerOnPoint() {
+        map.controller.animateTo(currentLocation)
+    }
+
+    fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
     }
 
     fun updateStartMarkerLocation(location: GeoPoint) {
@@ -69,18 +82,22 @@ class MapHelper(private val context: Context, val map: MapView) {
         map.invalidate()
     }
 
-    fun removeRouteFromMap(){
+    fun removeRouteFromMap() {
         map.overlays.remove(route)
         route = Polyline()
         map.overlays.add(route)
     }
 
-    fun removeEndMarker(){
+    fun removeEndMarker() {
         map.overlays.remove(endMarker)
     }
 
-    fun addEndMarker(location:GeoPoint){
+    fun addEndMarker(location: GeoPoint) {
         endMarker.position = location
         map.overlays.add(endMarker)
+    }
+
+    fun updateCurrentLocation(newLocation: GeoPoint) {
+        currentLocation = newLocation
     }
 }

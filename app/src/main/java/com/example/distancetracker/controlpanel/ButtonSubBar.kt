@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
 import com.example.distancetracker.Route
@@ -23,7 +24,7 @@ class ButtonSubBar(
     private val buttonSubBar: LinearLayout,
     private val activity: Activity,
     private val context: Context,
-    private val recording: Boolean
+    private val distanceTracker: DistanceTracker
 ) {
     private lateinit var saveSessionBtn: ImageButton
     private lateinit var resetBtn: ImageButton
@@ -37,7 +38,7 @@ class ButtonSubBar(
         saveSessionBtn = buttonSubBar.findViewById(R.id.saveBtn)
 
         saveSessionBtn.setOnClickListener {
-            if (!recording) {
+            if (!distanceTracker.recording) {
                 showSaveDialog()
             } else {
                 Toast.makeText(
@@ -64,14 +65,14 @@ class ButtonSubBar(
         dialog.setContentView(R.layout.dialog_save_route)
 
         val totalDistanceDialog = dialog.findViewById<TextView>(R.id.totalDistance)
-        val totalDistanceMetres = totalDistance / 1000
+        val totalDistanceMetres = distanceTracker.totalDistance / 1000
         totalDistanceDialog.text = String.format("%.2f km", totalDistanceMetres)
 
         val sessionTimeDialog = dialog.findViewById<TextView>(R.id.sessionTime)
-        sessionTimeDialog.text = sessionTimer.getFormattedSessionDuration()
+        sessionTimeDialog.text = distanceTracker.sessionTimer.getFormattedSessionDuration()
 
         val averageSpeedDialog = dialog.findViewById<TextView>(R.id.averageSpeed)
-        averageSpeedDialog.text = String.format("%.2f km/h", averageSpeed)
+        averageSpeedDialog.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
 
         val saveBtn = dialog.findViewById<Button>(R.id.saveBtn)
         saveBtn.setOnClickListener {
@@ -127,38 +128,38 @@ class ButtonSubBar(
             Route(
                 "route_name",
                 String.format(
-                    "${sessionTimer.sessionSeconds + sessionTimer.sessionMinutes * 60 + sessionTimer.sessionHours * 3600}"
+                    "${distanceTracker.sessionTimer.sessionSeconds + distanceTracker.sessionTimer.sessionMinutes * 60 + distanceTracker.sessionTimer.sessionHours * 3600}"
                 ),
-                geoPointList,
-                averageSpeed.toString(),
-                totalDistance.toString()
+                distanceTracker.geoPointList,
+                distanceTracker.averageSpeed.toString(),
+                distanceTracker.totalDistance.toString()
             )
         )
         resetSession()
     }
 
     private fun resetSession() {
-        stopSession()
-        sessionTimer.resetSessionTimes()
-        sessionTimer.setSessionDurationDisplay()
-        resetTotalDistance()
-        resetAverageSpeed()
-        changeMainButtonDescription(R.string.start_session)
-        changeMainButtonIcon(R.drawable.start_icon)
-        mapHelper.removeRouteFromMap()
-        mapHelper.removeEndMarker()
+        distanceTracker.stopSession()
+        distanceTracker.sessionTimer.resetSessionTimes()
+        distanceTracker.sessionTimer.setSessionDurationDisplay()
+        distanceTracker.controlPanel.infoSection.resetTotalDistance()
+        distanceTracker.controlPanel.infoSection.resetAverageSpeed()
+        distanceTracker.controlPanel.buttonSection.changeSessionButtonDescription(R.string.start_session)
+        distanceTracker.controlPanel.buttonSection.changeSessionButtonIcon(R.drawable.start_icon)
+        distanceTracker.mapHelper.removeRouteFromMap()
+        distanceTracker.mapHelper.removeEndMarker()
         hideButtonBar()
     }
 
-    private fun showResetButton() {
+    fun showResetButton() {
         resetBtn.visibility = View.VISIBLE
     }
 
-    private fun activateSaveBtn() {
+    fun activateSaveBtn() {
         saveSessionBtn.alpha = 1f
     }
 
-    private fun deactivateSaveBtn() {
+    fun deactivateSaveBtn() {
         saveSessionBtn.alpha = 0.2f
     }
 
@@ -172,5 +173,13 @@ class ButtonSubBar(
             }
             setNegativeButton("Cancel") { _, _ -> }
         }.create().show()
+    }
+
+    private fun hideButtonBar() {
+        buttonSubBar.visibility = View.GONE
+    }
+
+    fun showButtonBar() {
+        buttonSubBar.visibility = View.VISIBLE
     }
 }

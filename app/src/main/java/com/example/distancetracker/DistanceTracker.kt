@@ -14,7 +14,7 @@ class DistanceTracker(
 ) {
     private lateinit var topBar: TopBar
     lateinit var mapHelper: MapHelper
-    private lateinit var controlPanel: ControlPanel
+    lateinit var controlPanel: ControlPanel
 
     var recording: Boolean = false
     var startedSession: Boolean = false
@@ -37,7 +37,7 @@ class DistanceTracker(
     }
 
     private fun initializeTopBar() {
-        topBar = TopBar(distanceTrackerLayout.findViewById(R.id.distanceTrackerLayout))
+        topBar = TopBar(distanceTrackerLayout.findViewById(R.id.distanceTrackerLayout), this)
     }
 
     private fun initializeMap() {
@@ -46,14 +46,19 @@ class DistanceTracker(
 
     private fun initializeControlPanel() {
         controlPanel =
-            ControlPanel(distanceTrackerLayout.findViewById(R.id.controlPanelLayout), this)
+            ControlPanel(
+                context,
+                mainActivity,
+                distanceTrackerLayout.findViewById(R.id.controlPanelLayout),
+                this
+            )
     }
 
     private fun stopRecording() {
         recording = false
     }
 
-    private fun pauseSession() {
+    fun pauseSession() {
         sessionTimer.stopTimer()
         stopRecording()
     }
@@ -61,5 +66,11 @@ class DistanceTracker(
     private fun initializeTimer() {
         sessionTimer =
             CustomTimer(distanceTrackerLayout.findViewById(R.id.sessionDuration), mainActivity)
+    }
+
+     fun stopSession() {
+        sessionTimer.stopTimer()
+        startedSession = false
+        stopRecording()
     }
 }
