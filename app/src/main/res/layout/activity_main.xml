@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/distanceTrackerLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -12,13 +11,13 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="15dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:padding="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -42,13 +41,12 @@
         <LinearLayout
             android:id="@+id/routeListLayout"
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/routeList"
@@ -60,17 +58,18 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end"
-                android:padding="10dp">
+                android:padding="20dp">
 
                 <ImageButton
                     android:id="@+id/closeListBtn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@color/white"
                     android:contentDescription="@string/close_list_icon"
                     android:scaleType="centerCrop"

@@ -20,4 +20,5 @@
     <string name="cancel">Cancel</string>
     <string name="route_name">Route name</string>
     <string name="no_routes_saved">No routes saved!</string>
+    <string name="map_icon">map icon</string>
 </resources>
