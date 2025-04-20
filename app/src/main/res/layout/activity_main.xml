@@ -42,14 +42,20 @@
         <LinearLayout
             android:id="@+id/routeListLayout"
             android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/routeList"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/routeList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
 
             <View
                 android:layout_width="match_parent"

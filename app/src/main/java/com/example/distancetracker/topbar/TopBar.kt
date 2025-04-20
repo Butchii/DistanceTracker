@@ -1,35 +1,54 @@
 package com.example.distancetracker.topbar
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.example.distancetracker.DistanceTracker
+import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
+import com.example.distancetracker.Route
+import org.w3c.dom.Text
+import java.util.zip.Inflater
 
-class TopBar(private val topBarLayout: LinearLayout, private val distanceTracker: DistanceTracker) {
+class TopBar(
+    private val context: Context,
+    private val topBarLayout: LinearLayout,
+    private val distanceTracker: DistanceTracker
+) {
 
     private lateinit var listBtn: ImageButton
-    private lateinit var routeListLayout: LinearLayout
+    private lateinit var routeLayout: LinearLayout
+    private lateinit var routeListLayout:LinearLayout
 
     private var showingRouteList: Boolean = false
 
+    private var routeList: ArrayList<Route> = ArrayList()
+
     init {
-        initializeRouteListLayout()
+        initializeRouteLayout()
         initializeListBtn()
         initializeCloseListBtn()
     }
 
-    private fun initializeRouteListLayout() {
-        routeListLayout = topBarLayout.findViewById(R.id.routeListLayout)
+    private fun initializeRouteLayout() {
+        routeLayout = topBarLayout.findViewById(R.id.routeListLayout)
+        routeListLayout = routeLayout.findViewById(R.id.routeList)
     }
 
     private fun initializeListBtn() {
         listBtn = topBarLayout.findViewById(R.id.listBtn)
-        routeListLayout = topBarLayout.findViewById(R.id.routeListLayout)
 
         listBtn.setOnClickListener {
             if (!showingRouteList) {
-                routeListLayout.visibility = View.VISIBLE
+                FireStore.getRoutes(routeList, this)
+
+                routeLayout.visibility = View.VISIBLE
                 distanceTracker.mapHelper.map.visibility = View.GONE
                 showingRouteList = true
 
@@ -38,7 +57,7 @@ class TopBar(private val topBarLayout: LinearLayout, private val distanceTracker
                 distanceTracker.mapHelper.map.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
             } else {
-                routeListLayout.visibility = View.GONE
+                routeLayout.visibility = View.GONE
                 distanceTracker.mapHelper.map.visibility = View.VISIBLE
                 showingRouteList = false
 
@@ -51,9 +70,9 @@ class TopBar(private val topBarLayout: LinearLayout, private val distanceTracker
     }
 
     private fun initializeCloseListBtn() {
-        val closeListBtn = topBarLayout.findViewById<ImageButton>(R.id.closeListBtn)
+        val closeListBtn = routeLayout.findViewById<ImageButton>(R.id.closeListBtn)
         closeListBtn.setOnClickListener {
-            routeListLayout.visibility = View.GONE
+            routeLayout.visibility = View.GONE
             distanceTracker.mapHelper.map.visibility = View.VISIBLE
             showingRouteList = true
 
@@ -64,7 +83,27 @@ class TopBar(private val topBarLayout: LinearLayout, private val distanceTracker
         }
     }
 
+    @SuppressLint("InflateParams")
     fun addRoutesToList() {
-        TODO()
+        routeListLayout.removeAllViews()
+        if (routeList.isEmpty()) {
+            val noRoutesHint = LayoutInflater.from(context).inflate(R.layout.no_routes_hint, null)
+            routeListLayout.gravity = Gravity.CENTER
+            routeListLayout.addView(noRoutesHint)
+        } else {
+            for (route in routeList) {
+                routeListLayout.gravity = Gravity.NO_GRAVITY
+                val newRoute = LayoutInflater.from(context).inflate(R.layout.route_layout, null)
+
+                val routeName = newRoute.findViewById<TextView>(R.id.routeName)
+                routeName.text = route.name
+
+                val mapBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
+                mapBtn.setOnClickListener {
+                    //TODO
+                }
+                routeListLayout.addView(newRoute)
+            }
+        }
     }
 }

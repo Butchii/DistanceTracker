@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@color/white"
+    android:background="@color/route_bg"
     android:gravity="center_vertical"
-    android:padding="30dp">
+    android:padding="25dp">
 
     <TextView
         android:id="@+id/routeName"
@@ -21,7 +21,7 @@
         android:id="@+id/showOnMapBtn"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/white"
+        android:background="@color/route_bg"
         android:scaleType="centerCrop"
         android:src="@drawable/inspect_icon" />
 </LinearLayout>

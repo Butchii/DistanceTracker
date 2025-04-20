@@ -25,8 +25,6 @@ class DistanceTracker(
 
     var geoPointList: ArrayList<GeoPoint> = ArrayList()
 
-    private var routeList: ArrayList<Route> = ArrayList()
-
     lateinit var sessionTimer: CustomTimer
 
     init {
@@ -34,11 +32,10 @@ class DistanceTracker(
         initializeMapHelper()
         initializeTimer()
         initializeControlPanel()
-        FireStore.getRoutes(routeList)
     }
 
     private fun initializeTopBar() {
-        topBar = TopBar(distanceTrackerLayout.findViewById(R.id.topBarLayout), this)
+        topBar = TopBar(context, distanceTrackerLayout.findViewById(R.id.topBarLayout), this)
     }
 
     private fun initializeMapHelper() {
