@@ -46,7 +46,6 @@ class TopBar(private val topBarLayout: LinearLayout, private val distanceTracker
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
                 distanceTracker.mapHelper.map.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
-
             }
         }
     }

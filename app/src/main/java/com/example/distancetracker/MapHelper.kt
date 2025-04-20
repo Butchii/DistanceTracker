@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import android.preference.PreferenceManager
@@ -15,7 +14,6 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import org.osmdroid.config.Configuration
@@ -30,7 +28,6 @@ class MapHelper(
     private val context: Context,
     private val activity: Activity,
     val map: MapView,
-    private val distanceTracker: DistanceTracker,
     private val locationCallback: LocationCallback
 ) {
 

@@ -38,7 +38,7 @@ class DistanceTracker(
     }
 
     private fun initializeTopBar() {
-        topBar = TopBar(distanceTrackerLayout.findViewById(R.id.distanceTrackerLayout), this)
+        topBar = TopBar(distanceTrackerLayout.findViewById(R.id.topBarLayout), this)
     }
 
     private fun initializeMapHelper() {
@@ -46,7 +46,6 @@ class DistanceTracker(
             context,
             mainActivity,
             distanceTrackerLayout.findViewById(R.id.map),
-            this,
             locationCallback
         )
     }

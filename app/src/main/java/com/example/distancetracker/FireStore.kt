@@ -1,12 +1,9 @@
 package com.example.distancetracker
 
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import org.osmdroid.util.GeoPoint
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 class FireStore {
     companion object {

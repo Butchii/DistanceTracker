@@ -63,9 +63,9 @@ open class MainActivity : AppCompatActivity() {
                             newGeoPoint
                         )
                         distanceTracker.geoPointList.add(newGeoPoint)
-                        Log.d("myTag", "Distance ACCEPTED by threshhold and updated")
+                        Log.d("myTag", "Distance ACCEPTED by thresh hold and updated")
                     } else {
-                        Log.d("myTag", "Distance NOT ACCEPTED by threshhold")
+                        Log.d("myTag", "Distance NOT ACCEPTED by thresh hold")
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 }
