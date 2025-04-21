@@ -9,6 +9,8 @@ import android.os.Looper
 import android.preference.PreferenceManager
 import androidx.core.content.ContextCompat
 import android.util.Log
+import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -164,7 +166,7 @@ class MapHelper(
         )
     }
 
-     fun startLocationsUpdates() {
+    fun startLocationsUpdates() {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -186,5 +188,13 @@ class MapHelper(
 
     private fun createLocationRequest() {
         locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000).build()
+    }
+
+    fun hideMap() {
+        map.visibility = View.GONE
+    }
+
+    fun showMap() {
+        map.visibility = View.VISIBLE
     }
 }

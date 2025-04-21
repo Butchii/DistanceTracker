@@ -74,6 +74,8 @@ class ButtonSubBar(
         val averageSpeedDialog = dialog.findViewById<TextView>(R.id.averageSpeed)
         averageSpeedDialog.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
 
+        val routeNameWarning = dialog.findViewById<TextView>(R.id.routeNameWarning)
+
         val saveBtn = dialog.findViewById<Button>(R.id.saveBtn)
         saveBtn.setOnClickListener {
             if (saveBtn.alpha == 1f) {
@@ -95,7 +97,7 @@ class ButtonSubBar(
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                isInputValid(saveBtn, p0.toString())
+                isInputValid(saveBtn, p0.toString(), routeNameWarning)
             }
         })
 
@@ -112,14 +114,24 @@ class ButtonSubBar(
         dialog.show()
     }
 
-    private fun isInputValid(saveBtn: Button, input: String) {
+    private fun isInputValid(saveBtn: Button, input: String, warning: TextView) {
         //check if value of edittext on save dialog has 3 or more characters
         //changes save button alpha depending on the result
         if (input.length >= 3) {
             saveBtn.alpha = 1f
+            hideRouteNameWarning(warning)
         } else {
             saveBtn.alpha = 0.3f
+            showRouteNameWarning(warning)
         }
+    }
+
+    private fun showRouteNameWarning(warning: TextView) {
+        warning.visibility = View.VISIBLE
+    }
+
+    private fun hideRouteNameWarning(warning: TextView) {
+        warning.visibility = View.GONE
     }
 
     private fun saveSession() {

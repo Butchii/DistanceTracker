@@ -10,4 +10,5 @@
     <color name="grey">#bebebe</color>
     <color name="border_grey">#a0a0a0</color>
     <color name="route_bg">#F7FCFE</color>
+    <color name="warning_red">#AA0000</color>
 </resources>

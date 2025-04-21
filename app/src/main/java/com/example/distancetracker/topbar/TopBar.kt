@@ -2,7 +2,6 @@ package com.example.distancetracker.topbar
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -13,15 +12,12 @@ import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
 import com.example.distancetracker.Route
-import org.w3c.dom.Text
-import java.util.zip.Inflater
 
 class TopBar(
     private val context: Context,
     private val topBarLayout: LinearLayout,
     private val distanceTracker: DistanceTracker
 ) {
-
     private lateinit var listBtn: ImageButton
     private lateinit var routeLayout: LinearLayout
     private lateinit var routeListLayout:LinearLayout
@@ -47,26 +43,27 @@ class TopBar(
         listBtn.setOnClickListener {
             if (!showingRouteList) {
                 FireStore.getRoutes(routeList, this)
-
-                routeLayout.visibility = View.VISIBLE
-                distanceTracker.mapHelper.map.visibility = View.GONE
-                showingRouteList = true
-
-                topBarLayout.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 8f)
-                distanceTracker.mapHelper.map.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
+                showRouteList()
+                distanceTracker.mapHelper.hideMap()                
             } else {
-                routeLayout.visibility = View.GONE
-                distanceTracker.mapHelper.map.visibility = View.VISIBLE
-                showingRouteList = false
-
-                topBarLayout.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
-                distanceTracker.mapHelper.map.layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
+                hideRouteList()
+                distanceTracker.mapHelper.showMap()
             }
         }
+    }
+
+    private fun showRouteList(){
+        routeLayout.visibility = View.VISIBLE
+        showingRouteList = true
+        topBarLayout.layoutParams =
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 8f)
+    }
+
+    private fun hideRouteList(){
+        routeLayout.visibility = View.GONE
+        showingRouteList = false
+        topBarLayout.layoutParams =
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
     }
 
     private fun initializeCloseListBtn() {

@@ -15,10 +15,11 @@
     <string name="recording"><u>Recording..</u></string>
     <string name="paused">Paused..</string>
     <string name="close_list_icon">close list icon</string>
-    <string name="enter_route_name">Enter route name..</string>
+    <string name="enter_route_name">Enter name (min 3 chars.)</string>
     <string name="save_session">Save session</string>
     <string name="cancel">Cancel</string>
     <string name="route_name">Route name</string>
     <string name="no_routes_saved">No routes saved!</string>
     <string name="map_icon">map icon</string>
+    <string name="route_name_is_too_short_n_minimum_3_characters">Route name is too short!\n Minimum 3 characters!.</string>
 </resources>

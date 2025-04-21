@@ -9,20 +9,39 @@
 
         <TextView
             style="@style/save_dialog_section_title"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:text="@string/route_name" />
 
-        <EditText
-            android:id="@+id/routeNameEntry"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:autofillHints="route name"
-            android:gravity="center"
-            android:hint="@string/enter_route_name"
-            android:inputType="text"
-            android:textColor="@color/black"
-            android:textColorHint="@color/grey"
-            android:textSize="15sp" />
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/routeNameEntry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="route name"
+                android:hint="@string/enter_route_name"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/routeNameWarning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/route_name_is_too_short_n_minimum_3_characters"
+                android:textColor="@color/warning_red"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+
     </LinearLayout>
 
     <View style="@style/save_dialog_divider" />
