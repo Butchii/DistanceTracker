@@ -1,6 +1,7 @@
 package com.example.distancetracker.controlpanel
 
 import android.content.Context
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -29,26 +30,28 @@ class InfoSection(
         totalDistanceTV = infoSectionLayout.findViewById(R.id.totalDistance)
     }
 
-     fun resetTotalDistance() {
+    fun resetTotalDistance() {
         distanceTracker.totalDistance = 0.0
         totalDistanceTV.text = ContextCompat.getString(context, R.string._0_0km)
     }
 
-     fun resetAverageSpeed() {
+    fun resetAverageSpeed() {
         distanceTracker.averageSpeed = 0.0
         averageSpeedTV.text = ContextCompat.getString(context, R.string._0_0_km_h)
     }
 
-     fun updateTotalDistance(distanceWalked: Float) {
+    fun updateTotalDistance(distanceWalked: Float) {
         distanceTracker.totalDistance += distanceWalked
         val totalDistanceMetres = distanceTracker.totalDistance / 1000
         totalDistanceTV.text = String.format("%.2f km", totalDistanceMetres)
     }
 
-     fun updateAverageSpeed() {
-        distanceTracker.averageSpeed =
-            (distanceTracker.totalDistance / (distanceTracker.sessionTimer.sessionSeconds + (distanceTracker.sessionTimer.sessionMinutes * 60) + (distanceTracker.sessionTimer.sessionHours * 3600))) * 3.6
-        averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
+    fun updateAverageSpeed() {
+        Log.d("myTag", distanceTracker.sessionTimer.sessionSeconds.toString())
+        if (distanceTracker.sessionTimer.sessionSeconds % 2 == 0) {
+            distanceTracker.averageSpeed =
+                (distanceTracker.totalDistance / (distanceTracker.sessionTimer.sessionSeconds + (distanceTracker.sessionTimer.sessionMinutes * 60) + (distanceTracker.sessionTimer.sessionHours * 3600))) * 3.6
+            averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
+        }
     }
-
 }
