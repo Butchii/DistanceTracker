@@ -7,6 +7,7 @@ import android.location.Location
 import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
 
@@ -18,7 +19,12 @@ open class MainActivity : AppCompatActivity() {
 
     private fun createDistanceTracker() {
         distanceTracker =
-            DistanceTracker(findViewById(R.id.distanceTrackerLayout), applicationContext, this, locationCallback)
+            DistanceTracker(
+                findViewById(R.id.distanceTrackerLayout),
+                applicationContext,
+                this,
+                locationCallback
+            )
     }
 
     override fun onResume() {
@@ -53,17 +59,25 @@ open class MainActivity : AppCompatActivity() {
                         "myTag",
                         String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
                     )
-
-                    if (locations[0].distanceTo(newLocation) > 1) {
+                    val distance = locations[0].distanceTo(newLocation)
+                    if (distance > 1 && distance < 6) {
                         distanceTracker.mapHelper.updateCurrentLocation(
                             newGeoPoint
                         )
-                        distanceTracker.controlPanel.infoSection.updateTotalDistance(locations[0].distanceTo(newLocation))
+                        distanceTracker.controlPanel.infoSection.updateTotalDistance(
+                            locations[0].distanceTo(
+                                newLocation
+                            )
+                        )
                         distanceTracker.mapHelper.updateEndMarkerLocation(
                             newGeoPoint
                         )
                         distanceTracker.geoPointList.add(newGeoPoint)
-                        Log.d("myTag", "Distance ACCEPTED by thresh hold and updated")
+                        Log.d("myTag", "Distance ACCEPTED by thresh hold and updated EndMarker Position")
+                    }else if(distance > 6){
+                        distanceTracker.mapHelper.increaseLocationCounter()
+                        distanceTracker.mapHelper.saveLocationForOptimization(newGeoPoint, distance)
+                        distanceTracker.mapHelper.checkLocationCounter()
                     } else {
                         Log.d("myTag", "Distance NOT ACCEPTED by thresh hold")
                     }

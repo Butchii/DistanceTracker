@@ -25,6 +25,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import java.util.Collections
 
 class MapHelper(
     private val context: Context,
@@ -40,7 +41,7 @@ class MapHelper(
     private var startMarker: Marker = Marker(map)
     var endMarker: Marker = Marker(map)
 
-    private var locationAverage: ArrayList<GeoPoint> = ArrayList()
+    private var locationList: HashMap<Float, GeoPoint> = HashMap()
     private var locationCounter: Int = 0
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
@@ -187,7 +188,7 @@ class MapHelper(
     }
 
     private fun createLocationRequest() {
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000).build()
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
     }
 
     fun hideMap() {
@@ -196,5 +197,34 @@ class MapHelper(
 
     fun showMap() {
         map.visibility = View.VISIBLE
+    }
+
+    fun increaseLocationCounter() {
+        locationCounter++
+    }
+
+    private fun resetLocationCounter() {
+        locationCounter = 0
+    }
+
+    fun checkLocationCounter() {
+        if (locationCounter == 3) {
+            locationList[Collections.min(locationList.keys)]?.let { updateEndMarkerLocation(it) }
+            Log.d("myTag", "Location counter hit 3 and End marker position has been updated to minimum distance position")
+            resetLocationCounter()
+            clearLocationList()
+        }
+    }
+
+    private fun clearLocationList(){
+        locationList.clear()
+    }
+
+    fun saveLocationForOptimization(location:GeoPoint, distance:Float){
+        locationList[distance] = location
+        Log.d("myTag", String.format("Location counter is $locationCounter"))
+        Log.d("myTag", String.format("Location to save is : $location"))
+        Log.d("myTag", String.format("Distance is : $distance"))
+        Log.d("myTag", String.format("Location list is: $locationList"))
     }
 }
