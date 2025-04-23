@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -31,7 +32,8 @@ class MapHelper(
     private val context: Context,
     private val activity: Activity,
     val map: MapView,
-    private val locationCallback: LocationCallback
+    private val locationCallback: LocationCallback,
+    private val distanceTracker: DistanceTracker
 ) {
 
     var route: Polyline = Polyline()
@@ -43,6 +45,8 @@ class MapHelper(
 
     private var locationList: HashMap<Float, GeoPoint> = HashMap()
     private var locationCounter: Int = 0
+
+    private var pauseCounter: Int = 0
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
@@ -210,21 +214,43 @@ class MapHelper(
     fun checkLocationCounter() {
         if (locationCounter == 3) {
             locationList[Collections.min(locationList.keys)]?.let { updateEndMarkerLocation(it) }
-            Log.d("myTag", "Location counter hit 3 and End marker position has been updated to minimum distance position")
+            Log.d(
+                "myTag",
+                "Location counter hit 3 and End marker position has been updated to minimum distance position"
+            )
             resetLocationCounter()
             clearLocationList()
         }
     }
 
-    private fun clearLocationList(){
+    private fun clearLocationList() {
         locationList.clear()
     }
 
-    fun saveLocationForOptimization(location:GeoPoint, distance:Float){
+    fun saveLocationForOptimization(location: GeoPoint, distance: Float) {
         locationList[distance] = location
         Log.d("myTag", String.format("Location counter is $locationCounter"))
         Log.d("myTag", String.format("Location to save is : $location"))
         Log.d("myTag", String.format("Distance is : $distance"))
         Log.d("myTag", String.format("Location list is: $locationList"))
+    }
+
+    fun increasePauseCounter() {
+        pauseCounter++
+        Log.d("myTag", String.format("Pause counter is $pauseCounter"))
+        checkPauseCounter()
+    }
+
+    fun resetPauseCounter() {
+        pauseCounter = 0
+    }
+
+    private fun checkPauseCounter() {
+        if (pauseCounter == 30) {
+            Toast.makeText(context, "Session paused because of idling!", Toast.LENGTH_SHORT).show()
+            distanceTracker.pauseSession()
+            distanceTracker.controlPanel.buttonSection.enterPauseMode()
+            resetPauseCounter()
+        }
     }
 }

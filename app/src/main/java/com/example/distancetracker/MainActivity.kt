@@ -73,12 +73,17 @@ open class MainActivity : AppCompatActivity() {
                             newGeoPoint
                         )
                         distanceTracker.geoPointList.add(newGeoPoint)
-                        Log.d("myTag", "Distance ACCEPTED by thresh hold and updated EndMarker Position")
-                    }else if(distance > 6){
+                        Log.d(
+                            "myTag",
+                            "Distance ACCEPTED by thresh hold and updated EndMarker Position"
+                        )
+                        distanceTracker.mapHelper.resetPauseCounter()
+                    } else if (distance > 6) {
                         distanceTracker.mapHelper.increaseLocationCounter()
                         distanceTracker.mapHelper.saveLocationForOptimization(newGeoPoint, distance)
                         distanceTracker.mapHelper.checkLocationCounter()
                     } else {
+                        distanceTracker.mapHelper.increasePauseCounter()
                         Log.d("myTag", "Distance NOT ACCEPTED by thresh hold")
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()

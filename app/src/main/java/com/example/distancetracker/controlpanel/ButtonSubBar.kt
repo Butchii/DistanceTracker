@@ -160,6 +160,7 @@ class ButtonSubBar(
         distanceTracker.controlPanel.buttonSection.changeSessionButtonIcon(R.drawable.start_icon)
         distanceTracker.mapHelper.removeRouteFromMap()
         distanceTracker.mapHelper.removeEndMarker()
+        distanceTracker.mapHelper.resetPauseCounter()
         hideButtonBar()
     }
 

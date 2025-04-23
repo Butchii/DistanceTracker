@@ -43,7 +43,8 @@ class DistanceTracker(
             context,
             mainActivity,
             distanceTrackerLayout.findViewById(R.id.map),
-            locationCallback
+            locationCallback,
+            this
         )
     }
 

@@ -52,14 +52,10 @@ class ButtonSection(
                     //session already exists
                     if (distanceTracker.recording) {
                         distanceTracker.pauseSession()
-                        changeSessionButtonDescription(R.string.paused)
-                        changeSessionButtonIcon(R.drawable.pause_icon)
-                        buttonSubBar.activateSaveBtn()
+                        enterPauseMode()
                     } else {
                         resumeSession()
-                        changeSessionButtonDescription(R.string.recording)
-                        changeSessionButtonIcon(R.drawable.record_icon)
-                        buttonSubBar.deactivateSaveBtn()
+                        enterRecordingMode()
                     }
                 }
             } else {
@@ -69,8 +65,21 @@ class ButtonSection(
         }
     }
 
+    private fun enterRecordingMode(){
+        changeSessionButtonDescription(R.string.recording)
+        changeSessionButtonIcon(R.drawable.record_icon)
+        buttonSubBar.deactivateSaveBtn()
+    }
+
+    fun enterPauseMode(){
+        changeSessionButtonDescription(R.string.paused)
+        changeSessionButtonIcon(R.drawable.pause_icon)
+        buttonSubBar.activateSaveBtn()
+    }
+
     private fun resumeSession() {
         startRecording()
+        distanceTracker.mapHelper.resetPauseCounter()
         distanceTracker.sessionTimer.createTimer()
     }
 
