@@ -7,13 +7,12 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Looper
 import android.preference.PreferenceManager
-import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -35,7 +34,6 @@ class MapHelper(
     private val locationCallback: LocationCallback,
     private val distanceTracker: DistanceTracker
 ) {
-
     var route: Polyline = Polyline()
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -47,9 +45,11 @@ class MapHelper(
     private var locationCounter: Int = 0
 
     private var pauseCounter: Int = 0
+    private var prePauseLocation: GeoPoint = GeoPoint(0.0, 0.0)
+    private var prePauseRoute: Polyline = Polyline()
 
-    var lowerThreshHold: Double = (1000 / 3600).toDouble()
-    var upperThreshHold:Double = (7500 / 3600).toDouble()
+    var lowerDistanceThreshHold: Double = (1000 / 3600).toDouble()
+    var upperDistanceThreshHold: Double = (7500 / 3600).toDouble()
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
@@ -255,6 +255,23 @@ class MapHelper(
             distanceTracker.pauseSession()
             distanceTracker.controlPanel.buttonSection.enterPauseMode()
             resetPauseCounter()
+            updateEndMarkerLocation(prePauseLocation)
+            //resetRoute()
+            //TODO delete polyline from prePauseLocation to previous end marker location
         }
     }
+
+    fun setPauseLocation(geoPoint: GeoPoint) {
+        prePauseLocation = geoPoint
+    }
+
+    fun savePauseRoute() {
+        prePauseRoute = route
+    }
+
+    /* private fun resetRoute(){
+        map.overlays.remove(route)
+        route = prePauseRoute.deep copy
+        map.overlays.add(route)
+     */
 }
