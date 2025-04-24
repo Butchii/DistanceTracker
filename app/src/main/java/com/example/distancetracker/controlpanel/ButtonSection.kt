@@ -16,7 +16,7 @@ class ButtonSection(
     private val activity: Activity,
     private val distanceTracker: DistanceTracker
 ) {
-    private lateinit var buttonSubBar: ButtonSubBar
+    lateinit var buttonSubBar: ButtonSubBar
 
     private lateinit var sessionBtn: ImageButton
     private lateinit var sessionBtnDescription: TextView
@@ -44,7 +44,7 @@ class ButtonSection(
             if (distanceTracker.mapHelper.isLocationEnabled()) {
                 if (!distanceTracker.startedSession) {
                     //no session started yet
-                    startSession()
+                    distanceTracker.startSession()
                     changeSessionButtonDescription(R.string.recording)
                     changeSessionButtonIcon(R.drawable.record_icon)
                     buttonSubBar.showResetButton()
@@ -54,7 +54,7 @@ class ButtonSection(
                         distanceTracker.pauseSession()
                         enterPauseMode()
                     } else {
-                        resumeSession()
+                        distanceTracker.resumeSession()
                         enterRecordingMode()
                     }
                 }
@@ -65,7 +65,7 @@ class ButtonSection(
         }
     }
 
-    private fun enterRecordingMode(){
+    fun enterRecordingMode(){
         changeSessionButtonDescription(R.string.recording)
         changeSessionButtonIcon(R.drawable.record_icon)
         buttonSubBar.deactivateSaveBtn()
@@ -76,29 +76,6 @@ class ButtonSection(
         changeSessionButtonIcon(R.drawable.pause_icon)
         buttonSubBar.activateSaveBtn()
     }
-
-    private fun resumeSession() {
-        startRecording()
-        distanceTracker.mapHelper.resetPauseCounter()
-        distanceTracker.sessionTimer.createTimer()
-    }
-
-    private fun startSession() {
-        distanceTracker.geoPointList.add(distanceTracker.mapHelper.currentLocation)
-        distanceTracker.mapHelper.updateStartMarkerLocation(distanceTracker.mapHelper.currentLocation)
-        distanceTracker.mapHelper.addEndMarker(distanceTracker.mapHelper.currentLocation)
-        distanceTracker.mapHelper.route.addPoint(distanceTracker.mapHelper.currentLocation)
-
-        distanceTracker.startedSession = true
-        startRecording()
-        buttonSubBar.showButtonBar()
-        distanceTracker.sessionTimer.createTimer()
-    }
-
-    private fun startRecording() {
-        distanceTracker.recording = true
-    }
-
 
     fun changeSessionButtonIcon(iconId: Int) {
         sessionBtn.setImageResource(iconId)

@@ -56,7 +56,6 @@ open class MainActivity : AppCompatActivity() {
                 newLocation.longitude = distanceTracker.mapHelper.endMarker.position.longitude
                 val distance = locations[0].distanceTo(newLocation)
                 if (distanceTracker.recording) {
-
                     Log.d(
                         "myTag",
                         String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")

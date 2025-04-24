@@ -77,4 +77,26 @@ class DistanceTracker(
         startedSession = false
         stopRecording()
     }
+
+    fun startSession() {
+        geoPointList.add(mapHelper.currentLocation)
+        mapHelper.updateStartMarkerLocation(mapHelper.currentLocation)
+        mapHelper.addEndMarker(mapHelper.currentLocation)
+        mapHelper.route.addPoint(mapHelper.currentLocation)
+
+        startedSession = true
+        startRecording()
+        controlPanel.buttonSection.buttonSubBar.showButtonBar()
+        sessionTimer.createTimer()
+    }
+
+     fun resumeSession() {
+        startRecording()
+        mapHelper.resetPauseCounter()
+        sessionTimer.createTimer()
+    }
+
+    private fun startRecording() {
+        recording = true
+    }
 }
