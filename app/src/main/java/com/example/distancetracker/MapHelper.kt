@@ -48,6 +48,9 @@ class MapHelper(
 
     private var pauseCounter: Int = 0
 
+    var lowerThreshHold: Double = (1000 / 3600).toDouble()
+    var upperThreshHold:Double = (7500 / 3600).toDouble()
+
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
     private lateinit var locationRequest: LocationRequest
@@ -220,6 +223,7 @@ class MapHelper(
             )
             resetLocationCounter()
             clearLocationList()
+            //TODO update average speed
         }
     }
 

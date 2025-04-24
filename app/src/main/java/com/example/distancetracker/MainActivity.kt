@@ -60,7 +60,7 @@ open class MainActivity : AppCompatActivity() {
                         String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
                     )
                     val distance = locations[0].distanceTo(newLocation)
-                    if (distance > 1 && distance < 6) {
+                    if (distance > distanceTracker.mapHelper.lowerThreshHold && distance < distanceTracker.mapHelper.upperThreshHold) {
                         distanceTracker.mapHelper.updateCurrentLocation(
                             newGeoPoint
                         )
@@ -78,7 +78,7 @@ open class MainActivity : AppCompatActivity() {
                             "Distance ACCEPTED by thresh hold and updated EndMarker Position"
                         )
                         distanceTracker.mapHelper.resetPauseCounter()
-                    } else if (distance > 6) {
+                    } else if (distance > distanceTracker.mapHelper.upperThreshHold) {
                         distanceTracker.mapHelper.increaseLocationCounter()
                         distanceTracker.mapHelper.saveLocationForOptimization(newGeoPoint, distance)
                         distanceTracker.mapHelper.checkLocationCounter()

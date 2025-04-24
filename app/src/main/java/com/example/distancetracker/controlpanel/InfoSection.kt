@@ -47,7 +47,6 @@ class InfoSection(
     }
 
     fun updateAverageSpeed() {
-        Log.d("myTag", String.format("Session time in seconds: ${distanceTracker.sessionTimer.sessionSeconds}"))
         if (distanceTracker.sessionTimer.sessionSeconds > 2) {
             distanceTracker.averageSpeed =
                 (distanceTracker.totalDistance / (distanceTracker.sessionTimer.sessionSeconds + (distanceTracker.sessionTimer.sessionMinutes * 60) + (distanceTracker.sessionTimer.sessionHours * 3600))) * 3.6
