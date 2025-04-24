@@ -256,8 +256,7 @@ class MapHelper(
             distanceTracker.controlPanel.buttonSection.enterPauseMode()
             resetPauseCounter()
             updateEndMarkerLocation(prePauseLocation)
-            //resetRoute()
-            //TODO delete polyline from prePauseLocation to previous end marker location
+            resetRoute()
         }
     }
 
@@ -266,12 +265,16 @@ class MapHelper(
     }
 
     fun savePauseRoute() {
-        prePauseRoute = route
+        for(point in route.actualPoints){
+            prePauseRoute.addPoint(point)
+        }
     }
 
-    /* private fun resetRoute(){
-        map.overlays.remove(route)
-        route = prePauseRoute.deep copy
-        map.overlays.add(route)
-     */
+     private fun resetRoute() {
+         map.overlays.remove(route)
+         for(point in prePauseRoute.actualPoints){
+             route.addPoint(point)
+         }
+         map.overlays.add(route)
+     }
 }
