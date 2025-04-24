@@ -48,6 +48,8 @@ class MapHelper(
     private var prePauseLocation: GeoPoint = GeoPoint(0.0, 0.0)
     private var prePauseRoute: Polyline = Polyline()
 
+    var resumeSessionCounter: Int = 0
+
     var lowerDistanceThreshHold: Double = (1000 / 3600).toDouble()
     var upperDistanceThreshHold: Double = (7500 / 3600).toDouble()
 
@@ -239,42 +241,55 @@ class MapHelper(
         Log.d("myTag", String.format("Location list is: $locationList"))
     }
 
-    fun increasePauseCounter() {
+    fun incrementPauseCounter() {
         pauseCounter++
         Log.d("myTag", String.format("Pause counter is $pauseCounter"))
-        checkPauseCounter()
     }
 
     fun resetPauseCounter() {
         pauseCounter = 0
     }
 
-    private fun checkPauseCounter() {
-        if (pauseCounter == 30) {
+    fun checkPauseCounter() {
+        if (pauseCounter == 15) {
             Toast.makeText(context, "Session paused because of idling!", Toast.LENGTH_SHORT).show()
             distanceTracker.pauseSession()
             distanceTracker.controlPanel.buttonSection.enterPauseMode()
             resetPauseCounter()
             updateEndMarkerLocation(prePauseLocation)
+            Log.d("myTag", "Changed End marker position to pre pause location")
             resetRoute()
         }
     }
 
     fun setPauseLocation(geoPoint: GeoPoint) {
+        //save current position for a potential pause activation
         prePauseLocation = geoPoint
     }
 
     fun savePauseRoute() {
-        for(point in route.actualPoints){
+        //save current route for a potential pause activation
+        for (point in route.actualPoints) {
             prePauseRoute.addPoint(point)
         }
     }
 
-     private fun resetRoute() {
-         map.overlays.remove(route)
-         for(point in prePauseRoute.actualPoints){
-             route.addPoint(point)
-         }
-         map.overlays.add(route)
-     }
+    private fun resetRoute() {
+        //change current route to saved pre pause route
+        map.overlays.remove(route)
+        for (point in prePauseRoute.actualPoints) {
+            route.addPoint(point)
+        }
+        map.overlays.add(route)
+        Log.d("myTag", "Changed route to pre pause route")
+    }
+    fun incrementResumeCounter(){
+        resumeSessionCounter++
+    }
+
+    fun checkResumeCounter(){
+        if(resumeSessionCounter > 5){
+            Toast.makeText(context, "Session resumed",Toast.LENGTH_SHORT).show()
+        }
+    }
 }

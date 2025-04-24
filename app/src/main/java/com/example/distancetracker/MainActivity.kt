@@ -51,15 +51,17 @@ open class MainActivity : AppCompatActivity() {
                 distanceTracker.mapHelper.updateCurrentLocation(newGeoPoint)
                 distanceTracker.mapHelper.updateStartMarkerLocation(distanceTracker.mapHelper.currentLocation)
             } else {
+                val newLocation = Location("")
+                newLocation.latitude = distanceTracker.mapHelper.endMarker.position.latitude
+                newLocation.longitude = distanceTracker.mapHelper.endMarker.position.longitude
+                val distance = locations[0].distanceTo(newLocation)
                 if (distanceTracker.recording) {
-                    val newLocation = Location("")
-                    newLocation.latitude = distanceTracker.mapHelper.endMarker.position.latitude
-                    newLocation.longitude = distanceTracker.mapHelper.endMarker.position.longitude
+
                     Log.d(
                         "myTag",
                         String.format("Distance walked ${locations[0].distanceTo(newLocation)} metres")
                     )
-                    val distance = locations[0].distanceTo(newLocation)
+
                     if (distance > distanceTracker.mapHelper.lowerDistanceThreshHold && distance < distanceTracker.mapHelper.upperDistanceThreshHold) {
                         distanceTracker.mapHelper.updateCurrentLocation(
                             newGeoPoint
@@ -83,12 +85,18 @@ open class MainActivity : AppCompatActivity() {
                         distanceTracker.mapHelper.saveLocationForOptimization(newGeoPoint, distance)
                         distanceTracker.mapHelper.checkLocationCounter()
                     } else {
-                        distanceTracker.mapHelper.increasePauseCounter()
+                        distanceTracker.mapHelper.incrementPauseCounter()
+                        distanceTracker.mapHelper.checkPauseCounter()
                         distanceTracker.mapHelper.setPauseLocation(newGeoPoint)
                         distanceTracker.mapHelper.savePauseRoute()
                         Log.d("myTag", "Distance NOT ACCEPTED by thresh hold")
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
+                } else {
+                    if (distance > distanceTracker.mapHelper.lowerDistanceThreshHold && distance < distanceTracker.mapHelper.upperDistanceThreshHold) {
+                        distanceTracker.mapHelper.incrementResumeCounter()
+                        distanceTracker.mapHelper.checkResumeCounter()
+                    }
                 }
             }
         }

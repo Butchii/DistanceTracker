@@ -1,7 +1,6 @@
 package com.example.distancetracker.controlpanel
 
 import android.content.Context
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
