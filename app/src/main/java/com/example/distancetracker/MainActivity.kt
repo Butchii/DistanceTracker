@@ -76,9 +76,9 @@ open class MainActivity : AppCompatActivity() {
                             currentLocationAsGeoPoint,
                             distance
                         )
+                        distanceTracker.mapHelper.resetPauseCounter()
                     } else {
                         distanceTracker.mapHelper.updatePauseCounter(currentLocationAsGeoPoint)
-
                         distanceTracker.mapHelper.resetLocationCounter()
                         distanceTracker.mapHelper.clearLocationList()
                     }

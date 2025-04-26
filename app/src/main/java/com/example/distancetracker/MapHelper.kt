@@ -74,12 +74,12 @@ class MapHelper(
     }
 
     private fun configureMarkers() {
-        startMarker.setAnchor(0.175f, 0.35f)
-        startMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker)
+        startMarker.setAnchor(0.25f, 0.35f)
+        startMarker.icon = ContextCompat.getDrawable(context, R.drawable.start_marker_map_icon)
         map.overlays.add(startMarker)
 
-        endMarker.setAnchor(0.175f, 0.35f)
-        endMarker.icon = ContextCompat.getDrawable(context, R.drawable.map_marker)
+        endMarker.setAnchor(0.25f, 0.35f)
+        endMarker.icon = ContextCompat.getDrawable(context, R.drawable.end_marker_map_icon)
     }
 
     private fun setupMap() {
@@ -136,6 +136,9 @@ class MapHelper(
 
     fun addEndMarker(location: GeoPoint) {
         endMarker.position = location
+
+        endMarkerLocation.latitude = location.latitude
+        endMarkerLocation.longitude = location.longitude
         map.overlays.add(endMarker)
     }
 
@@ -241,7 +244,7 @@ class MapHelper(
 
             Log.d(
                 "myTag",
-                "Location counter hit 3 and End marker position has been updated to minimum distance position"
+                "Location counter hit 3 and End marker position has been updated to saved minimum distance position"
             )
         }
     }
@@ -259,23 +262,28 @@ class MapHelper(
     }
 
     private fun incrementPauseCounter() {
+        Log.d("myTag", "Distance too low, updated Pause Counter")
         pauseSessionCounter++
         Log.d("myTag", String.format("Pause counter is $pauseSessionCounter"))
     }
 
     fun resetPauseCounter() {
+        Log.d("myTag", "saved route before clearing: ${prePauseRoute.actualPoints}")
         pauseSessionCounter = 0
+        prePauseRoute = Polyline()
+        Log.d("myTag", "saved route after clearing: ${prePauseRoute.actualPoints}")
     }
 
     private fun checkPauseCounter() {
         if (pauseSessionCounter == 10) {
             Toast.makeText(context, "Session paused because of idling!", Toast.LENGTH_SHORT).show()
+            Log.d("myTag", "Paused session because of idling")
             distanceTracker.pauseSession()
             distanceTracker.controlPanel.buttonSection.enterPauseMode()
+            resetRoute()
             resetPauseCounter()
             updateEndMarkerLocation(prePauseLocation)
             Log.d("myTag", "Changed End marker position to pre pause location")
-            resetRoute()
         }
     }
 
@@ -289,14 +297,18 @@ class MapHelper(
         for (geoPoint in route.actualPoints) {
             prePauseRoute.addPoint(geoPoint)
         }
+        Log.d("myTag", String.format("saved route is: ${prePauseRoute.actualPoints} \n"))
     }
 
     private fun resetRoute() {
         //change current route to saved pre pause route
         map.overlays.remove(route)
+        route = Polyline()
+        Log.d("myTag", String.format("old route: ${route.actualPoints} \n"))
         for (geoPoint in prePauseRoute.actualPoints) {
             route.addPoint(geoPoint)
         }
+        Log.d("myTag", String.format("new route: ${route.actualPoints} \n"))
         map.overlays.add(route)
         Log.d("myTag", "Changed route to pre pause route")
     }
@@ -323,10 +335,9 @@ class MapHelper(
 
     fun updatePauseCounter(geoPoint: GeoPoint) {
         incrementPauseCounter()
-        checkPauseCounter()
         setPauseLocation(geoPoint)
         savePauseRoute()
-        Log.d("myTag", "Distance too low, updated Pause Counter")
+        checkPauseCounter()
     }
 
     fun updateLocationCounter(geoPoint: GeoPoint, distance: Float) {
