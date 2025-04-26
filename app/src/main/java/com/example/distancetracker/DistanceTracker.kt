@@ -107,4 +107,29 @@ class DistanceTracker(
     fun hasStartedSession(): Boolean {
         return startedSession
     }
+
+    fun acceptLocation(distance: Float, newLocation: GeoPoint) {
+        controlPanel.infoSection.updateTotalDistance(distance)
+
+        mapHelper.updateEndMarkerLocation(newLocation)
+        mapHelper.resetPauseCounter()
+        mapHelper.resetLocationCounter()
+        mapHelper.clearLocationList()
+
+        geoPointList.add(newLocation)
+    }
+
+    fun refuseLocation(distance: Float, newLocation:GeoPoint) {
+        if (mapHelper.isDistanceTooHigh(distance)) {
+            mapHelper.updateLocationCounter(
+                newLocation,
+                distance
+            )
+            mapHelper.resetPauseCounter()
+        }else{
+            mapHelper.updatePauseCounter(newLocation)
+            mapHelper.resetLocationCounter()
+            mapHelper.clearLocationList()
+        }
+    }
 }

@@ -44,43 +44,22 @@ open class MainActivity : AppCompatActivity() {
         override fun onLocationResult(p0: LocationResult) {
             super.onLocationResult(p0)
             val locations = p0.locations
-            val currentLocationAsGeoPoint =
+            val newLocationAsGeoPoint =
                 GeoPoint(locations[0].latitude, locations[0].longitude)
             if (!distanceTracker.hasStartedSession()) {
-                distanceTracker.mapHelper.updateStartMarkerLocation(currentLocationAsGeoPoint)
+                distanceTracker.mapHelper.updateStartMarkerLocation(newLocationAsGeoPoint)
             } else {
                 val lastLocation = distanceTracker.mapHelper.endMarkerLocation
                 val distance = locations[0].distanceTo(lastLocation)
+                Log.d(
+                    "myTag",
+                    String.format("Distance walked ${locations[0].distanceTo(lastLocation)} metres")
+                )
                 if (distanceTracker.isRecording()) {
-                    Log.d(
-                        "myTag",
-                        String.format("Distance walked ${locations[0].distanceTo(lastLocation)} metres")
-                    )
-
                     if (distanceTracker.mapHelper.isDistanceWithinTheLimits(distance)) {
-                        distanceTracker.controlPanel.infoSection.updateTotalDistance(
-                            locations[0].distanceTo(
-                                lastLocation
-                            )
-                        )
-                        distanceTracker.mapHelper.updateEndMarkerLocation(
-                            currentLocationAsGeoPoint
-                        )
-                        distanceTracker.geoPointList.add(currentLocationAsGeoPoint)
-                        distanceTracker.mapHelper.resetPauseCounter()
-
-                        distanceTracker.mapHelper.resetLocationCounter()
-                        distanceTracker.mapHelper.clearLocationList()
-                    } else if (distanceTracker.mapHelper.isDistanceTooHigh(distance)) {
-                        distanceTracker.mapHelper.updateLocationCounter(
-                            currentLocationAsGeoPoint,
-                            distance
-                        )
-                        distanceTracker.mapHelper.resetPauseCounter()
+                        distanceTracker.acceptLocation(distance, newLocationAsGeoPoint)
                     } else {
-                        distanceTracker.mapHelper.updatePauseCounter(currentLocationAsGeoPoint)
-                        distanceTracker.mapHelper.resetLocationCounter()
-                        distanceTracker.mapHelper.clearLocationList()
+                        distanceTracker.refuseLocation(distance, newLocationAsGeoPoint)
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {
