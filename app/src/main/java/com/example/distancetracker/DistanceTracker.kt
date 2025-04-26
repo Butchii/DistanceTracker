@@ -90,7 +90,7 @@ class DistanceTracker(
         sessionTimer.createTimer()
     }
 
-     fun resumeSession() {
+    fun resumeSession() {
         startRecording()
         mapHelper.resetPauseCounter()
         sessionTimer.createTimer()
@@ -98,5 +98,13 @@ class DistanceTracker(
 
     private fun startRecording() {
         recording = true
+    }
+
+    fun isRecording(): Boolean {
+        return recording
+    }
+
+    fun hasStartedSession(): Boolean {
+        return startedSession
     }
 }

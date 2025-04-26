@@ -3,6 +3,7 @@ package com.example.distancetracker
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.location.Location
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Looper
@@ -40,6 +41,8 @@ class MapHelper(
 
     private var startMarker: Marker = Marker(map)
     var endMarker: Marker = Marker(map)
+
+    var endMarkerLocation: Location = Location("")
 
     private var locationList: HashMap<Float, GeoPoint> = HashMap()
     private var locationCounter: Int = 0
@@ -110,9 +113,13 @@ class MapHelper(
     fun updateEndMarkerLocation(location: GeoPoint) {
         Log.d(
             "myTag",
-            String.format("Updated ENDMARKER position from ${endMarker.position} to $location")
+            "Distance ACCEPTED by thresh hold and updated EndMarker Position"
         )
         endMarker.position = location
+
+        endMarkerLocation.latitude = location.latitude
+        endMarkerLocation.longitude = location.longitude
+
         route.addPoint(location)
         map.invalidate()
     }
@@ -130,10 +137,6 @@ class MapHelper(
     fun addEndMarker(location: GeoPoint) {
         endMarker.position = location
         map.overlays.add(endMarker)
-    }
-
-    fun updateCurrentLocation(newLocation: GeoPoint) {
-        currentLocation = newLocation
     }
 
     private fun setFusedLocationClient() {
@@ -283,15 +286,42 @@ class MapHelper(
         map.overlays.add(route)
         Log.d("myTag", "Changed route to pre pause route")
     }
-    fun incrementResumeCounter(){
+
+    fun incrementResumeCounter() {
         resumeSessionCounter++
     }
 
-    fun checkResumeCounter(){
-        if(resumeSessionCounter > 5){
-            Toast.makeText(context, "Session resumed",Toast.LENGTH_SHORT).show()
+    fun checkResumeCounter() {
+        if (resumeSessionCounter > 5) {
+            Toast.makeText(context, "Session resumed", Toast.LENGTH_SHORT).show()
             distanceTracker.resumeSession()
             distanceTracker.controlPanel.buttonSection.enterRecordingMode()
         }
+    }
+
+    fun isDistanceWithinTheLimits(distance: Float): Boolean {
+        return distance > lowerDistanceThreshHold && distance < upperDistanceThreshHold
+    }
+
+    fun isDistanceTooHigh(distance: Float): Boolean {
+        return distance > upperDistanceThreshHold
+    }
+
+    fun updatePauseCounter(geoPoint: GeoPoint) {
+        incrementPauseCounter()
+        checkPauseCounter()
+        setPauseLocation(geoPoint)
+        savePauseRoute()
+    }
+
+    fun updateLocationCounter(geoPoint: GeoPoint, distance: Float) {
+        increaseLocationCounter()
+        saveLocationForOptimization(geoPoint, distance)
+        checkLocationCounter()
+    }
+
+    fun updateResumeCounter(){
+        incrementResumeCounter()
+        checkResumeCounter()
     }
 }
