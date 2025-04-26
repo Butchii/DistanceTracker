@@ -68,6 +68,9 @@ open class MainActivity : AppCompatActivity() {
                         )
                         distanceTracker.geoPointList.add(currentLocationAsGeoPoint)
                         distanceTracker.mapHelper.resetPauseCounter()
+
+                        distanceTracker.mapHelper.resetLocationCounter()
+                        distanceTracker.mapHelper.clearLocationList()
                     } else if (distanceTracker.mapHelper.isDistanceTooHigh(distance)) {
                         distanceTracker.mapHelper.updateLocationCounter(
                             currentLocationAsGeoPoint,
@@ -75,7 +78,9 @@ open class MainActivity : AppCompatActivity() {
                         )
                     } else {
                         distanceTracker.mapHelper.updatePauseCounter(currentLocationAsGeoPoint)
-                        Log.d("myTag", "Distance NOT ACCEPTED by thresh hold")
+
+                        distanceTracker.mapHelper.resetLocationCounter()
+                        distanceTracker.mapHelper.clearLocationList()
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {

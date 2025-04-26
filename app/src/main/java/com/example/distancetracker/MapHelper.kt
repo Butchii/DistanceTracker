@@ -40,7 +40,7 @@ class MapHelper(
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var startMarker: Marker = Marker(map)
-    var endMarker: Marker = Marker(map)
+    private var endMarker: Marker = Marker(map)
 
     var endMarkerLocation: Location = Location("")
 
@@ -53,8 +53,8 @@ class MapHelper(
 
     private var resumeSessionCounter: Int = 0
 
-    var lowerDistanceThreshHold: Double = 0.41
-    var upperDistanceThreshHold: Double = (7500 / 3600).toDouble()
+    private var lowerDistanceThreshHold: Double = 0.41
+    private var upperDistanceThreshHold: Double = (7500 / 3600).toDouble()
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
@@ -211,32 +211,46 @@ class MapHelper(
         map.visibility = View.VISIBLE
     }
 
-    fun increaseLocationCounter() {
+    private fun increaseLocationCounter() {
         locationCounter++
     }
 
-    private fun resetLocationCounter() {
+    fun resetLocationCounter() {
         locationCounter = 0
     }
 
-    fun checkLocationCounter() {
+    private fun checkLocationCounter() {
         if (locationCounter == 3) {
-            locationList[Collections.min(locationList.keys)]?.let { updateEndMarkerLocation(it) }
+            val minDistanceGeoPoint = locationList[Collections.min(locationList.keys)]
+
+            val minDistanceLocation = Location("")
+            if (minDistanceGeoPoint != null) {
+                minDistanceLocation.latitude = minDistanceGeoPoint.latitude
+                minDistanceLocation.longitude = minDistanceGeoPoint.longitude
+            }
+
+            val additionalDistance = minDistanceLocation.distanceTo(endMarkerLocation)
+            distanceTracker.averageSpeed += additionalDistance / locationCounter
+
+            if (minDistanceGeoPoint != null) {
+                updateEndMarkerLocation(minDistanceGeoPoint)
+            }
+
+            resetLocationCounter()
+            clearLocationList()
+
             Log.d(
                 "myTag",
                 "Location counter hit 3 and End marker position has been updated to minimum distance position"
             )
-            resetLocationCounter()
-            clearLocationList()
-            //TODO update average speed
         }
     }
 
-    private fun clearLocationList() {
+    fun clearLocationList() {
         locationList.clear()
     }
 
-    fun saveLocationForOptimization(location: GeoPoint, distance: Float) {
+    private fun saveLocationForOptimization(location: GeoPoint, distance: Float) {
         locationList[distance] = location
         Log.d("myTag", String.format("Location counter is $locationCounter"))
         Log.d("myTag", String.format("Location to save is : $location"))
@@ -244,7 +258,7 @@ class MapHelper(
         Log.d("myTag", String.format("Location list is: $locationList"))
     }
 
-    fun incrementPauseCounter() {
+    private fun incrementPauseCounter() {
         pauseSessionCounter++
         Log.d("myTag", String.format("Pause counter is $pauseSessionCounter"))
     }
@@ -253,7 +267,7 @@ class MapHelper(
         pauseSessionCounter = 0
     }
 
-    fun checkPauseCounter() {
+    private fun checkPauseCounter() {
         if (pauseSessionCounter == 10) {
             Toast.makeText(context, "Session paused because of idling!", Toast.LENGTH_SHORT).show()
             distanceTracker.pauseSession()
@@ -265,12 +279,12 @@ class MapHelper(
         }
     }
 
-    fun setPauseLocation(geoPoint: GeoPoint) {
+    private fun setPauseLocation(geoPoint: GeoPoint) {
         //save current position for a potential pause activation
         prePauseLocation = geoPoint
     }
 
-    fun savePauseRoute() {
+    private fun savePauseRoute() {
         //save current route for a potential pause activation
         for (geoPoint in route.actualPoints) {
             prePauseRoute.addPoint(geoPoint)
@@ -287,11 +301,11 @@ class MapHelper(
         Log.d("myTag", "Changed route to pre pause route")
     }
 
-    fun incrementResumeCounter() {
+    private fun incrementResumeCounter() {
         resumeSessionCounter++
     }
 
-    fun checkResumeCounter() {
+    private fun checkResumeCounter() {
         if (resumeSessionCounter > 5) {
             Toast.makeText(context, "Session resumed", Toast.LENGTH_SHORT).show()
             distanceTracker.resumeSession()
@@ -312,6 +326,7 @@ class MapHelper(
         checkPauseCounter()
         setPauseLocation(geoPoint)
         savePauseRoute()
+        Log.d("myTag", "Distance too low, updated Pause Counter")
     }
 
     fun updateLocationCounter(geoPoint: GeoPoint, distance: Float) {
@@ -320,7 +335,7 @@ class MapHelper(
         checkLocationCounter()
     }
 
-    fun updateResumeCounter(){
+    fun updateResumeCounter() {
         incrementResumeCounter()
         checkResumeCounter()
     }
