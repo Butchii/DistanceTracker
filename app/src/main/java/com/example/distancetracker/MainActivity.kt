@@ -55,6 +55,10 @@ open class MainActivity : AppCompatActivity() {
                     "myTag",
                     String.format("Distance walked ${locations[0].distanceTo(lastLocation)} metres")
                 )
+                Log.d(
+                    "myTag",
+                    String.format("Total Distance walked ${distanceTracker.totalDistance} metres")
+                )
                 if (distanceTracker.isRecording()) {
                     if (distanceTracker.mapHelper.isDistanceWithinTheLimits(distance)) {
                         distanceTracker.acceptLocation(distance, newLocationAsGeoPoint)

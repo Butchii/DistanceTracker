@@ -53,8 +53,8 @@ class MapHelper(
 
     private var resumeSessionCounter: Int = 0
 
-    private var lowerDistanceThreshHold: Double = 0.41
-    private var upperDistanceThreshHold: Double = (7500 / 3600).toDouble()
+    private var lowerDistanceThreshHold: Double = 0.55  //  2  km/h
+    private var upperDistanceThreshHold: Double = 2.08  // 7,5 km/h
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
