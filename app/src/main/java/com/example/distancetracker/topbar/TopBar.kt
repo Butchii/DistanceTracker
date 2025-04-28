@@ -56,7 +56,7 @@ class TopBar(
         routeLayout.visibility = View.VISIBLE
         showingRouteList = true
         topBarLayout.layoutParams =
-            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 8f)
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
     }
 
     private fun hideRouteList(){
@@ -76,7 +76,7 @@ class TopBar(
             topBarLayout.layoutParams =
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
             distanceTracker.mapHelper.map.layoutParams =
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 6f)
         }
     }
 

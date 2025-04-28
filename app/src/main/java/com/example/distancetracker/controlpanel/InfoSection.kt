@@ -52,4 +52,13 @@ class InfoSection(
             averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
         }
     }
+
+    fun setAverageSpeed() {
+        averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
+    }
+
+    fun setTotalDistance() {
+        totalDistanceTV.text = String.format("%.2f km", distanceTracker.totalDistance)
+    }
+
 }
