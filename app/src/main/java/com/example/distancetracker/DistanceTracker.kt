@@ -27,6 +27,8 @@ class DistanceTracker(
 
     lateinit var sessionTimer: CustomTimer
 
+    var locatedFirstTime: Boolean = false
+
     init {
         initializeTopBar()
         initializeMapHelper()
@@ -113,23 +115,23 @@ class DistanceTracker(
 
         mapHelper.updateEndMarkerLocation(newLocation)
         mapHelper.resetPauseCounter()
-        mapHelper.resetLocationCounter()
-        mapHelper.clearLocationList()
+        mapHelper.resetRejectLocationCounter()
+        mapHelper.clearRejectedLocationList()
 
         geoPointList.add(newLocation)
     }
 
-    fun refuseLocation(distance: Float, newLocation:GeoPoint) {
+    fun refuseLocation(distance: Float, newLocation: GeoPoint) {
         if (mapHelper.isDistanceTooHigh(distance)) {
             mapHelper.updateLocationCounter(
                 newLocation,
                 distance
             )
             mapHelper.resetPauseCounter()
-        }else{
+        } else {
             mapHelper.updatePauseCounter(newLocation)
-            mapHelper.resetLocationCounter()
-            mapHelper.clearLocationList()
+            mapHelper.resetRejectLocationCounter()
+            mapHelper.clearRejectedLocationList()
         }
     }
 }

@@ -44,6 +44,10 @@ open class MainActivity : AppCompatActivity() {
         override fun onLocationResult(p0: LocationResult) {
             super.onLocationResult(p0)
             val locations = p0.locations
+            Log.d(
+                "myTag",
+                String.format("total distance walked before : ${distanceTracker.totalDistance}")
+            )
             val newLocationAsGeoPoint =
                 GeoPoint(locations[0].latitude, locations[0].longitude)
             if (!distanceTracker.hasStartedSession()) {
@@ -71,6 +75,14 @@ open class MainActivity : AppCompatActivity() {
                         distanceTracker.mapHelper.updateResumeCounter()
                     }
                 }
+            }
+            Log.d(
+                "myTag",
+                String.format("total distance walked after : ${distanceTracker.totalDistance}")
+            )
+            if (!distanceTracker.locatedFirstTime) {
+                distanceTracker.mapHelper.centerOnPoint(newLocationAsGeoPoint)
+                distanceTracker.locatedFirstTime = !distanceTracker.locatedFirstTime
             }
         }
     }

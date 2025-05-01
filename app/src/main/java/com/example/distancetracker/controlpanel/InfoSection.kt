@@ -1,6 +1,7 @@
 package com.example.distancetracker.controlpanel
 
 import android.content.Context
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -40,7 +41,9 @@ class InfoSection(
     }
 
     fun updateTotalDistance(distanceWalked: Float) {
+        Log.d("myTag",String.format("total distance was ${distanceTracker.totalDistance} "))
         distanceTracker.totalDistance += distanceWalked
+        Log.d("myTag",String.format("total distance is ${distanceTracker.totalDistance} "))
         val totalDistanceMetres = distanceTracker.totalDistance / 1000
         totalDistanceTV.text = String.format("%.2f km", totalDistanceMetres)
     }
@@ -50,6 +53,7 @@ class InfoSection(
             distanceTracker.averageSpeed =
                 (distanceTracker.totalDistance / (distanceTracker.sessionTimer.sessionSeconds + (distanceTracker.sessionTimer.sessionMinutes * 60) + (distanceTracker.sessionTimer.sessionHours * 3600))) * 3.6
             averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
+            Log.d("myTAg",String.format("this is the other avg ${distanceTracker.averageSpeed}"))
         }
     }
 

@@ -44,8 +44,8 @@ class MapHelper(
 
     var endMarkerLocation: Location = Location("")
 
-    private var locationList: HashMap<Float, GeoPoint> = HashMap()
-    private var locationCounter: Int = 0
+    private var rejectedLocations: HashMap<Float, GeoPoint> = HashMap()
+    private var rejectLocationCounter: Int = 0
 
     private var pauseSessionCounter: Int = 0
 
@@ -77,7 +77,7 @@ class MapHelper(
         setupMap()
         configureMarkers()
         map.overlays.add(route)
-        centerOnPoint()
+        centerOnPoint(currentLocation)
         startLocationsUpdates()
     }
 
@@ -97,8 +97,8 @@ class MapHelper(
         map.controller.setZoom(15)
     }
 
-    private fun centerOnPoint() {
-        map.controller.animateTo(currentLocation)
+    fun centerOnPoint(location: GeoPoint) {
+        map.controller.animateTo(location)
     }
 
     fun isLocationEnabled(): Boolean {
@@ -223,50 +223,45 @@ class MapHelper(
     }
 
     private fun increaseLocationCounter() {
-        locationCounter++
+        rejectLocationCounter++
     }
 
-    fun resetLocationCounter() {
-        locationCounter = 0
+    fun resetRejectLocationCounter() {
+        rejectLocationCounter = 0
     }
 
     private fun checkLocationCounter() {
-        if (locationCounter == 3) {
-            val minDistanceGeoPoint = locationList[Collections.min(locationList.keys)]
+        if (rejectLocationCounter == 5) {
+            val minDistanceGeoPoint = rejectedLocations[Collections.min(rejectedLocations.keys)]
 
             val minDistanceLocation = Location("")
             if (minDistanceGeoPoint != null) {
                 minDistanceLocation.latitude = minDistanceGeoPoint.latitude
                 minDistanceLocation.longitude = minDistanceGeoPoint.longitude
+                val additionalDistance = minDistanceLocation.distanceTo(endMarkerLocation)
+                distanceTracker.acceptLocation(additionalDistance, minDistanceGeoPoint)
+                distanceTracker.averageSpeed += additionalDistance / rejectLocationCounter
             }
-
-            val additionalDistance = minDistanceLocation.distanceTo(endMarkerLocation)
-            distanceTracker.averageSpeed += additionalDistance / locationCounter
-
-            if (minDistanceGeoPoint != null) {
-                updateEndMarkerLocation(minDistanceGeoPoint)
-            }
-
-            resetLocationCounter()
-            clearLocationList()
+            resetRejectLocationCounter()
+            clearRejectedLocationList()
 
             Log.d(
                 "myTag",
-                "Location counter hit 3 and End marker position has been updated to saved minimum distance position"
+                "Location counter hit 5 and End marker position has been updated to saved minimum distance position"
             )
         }
     }
 
-    fun clearLocationList() {
-        locationList.clear()
+    fun clearRejectedLocationList() {
+        rejectedLocations.clear()
     }
 
     private fun saveLocationForOptimization(location: GeoPoint, distance: Float) {
-        locationList[distance] = location
-        Log.d("myTag", String.format("Location counter is $locationCounter"))
+        rejectedLocations[distance] = location
+        Log.d("myTag", String.format("Location counter is $rejectLocationCounter"))
         Log.d("myTag", String.format("Location to save is : $location"))
         Log.d("myTag", String.format("Distance is : $distance"))
-        Log.d("myTag", String.format("Location list is: $locationList"))
+        Log.d("myTag", String.format("Location list is: $rejectedLocations"))
     }
 
     private fun incrementPauseCounter() {
@@ -296,21 +291,24 @@ class MapHelper(
 
     private fun resetSessionInformation() {
         resetSessionTotalDistance()
-        resetSessionAverageSpeed()
+        // resetSessionAverageSpeed()
         resetSessionTime()
     }
 
     private fun resetSessionAverageSpeed() {
+        Log.d("myTag", String.format("this is the saved avg speed $prePauseAverageSpeed"))
         distanceTracker.averageSpeed = prePauseAverageSpeed
         distanceTracker.controlPanel.infoSection.setAverageSpeed()
     }
 
     private fun resetSessionTotalDistance() {
+        Log.d("myTag", String.format("this is the saved total distance $prePauseTotalDistance"))
         distanceTracker.totalDistance = prePauseTotalDistance
         distanceTracker.controlPanel.infoSection.setTotalDistance()
     }
 
     private fun resetSessionTime() {
+        Log.d("myTag", String.format("this is the saved seconds $prePauseSessionSeconds"))
         distanceTracker.sessionTimer.sessionSeconds = prePauseSessionSeconds
         distanceTracker.sessionTimer.sessionMinutes = prePauseSessionMinutes
         distanceTracker.sessionTimer.sessionHours = prePauseSessionHours
@@ -401,7 +399,7 @@ class MapHelper(
     }
 
     private fun saveSessionTotalDistance() {
-        prePauseTotalDistance = distanceTracker.totalDistance
+        prePauseTotalDistance = distanceTracker.totalDistance / 1000
     }
 
     fun updateLocationCounter(geoPoint: GeoPoint, distance: Float) {
