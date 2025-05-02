@@ -61,8 +61,8 @@ class MapHelper(
 
     private var resumeSessionCounter: Int = 0
 
-    private var lowerDistanceThreshold: Double = 0.28  //  2  km/h
-    private var upperDistanceThreshold: Double = 1.04  // 7,5 km/h
+    private var lowerDistanceThreshold: Double = 0.55  //  2  km/h
+    private var upperDistanceThreshold: Double = 2.08  // 7,5 km/h
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
@@ -211,7 +211,7 @@ class MapHelper(
     }
 
     private fun createLocationRequest() {
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 500).build()
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
     }
 
     fun hideMap() {
@@ -261,7 +261,6 @@ class MapHelper(
         Log.d("myTag", String.format("Location counter is $rejectLocationCounter"))
         Log.d("myTag", String.format("Location to save is : $location"))
         Log.d("myTag", String.format("Distance is : $distance"))
-        Log.d("myTag", String.format("Location list is: $rejectedLocations"))
     }
 
     private fun incrementPauseCounter() {

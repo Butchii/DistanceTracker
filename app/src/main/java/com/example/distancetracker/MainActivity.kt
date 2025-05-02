@@ -6,6 +6,7 @@ import org.osmdroid.util.GeoPoint
 import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import org.osmdroid.views.overlay.Marker
 
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
@@ -54,6 +55,7 @@ open class MainActivity : AppCompatActivity() {
                 distanceTracker.mapHelper.updateStartMarkerLocation(newLocationAsGeoPoint)
             } else {
                 val lastLocation = distanceTracker.mapHelper.endMarkerLocation
+
                 val distance = locations[0].distanceTo(lastLocation)
                 Log.d(
                     "myTag",
@@ -62,12 +64,8 @@ open class MainActivity : AppCompatActivity() {
                 if (distanceTracker.isRecording()) {
                     if (distanceTracker.mapHelper.isDistanceWithinTheLimits(distance)) {
                         distanceTracker.acceptLocation(distance, newLocationAsGeoPoint)
-                        Log.d(
-                            "myTag",
-                            String.format("Total Distance walked ${distanceTracker.totalDistance} metres")
-                        )
                     } else {
-                        distanceTracker.refuseLocation(distance, newLocationAsGeoPoint)
+                        distanceTracker.rejectLocation(distance, newLocationAsGeoPoint)
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {
@@ -75,14 +73,21 @@ open class MainActivity : AppCompatActivity() {
                         distanceTracker.mapHelper.updateResumeCounter()
                     }
                 }
+                Log.d(
+                    "myTag",
+                    String.format("total distance walked after : ${distanceTracker.totalDistance}")
+                )
+                Log.d(
+                    "myTag",
+                    String.format("total distance saved in textview : ${distanceTracker.controlPanel.infoSection.totalDistanceTV.text}")
+                )
             }
-            Log.d(
-                "myTag",
-                String.format("total distance walked after : ${distanceTracker.totalDistance}")
-            )
             if (!distanceTracker.locatedFirstTime) {
                 distanceTracker.mapHelper.centerOnPoint(newLocationAsGeoPoint)
                 distanceTracker.locatedFirstTime = !distanceTracker.locatedFirstTime
+
+                distanceTracker.mapHelper.endMarkerLocation.latitude = locations[0].latitude
+                distanceTracker.mapHelper.endMarkerLocation.longitude = locations[0].longitude
             }
         }
     }

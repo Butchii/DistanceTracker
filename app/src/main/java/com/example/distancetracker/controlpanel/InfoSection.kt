@@ -13,8 +13,7 @@ class InfoSection(
     private val distanceTracker: DistanceTracker,
     private val context: Context
 ) {
-
-    private lateinit var totalDistanceTV: TextView
+    lateinit var totalDistanceTV: TextView
     private lateinit var averageSpeedTV: TextView
 
     init {
@@ -41,11 +40,11 @@ class InfoSection(
     }
 
     fun updateTotalDistance(distanceWalked: Float) {
-        Log.d("myTag",String.format("total distance was ${distanceTracker.totalDistance} "))
         distanceTracker.totalDistance += distanceWalked
-        Log.d("myTag",String.format("total distance is ${distanceTracker.totalDistance} "))
+
         val totalDistanceMetres = distanceTracker.totalDistance / 1000
-        totalDistanceTV.text = String.format("%.2f km", totalDistanceMetres)
+
+        totalDistanceTV.text = String.format("%.3f km", totalDistanceMetres)
     }
 
     fun updateAverageSpeed() {
@@ -53,7 +52,7 @@ class InfoSection(
             distanceTracker.averageSpeed =
                 (distanceTracker.totalDistance / (distanceTracker.sessionTimer.sessionSeconds + (distanceTracker.sessionTimer.sessionMinutes * 60) + (distanceTracker.sessionTimer.sessionHours * 3600))) * 3.6
             averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
-            Log.d("myTAg",String.format("this is the other avg ${distanceTracker.averageSpeed}"))
+            Log.d("myTAg", String.format("this is the other avg ${distanceTracker.averageSpeed}"))
         }
     }
 

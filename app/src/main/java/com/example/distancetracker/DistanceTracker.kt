@@ -1,6 +1,7 @@
 package com.example.distancetracker
 
 import android.content.Context
+import android.util.Log
 import android.widget.LinearLayout
 import com.example.distancetracker.controlpanel.ControlPanel
 import com.example.distancetracker.topbar.TopBar
@@ -121,7 +122,7 @@ class DistanceTracker(
         geoPointList.add(newLocation)
     }
 
-    fun refuseLocation(distance: Float, newLocation: GeoPoint) {
+    fun rejectLocation(distance: Float, newLocation: GeoPoint) {
         if (mapHelper.isDistanceTooHigh(distance)) {
             mapHelper.updateLocationCounter(
                 newLocation,
