@@ -6,7 +6,6 @@ import org.osmdroid.util.GeoPoint
 import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
-import org.osmdroid.views.overlay.Marker
 
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
@@ -42,9 +41,9 @@ open class MainActivity : AppCompatActivity() {
     }
 
     private var locationCallback: LocationCallback = object : LocationCallback() {
-        override fun onLocationResult(p0: LocationResult) {
-            super.onLocationResult(p0)
-            val locations = p0.locations
+        override fun onLocationResult(newLocation: LocationResult) {
+            super.onLocationResult(newLocation)
+            val locations = newLocation.locations
             Log.d(
                 "myTag",
                 String.format("total distance walked before : ${distanceTracker.totalDistance}")
@@ -53,6 +52,7 @@ open class MainActivity : AppCompatActivity() {
                 GeoPoint(locations[0].latitude, locations[0].longitude)
             if (!distanceTracker.hasStartedSession()) {
                 distanceTracker.mapHelper.updateStartMarkerLocation(newLocationAsGeoPoint)
+                distanceTracker.mapHelper.updateEndMarkerLocation(newLocationAsGeoPoint)
             } else {
                 val lastLocation = distanceTracker.mapHelper.endMarkerLocation
 
