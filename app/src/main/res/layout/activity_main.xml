@@ -34,9 +34,9 @@
             <ImageButton
                 android:id="@+id/settingsBtn"
                 style="@style/buttonLayout"
-                android:contentDescription="@string/open_saved_tracks_list"
                 android:layout_marginEnd="15dp"
                 android:alpha="0.2"
+                android:contentDescription="@string/open_saved_tracks_list"
                 android:src="@drawable/settings_icon" />
 
             <ImageButton
@@ -95,7 +95,27 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6" />
+        android:layout_weight="4" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:layout_weight="2">
+
+        <LinearLayout
+            android:id="@+id/debugLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
 
     <View
         android:layout_width="match_parent"

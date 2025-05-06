@@ -353,8 +353,8 @@ class MapHelper(
         }
     }
 
-    fun isDistanceWithinTheLimits(distance: Float): Boolean {
-        return distance > lowerDistanceThreshold && distance < upperDistanceThreshold
+    fun isDistanceValid(distance: Float): Boolean {
+        return distance > lowerDistanceThreshold
     }
 
     fun isDistanceTooHigh(distance: Float): Boolean {

@@ -122,17 +122,10 @@ class DistanceTracker(
         geoPointList.add(newLocation)
     }
 
-    fun rejectLocation(distance: Float, newLocation: GeoPoint) {
-        if (mapHelper.isDistanceTooHigh(distance)) {
-            mapHelper.updateLocationCounter(
-                newLocation,
-                distance
-            )
-            mapHelper.resetPauseCounter()
-        } else {
-            mapHelper.updatePauseCounter(newLocation)
-            mapHelper.resetRejectLocationCounter()
-            mapHelper.clearRejectedLocationList()
-        }
+    fun rejectLocation(newLocation: GeoPoint) {
+        mapHelper.updatePauseCounter(newLocation)
+        mapHelper.resetRejectLocationCounter()
+        mapHelper.clearRejectedLocationList()
+
     }
 }
