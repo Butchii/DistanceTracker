@@ -33,6 +33,9 @@ class DistanceTracker(
 
     var locatedFirstTime: Boolean = false
 
+    var activeAutoPause: Boolean = true
+    var activeAutoResume: Boolean = true
+
     init {
         initializeTopBar()
         initializeMapHelper()
@@ -127,7 +130,5 @@ class DistanceTracker(
 
     fun rejectLocation(newLocation: GeoPoint) {
         mapHelper.updatePauseCounter(newLocation)
-        mapHelper.resetRejectLocationCounter()
-        mapHelper.clearRejectedLocationList()
     }
 }

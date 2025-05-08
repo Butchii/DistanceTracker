@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Switch
 import android.widget.TextView
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
@@ -29,6 +30,11 @@ class TopBar(
 
     private var showingRoutes: Boolean = false
     private var showingSettings: Boolean = false
+
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private lateinit var autoPauseSwitch:Switch
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private lateinit var autoResumeSwitch:Switch
 
     private var routeList: ArrayList<Route> = ArrayList()
 
@@ -92,6 +98,22 @@ class TopBar(
     @SuppressLint("InflateParams")
     private fun initializeSettingsLayout() {
         settingsLayout = LayoutInflater.from(context).inflate(R.layout.settings_menu, null)
+        initializeAutoPauseSwitch()
+        initializeAutoResumeSwitch()
+    }
+
+    private fun initializeAutoResumeSwitch(){
+        autoResumeSwitch = settingsLayout.findViewById(R.id.resumeSwitch)
+        autoResumeSwitch.setOnClickListener {
+            distanceTracker.activeAutoResume = !autoResumeSwitch.isChecked
+        }
+    }
+
+    private fun initializeAutoPauseSwitch(){
+        autoPauseSwitch = settingsLayout.findViewById(R.id.pauseSwitch)
+        autoPauseSwitch.setOnClickListener {
+            distanceTracker.activeAutoPause = !autoPauseSwitch.isChecked
+        }
     }
 
     private fun initializeRoutesBtn() {

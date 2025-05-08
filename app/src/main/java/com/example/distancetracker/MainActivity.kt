@@ -65,7 +65,7 @@ open class MainActivity : AppCompatActivity() {
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {
-                    if (distanceTracker.mapHelper.isDistanceValid(distance)) {
+                    if (distanceTracker.mapHelper.isDistanceValid(distance) && distanceTracker.activeAutoResume) {
                         distanceTracker.mapHelper.updateResumeCounter()
                     }
                 }
