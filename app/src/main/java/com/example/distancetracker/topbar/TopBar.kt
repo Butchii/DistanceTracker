@@ -35,16 +35,18 @@ class TopBar(
     init {
         initializeTopBarExpandLayout()
         initializeRouteListLayout()
-        loadSettingsLayout()
+        initializeSettingsLayout()
         initializeRoutesBtn()
-        initializeOptionsBtn()
+        initializeSettingsBtn()
     }
 
-    private fun initializeOptionsBtn() {
+    private fun initializeSettingsBtn() {
         settingsBtn = topBarLayout.findViewById(R.id.settingsBtn)
 
         settingsBtn.setOnClickListener {
             if (!showingSettings) {
+                showingRoutes = false
+                topBarExpand.removeAllViews()
                 showSettings()
                 showTopBarExpand()
                 distanceTracker.mapHelper.hideMap()
@@ -88,7 +90,7 @@ class TopBar(
     }
 
     @SuppressLint("InflateParams")
-    private fun loadSettingsLayout() {
+    private fun initializeSettingsLayout() {
         settingsLayout = LayoutInflater.from(context).inflate(R.layout.settings_menu, null)
     }
 
@@ -97,7 +99,10 @@ class TopBar(
 
         routesBtn.setOnClickListener {
             if (!showingRoutes) {
+                topBarExpand.removeAllViews()
+                showingSettings = false
                 FireStore.getRoutes(routeList, this)
+                showTopBarExpand()
                 showRouteList()
                 distanceTracker.mapHelper.hideMap()
             } else {
