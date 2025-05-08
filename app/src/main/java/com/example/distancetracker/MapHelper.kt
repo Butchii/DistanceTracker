@@ -62,7 +62,6 @@ class MapHelper(
     private var resumeSessionCounter: Int = 0
 
     private var lowerDistanceThreshold: Double = 0.55  //  2  km/h
-    private var upperDistanceThreshold: Double = 2.08  // 7,5 km/h
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
@@ -222,45 +221,13 @@ class MapHelper(
         map.visibility = View.VISIBLE
     }
 
-    private fun increaseLocationCounter() {
-        rejectLocationCounter++
-    }
-
     fun resetRejectLocationCounter() {
         rejectLocationCounter = 0
     }
 
-    private fun checkLocationCounter() {
-        if (rejectLocationCounter == 5) {
-            val minDistanceGeoPoint = rejectedLocations[Collections.min(rejectedLocations.keys)]
-
-            val minDistanceLocation = Location("")
-            if (minDistanceGeoPoint != null) {
-                minDistanceLocation.latitude = minDistanceGeoPoint.latitude
-                minDistanceLocation.longitude = minDistanceGeoPoint.longitude
-                val additionalDistance = minDistanceLocation.distanceTo(endMarkerLocation)
-                distanceTracker.acceptLocation(additionalDistance, minDistanceGeoPoint)
-                distanceTracker.averageSpeed += additionalDistance / rejectLocationCounter
-            }
-            resetRejectLocationCounter()
-            clearRejectedLocationList()
-
-            Log.d(
-                "myTag",
-                "Location counter hit 5 and End marker position has been updated to saved minimum distance position"
-            )
-        }
-    }
 
     fun clearRejectedLocationList() {
         rejectedLocations.clear()
-    }
-
-    private fun saveLocationForOptimization(location: GeoPoint, distance: Float) {
-        rejectedLocations[distance] = location
-        Log.d("myTag", String.format("Location counter is $rejectLocationCounter"))
-        Log.d("myTag", String.format("Location to save is : $location"))
-        Log.d("myTag", String.format("Distance is : $distance"))
     }
 
     private fun incrementPauseCounter() {
@@ -290,7 +257,7 @@ class MapHelper(
 
     private fun resetSessionInformation() {
         resetSessionTotalDistance()
-        // resetSessionAverageSpeed()
+        resetSessionAverageSpeed()
         resetSessionTime()
     }
 
@@ -357,10 +324,6 @@ class MapHelper(
         return distance > lowerDistanceThreshold
     }
 
-    fun isDistanceTooHigh(distance: Float): Boolean {
-        return distance > upperDistanceThreshold
-    }
-
     fun updatePauseCounter(geoPoint: GeoPoint) {
         incrementPauseCounter()
         if (pauseSessionCounter == 1) {
@@ -394,17 +357,11 @@ class MapHelper(
     }
 
     private fun saveSessionSeconds() {
-        prePauseSessionSeconds = distanceTracker.sessionTimer.sessionSeconds
+        prePauseSessionSeconds = distanceTracker.sessionTimer.sessionSeconds - 1
     }
 
     private fun saveSessionTotalDistance() {
         prePauseTotalDistance = distanceTracker.totalDistance / 1000
-    }
-
-    fun updateLocationCounter(geoPoint: GeoPoint, distance: Float) {
-        increaseLocationCounter()
-        saveLocationForOptimization(geoPoint, distance)
-        checkLocationCounter()
     }
 
     fun updateResumeCounter() {

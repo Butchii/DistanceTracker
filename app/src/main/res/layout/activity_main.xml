@@ -35,7 +35,6 @@
                 android:id="@+id/settingsBtn"
                 style="@style/buttonLayout"
                 android:layout_marginEnd="15dp"
-                android:alpha="0.2"
                 android:contentDescription="@string/open_saved_tracks_list"
                 android:src="@drawable/settings_icon" />
 
@@ -47,42 +46,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/routeListLayout"
+            android:id="@+id/topBarExpandLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:id="@+id/routeList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </ScrollView>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:padding="20dp">
-
-                <ImageButton
-                    android:id="@+id/closeListBtn"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@color/white"
-                    android:contentDescription="@string/close_list_icon"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/close_list_icon" />
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -95,27 +62,12 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4" />
+        android:layout_weight="6" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/black" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/white"
-        android:layout_weight="2">
-
-        <LinearLayout
-            android:id="@+id/debugLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="vertical">
-        </LinearLayout>
-    </ScrollView>
 
     <View
         android:layout_width="match_parent"

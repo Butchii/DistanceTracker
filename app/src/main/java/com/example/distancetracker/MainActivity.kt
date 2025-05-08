@@ -14,15 +14,10 @@ import com.google.android.gms.location.LocationResult
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
 
-
-    private lateinit var debugLayout: LinearLayout
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         createDistanceTracker()
-
-        debugLayout = findViewById(R.id.debugLayout)
     }
 
     private fun createDistanceTracker() {
@@ -62,15 +57,11 @@ open class MainActivity : AppCompatActivity() {
                 val lastLocation = distanceTracker.mapHelper.endMarkerLocation
 
                 val distance = locations[0].distanceTo(lastLocation)
-
-                createDebugMessage(String.format("Distance walked ${locations[0].distanceTo(lastLocation)} metres"))
                 if (distanceTracker.isRecording()) {
                     if (distanceTracker.mapHelper.isDistanceValid(distance)) {
                         distanceTracker.acceptLocation(distance, newLocationAsGeoPoint)
-                        createDebugMessage(String.format("Distance accepted"))
                     } else {
                         distanceTracker.rejectLocation(newLocationAsGeoPoint)
-                        createDebugMessage(String.format("Distance denied"))
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {
@@ -89,12 +80,4 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("InflateParams")
-    private fun createDebugMessage(message: String) {
-        val debugMessageLayout =
-            LayoutInflater.from(applicationContext).inflate(R.layout.debug_message, null)
-        val debugMessage = debugMessageLayout.findViewById<TextView>(R.id.debugMessage)
-        debugMessage.text = message
-        debugLayout.addView(debugMessageLayout)
-    }
 }

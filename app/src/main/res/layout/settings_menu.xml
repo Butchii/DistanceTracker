@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -12,9 +13,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="70dp"
             android:gravity="center_vertical"
-            android:padding="20dp">
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -28,20 +30,23 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
-            <androidx.appcompat.widget.SwitchCompat
+            <Switch
                 android:id="@+id/pauseSwitch"
                 android:layout_width="100dp"
-                android:layout_height="48dp" />
+                android:layout_height="48dp"
+                android:checked="true"
+                android:switchMinWidth="60dp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             android:paddingBottom="10dp"
             android:text="@string/pause_session_if_distance_walked_is_too_low_5_times_in_a_row"
-            android:textColor="@color/grey"/>
+            android:textColor="@color/grey" />
     </LinearLayout>
 
     <View
@@ -56,9 +61,10 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="70dp"
             android:gravity="center_vertical"
-            android:padding="20dp">
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -72,20 +78,23 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
-            <androidx.appcompat.widget.SwitchCompat
+            <Switch
                 android:id="@+id/resumeSwitch"
                 android:layout_width="100dp"
-                android:layout_height="48dp" />
+                android:layout_height="48dp"
+                android:checked="true"
+                android:switchMinWidth="60dp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             android:paddingBottom="10dp"
             android:text="@string/resume_session_if_movement_is_recognized_5_times_in_a_row"
-            android:textColor="@color/grey"/>
+            android:textColor="@color/grey" />
     </LinearLayout>
 
     <View

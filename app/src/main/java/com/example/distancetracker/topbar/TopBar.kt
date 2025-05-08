@@ -18,60 +18,107 @@ class TopBar(
     private val topBarLayout: LinearLayout,
     private val distanceTracker: DistanceTracker
 ) {
-    private lateinit var listBtn: ImageButton
-    private lateinit var routeLayout: LinearLayout
-    private lateinit var routeListLayout:LinearLayout
+    private lateinit var routesBtn: ImageButton
+    private lateinit var settingsBtn: ImageButton
+    private lateinit var topBarExpand: LinearLayout
 
-    private var showingRouteList: Boolean = false
+    private lateinit var routeListLayout: View
+    private lateinit var settingsLayout: View
+
+    private lateinit var routeListContainer: LinearLayout
+
+    private var showingRoutes: Boolean = false
+    private var showingSettings: Boolean = false
 
     private var routeList: ArrayList<Route> = ArrayList()
 
     init {
-        initializeRouteLayout()
-        initializeListBtn()
-        initializeCloseListBtn()
+        initializeTopBarExpandLayout()
+        initializeRouteListLayout()
+        loadSettingsLayout()
+        initializeRoutesBtn()
+        initializeOptionsBtn()
     }
 
-    private fun initializeRouteLayout() {
-        routeLayout = topBarLayout.findViewById(R.id.routeListLayout)
-        routeListLayout = routeLayout.findViewById(R.id.routeList)
-    }
+    private fun initializeOptionsBtn() {
+        settingsBtn = topBarLayout.findViewById(R.id.settingsBtn)
 
-    private fun initializeListBtn() {
-        listBtn = topBarLayout.findViewById(R.id.listBtn)
-
-        listBtn.setOnClickListener {
-            if (!showingRouteList) {
-                FireStore.getRoutes(routeList, this)
-                showRouteList()
-                distanceTracker.mapHelper.hideMap()                
+        settingsBtn.setOnClickListener {
+            if (!showingSettings) {
+                showSettings()
+                showTopBarExpand()
+                distanceTracker.mapHelper.hideMap()
             } else {
-                hideRouteList()
+                hideTopBarExpand()
                 distanceTracker.mapHelper.showMap()
             }
         }
     }
 
-    private fun showRouteList(){
-        routeLayout.visibility = View.VISIBLE
-        showingRouteList = true
+    private fun showSettings() {
+        showingSettings = true
+        topBarExpand.addView(settingsLayout)
+    }
+
+    private fun showTopBarExpand() {
+        topBarExpand.visibility = View.VISIBLE
         topBarLayout.layoutParams =
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
     }
 
-    private fun hideRouteList(){
-        routeLayout.visibility = View.GONE
-        showingRouteList = false
+    private fun hideTopBarExpand() {
+        topBarExpand.visibility = View.GONE
+        topBarExpand.removeAllViews()
+        showingSettings = false
+        showingRoutes = false
         topBarLayout.layoutParams =
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
     }
 
+    private fun initializeTopBarExpandLayout() {
+        topBarExpand = topBarLayout.findViewById(R.id.topBarExpandLayout)
+    }
+
+    @SuppressLint("InflateParams")
+    private fun initializeRouteListLayout() {
+        routeListLayout = LayoutInflater.from(context).inflate(R.layout.routes_list, null)
+        routeListContainer = routeListLayout.findViewById(R.id.routeListContainer)
+
+        initializeCloseListBtn()
+    }
+
+    @SuppressLint("InflateParams")
+    private fun loadSettingsLayout() {
+        settingsLayout = LayoutInflater.from(context).inflate(R.layout.settings_menu, null)
+    }
+
+    private fun initializeRoutesBtn() {
+        routesBtn = topBarLayout.findViewById(R.id.listBtn)
+
+        routesBtn.setOnClickListener {
+            if (!showingRoutes) {
+                FireStore.getRoutes(routeList, this)
+                showRouteList()
+                distanceTracker.mapHelper.hideMap()
+            } else {
+                hideTopBarExpand()
+                distanceTracker.mapHelper.showMap()
+            }
+        }
+    }
+
+    private fun showRouteList() {
+        showingRoutes = true
+        topBarExpand.addView(routeListLayout)
+    }
+
+
     private fun initializeCloseListBtn() {
-        val closeListBtn = routeLayout.findViewById<ImageButton>(R.id.closeListBtn)
+        val closeListBtn = routeListLayout.findViewById<ImageButton>(R.id.closeListBtn)
         closeListBtn.setOnClickListener {
-            routeLayout.visibility = View.GONE
+            topBarExpand.visibility = View.GONE
             distanceTracker.mapHelper.map.visibility = View.VISIBLE
-            showingRouteList = true
+            showingRoutes = false
 
             topBarLayout.layoutParams =
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f)
@@ -82,14 +129,14 @@ class TopBar(
 
     @SuppressLint("InflateParams")
     fun addRoutesToList() {
-        routeListLayout.removeAllViews()
+        routeListContainer.removeAllViews()
         if (routeList.isEmpty()) {
             val noRoutesHint = LayoutInflater.from(context).inflate(R.layout.no_routes_hint, null)
-            routeListLayout.gravity = Gravity.CENTER
-            routeListLayout.addView(noRoutesHint)
+            routeListContainer.gravity = Gravity.CENTER
+            routeListContainer.addView(noRoutesHint)
         } else {
             for (route in routeList) {
-                routeListLayout.gravity = Gravity.NO_GRAVITY
+                routeListContainer.gravity = Gravity.NO_GRAVITY
                 val newRoute = LayoutInflater.from(context).inflate(R.layout.route_layout, null)
 
                 val routeName = newRoute.findViewById<TextView>(R.id.routeName)
@@ -99,7 +146,7 @@ class TopBar(
                 mapBtn.setOnClickListener {
                     //TODO
                 }
-                routeListLayout.addView(newRoute)
+                routeListContainer.addView(newRoute)
             }
         }
     }
