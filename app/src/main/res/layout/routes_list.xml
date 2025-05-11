@@ -12,8 +12,16 @@
         <LinearLayout
             android:id="@+id/routeListContainer"
             android:layout_width="match_parent"
+            android:minHeight="100dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical" >
+
+            <ProgressBar
+                android:id="@+id/loadingIcon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
     </ScrollView>
 
     <View
