@@ -34,8 +34,6 @@
                 android:id="@+id/pauseSwitch"
                 android:layout_width="100dp"
                 android:layout_height="48dp"
-                android:textOn="On"
-                android:textOff="Off"
                 android:checked="true"
                 android:switchMinWidth="60dp"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />

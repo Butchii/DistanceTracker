@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Switch
@@ -105,14 +106,14 @@ class TopBar(
     private fun initializeAutoResumeSwitch(){
         autoResumeSwitch = settingsLayout.findViewById(R.id.resumeSwitch)
         autoResumeSwitch.setOnClickListener {
-            distanceTracker.activeAutoResume = !autoResumeSwitch.isChecked
+            distanceTracker.activeAutoResume = autoResumeSwitch.isChecked
         }
     }
 
     private fun initializeAutoPauseSwitch(){
         autoPauseSwitch = settingsLayout.findViewById(R.id.pauseSwitch)
         autoPauseSwitch.setOnClickListener {
-            distanceTracker.activeAutoPause = !autoPauseSwitch.isChecked
+            distanceTracker.activeAutoPause = autoPauseSwitch.isChecked
         }
     }
 
