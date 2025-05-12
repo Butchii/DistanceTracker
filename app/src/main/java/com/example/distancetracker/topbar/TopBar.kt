@@ -33,9 +33,10 @@ class TopBar(
     private var showingSettings: Boolean = false
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private lateinit var autoPauseSwitch:Switch
+    private lateinit var autoPauseSwitch: Switch
+
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private lateinit var autoResumeSwitch:Switch
+    private lateinit var autoResumeSwitch: Switch
 
     private var routeList: ArrayList<Route> = ArrayList()
 
@@ -103,14 +104,14 @@ class TopBar(
         initializeAutoResumeSwitch()
     }
 
-    private fun initializeAutoResumeSwitch(){
+    private fun initializeAutoResumeSwitch() {
         autoResumeSwitch = settingsLayout.findViewById(R.id.resumeSwitch)
         autoResumeSwitch.setOnClickListener {
             distanceTracker.activeAutoResume = autoResumeSwitch.isChecked
         }
     }
 
-    private fun initializeAutoPauseSwitch(){
+    private fun initializeAutoPauseSwitch() {
         autoPauseSwitch = settingsLayout.findViewById(R.id.pauseSwitch)
         autoPauseSwitch.setOnClickListener {
             distanceTracker.activeAutoPause = autoPauseSwitch.isChecked
@@ -163,12 +164,15 @@ class TopBar(
             routeListContainer.gravity = Gravity.CENTER
             routeListContainer.addView(noRoutesHint)
         } else {
+            routeListContainer.gravity = Gravity.NO_GRAVITY
             for (route in routeList) {
-                routeListContainer.gravity = Gravity.NO_GRAVITY
                 val newRoute = LayoutInflater.from(context).inflate(R.layout.route_layout, null)
 
                 val routeName = newRoute.findViewById<TextView>(R.id.routeName)
                 routeName.text = route.name
+
+                val routeDate = newRoute.findViewById<TextView>(R.id.routeDate)
+                routeDate.text = route.date
 
                 val mapBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
                 mapBtn.setOnClickListener {
