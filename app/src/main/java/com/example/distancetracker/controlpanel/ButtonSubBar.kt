@@ -147,21 +147,7 @@ class ButtonSubBar(
                 distanceTracker.totalDistance.toString()
             )
         )
-        resetSession()
-    }
-
-    private fun resetSession() {
-        distanceTracker.stopSession()
-        distanceTracker.sessionTimer.resetSessionTimes()
-        distanceTracker.sessionTimer.setSessionDurationDisplay()
-        distanceTracker.controlPanel.infoSection.resetTotalDistance()
-        distanceTracker.controlPanel.infoSection.resetAverageSpeed()
-        distanceTracker.controlPanel.buttonSection.changeSessionButtonDescription(R.string.start_session)
-        distanceTracker.controlPanel.buttonSection.changeSessionButtonIcon(R.drawable.start_icon)
-        distanceTracker.mapHelper.removeRouteFromMap()
-        distanceTracker.mapHelper.removeEndMarker()
-        distanceTracker.mapHelper.resetPauseCounter()
-        hideButtonBar()
+        distanceTracker.resetSession()
     }
 
     fun showResetButton() {
@@ -182,13 +168,13 @@ class ButtonSubBar(
             setTitle("Reset session")
             setMessage("Are you sure you want to reset the current session?")
             setPositiveButton("Yes") { _: DialogInterface?, _: Int ->
-                resetSession()
+                distanceTracker.resetSession()
             }
             setNegativeButton("Cancel") { _, _ -> }
         }.create().show()
     }
 
-    private fun hideButtonBar() {
+    fun hideButtonBar() {
         buttonSubBar.visibility = View.GONE
     }
 

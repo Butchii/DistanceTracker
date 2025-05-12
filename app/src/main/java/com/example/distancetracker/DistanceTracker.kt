@@ -131,4 +131,20 @@ class DistanceTracker(
     fun rejectLocation(newLocation: GeoPoint) {
         mapHelper.updatePauseCounter(newLocation)
     }
+
+    fun resetSession() {
+        stopSession()
+        sessionTimer.resetSessionTimes()
+        sessionTimer.setSessionDurationDisplay()
+        controlPanel.infoSection.resetTotalDistance()
+        controlPanel.infoSection.resetAverageSpeed()
+        controlPanel.buttonSection.changeSessionButtonDescription(R.string.start_session)
+        controlPanel.buttonSection.changeSessionButtonIcon(R.drawable.start_icon)
+        mapHelper.removeRouteFromMap()
+        mapHelper.removeEndMarker()
+        mapHelper.resetPauseCounter()
+        geoPointList.clear()
+        controlPanel.buttonSection.buttonSubBar.hideButtonBar()
+    }
+
 }
