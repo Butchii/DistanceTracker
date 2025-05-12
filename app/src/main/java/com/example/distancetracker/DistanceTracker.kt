@@ -1,11 +1,8 @@
 package com.example.distancetracker
 
-import android.annotation.SuppressLint
+
 import android.content.Context
-import android.util.Log
-import android.view.LayoutInflater
 import android.widget.LinearLayout
-import android.widget.TextView
 import com.example.distancetracker.controlpanel.ControlPanel
 import com.example.distancetracker.topbar.TopBar
 import com.google.android.gms.location.LocationCallback
@@ -81,7 +78,7 @@ class DistanceTracker(
             CustomTimer(distanceTrackerLayout.findViewById(R.id.sessionDuration), mainActivity)
     }
 
-    fun stopSession() {
+    private fun stopSession() {
         sessionTimer.stopTimer()
         startedSession = false
         stopRecording()

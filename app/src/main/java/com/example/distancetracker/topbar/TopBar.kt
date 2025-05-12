@@ -169,13 +169,23 @@ class TopBar(
             for (route in routeList) {
                 val newRoute = LayoutInflater.from(context).inflate(R.layout.route_layout, null)
 
-                newRoute.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 250)
+                newRoute.layoutParams =
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 350)
 
                 val routeName = newRoute.findViewById<TextView>(R.id.routeName)
                 routeName.text = route.name
 
                 val routeDate = newRoute.findViewById<TextView>(R.id.routeDate)
                 routeDate.text = route.date
+
+                val sessionDurationTV = newRoute.findViewById<TextView>(R.id.sessionDuration)
+                sessionDurationTV.text = String.format("Duration: ${route.duration} s")
+
+                val sessionAvgTV = newRoute.findViewById<TextView>(R.id.sessionAvg)
+                sessionAvgTV.text = String.format("Avg Speed: ${route.averageSpeed} km/h")
+
+                val sessionDistanceTV = newRoute.findViewById<TextView>(R.id.sessionDistance)
+                sessionDistanceTV.text = String.format("Distance: ${route.totalDistance} km")
 
                 val mapBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
                 mapBtn.setOnClickListener {
