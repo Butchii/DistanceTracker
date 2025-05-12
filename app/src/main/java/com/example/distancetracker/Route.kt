@@ -1,6 +1,8 @@
 package com.example.distancetracker
 
+import android.annotation.SuppressLint
 import org.osmdroid.util.GeoPoint
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
@@ -13,5 +15,5 @@ data class Route(
     var averageSpeed: String,
     var totalDistance: String,
     var routeId: String = UUID.randomUUID().toString(),
-    var date: String = Calendar.getInstance().time.toString()
+    @SuppressLint("SimpleDateFormat") var date: String = SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().time)
 )

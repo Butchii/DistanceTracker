@@ -14,6 +14,7 @@ import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
 import com.example.distancetracker.Route
+import com.google.api.Distribution.BucketOptions.Linear
 
 class TopBar(
     private val context: Context,
@@ -167,6 +168,8 @@ class TopBar(
             routeListContainer.gravity = Gravity.NO_GRAVITY
             for (route in routeList) {
                 val newRoute = LayoutInflater.from(context).inflate(R.layout.route_layout, null)
+
+                newRoute.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 250)
 
                 val routeName = newRoute.findViewById<TextView>(R.id.routeName)
                 routeName.text = route.name

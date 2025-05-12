@@ -75,11 +75,12 @@ class ButtonSubBar(
         averageSpeedDialog.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
 
         val routeNameWarning = dialog.findViewById<TextView>(R.id.routeNameWarning)
+        val routeNameEntry = dialog.findViewById<EditText>(R.id.routeNameEntry)
 
         val saveBtn = dialog.findViewById<Button>(R.id.saveBtn)
         saveBtn.setOnClickListener {
             if (saveBtn.alpha == 1f) {
-                saveSession()
+                saveSession(routeNameEntry.text.toString())
                 dialog.dismiss()
             } else {
                 Toast.makeText(context, "Route name is not valid!", Toast.LENGTH_SHORT)
@@ -87,7 +88,6 @@ class ButtonSubBar(
             }
         }
 
-        val routeNameEntry = dialog.findViewById<EditText>(R.id.routeNameEntry)
         routeNameEntry.addTextChangedListener(object : TextWatcher {
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -134,11 +134,11 @@ class ButtonSubBar(
         warning.visibility = View.GONE
     }
 
-    private fun saveSession() {
+    private fun saveSession(routeName: String) {
         Toast.makeText(context, "Session saved", Toast.LENGTH_SHORT).show()
         FireStore.uploadRoute(
             Route(
-                "route_name",
+                routeName,
                 String.format(
                     "${distanceTracker.sessionTimer.sessionSeconds + distanceTracker.sessionTimer.sessionMinutes * 60 + distanceTracker.sessionTimer.sessionHours * 3600}"
                 ),
