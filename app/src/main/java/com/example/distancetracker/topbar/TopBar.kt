@@ -1,25 +1,35 @@
 package com.example.distancetracker.topbar
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.util.Log
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
 import com.example.distancetracker.Route
-import com.google.api.Distribution.BucketOptions.Linear
+import org.osmdroid.views.MapView
 
 class TopBar(
     private val context: Context,
     private val topBarLayout: LinearLayout,
-    private val distanceTracker: DistanceTracker
+    private val distanceTracker: DistanceTracker,
+    private val activity: Activity
 ) {
     private lateinit var routesBtn: ImageButton
     private lateinit var settingsBtn: ImageButton
@@ -92,7 +102,7 @@ class TopBar(
 
     @SuppressLint("InflateParams")
     private fun initializeRouteListLayout() {
-        routeListLayout = LayoutInflater.from(context).inflate(R.layout.routes_list, null)
+        routeListLayout = LayoutInflater.from(context).inflate(R.layout.session_list, null)
         routeListContainer = routeListLayout.findViewById(R.id.routeListContainer)
 
         initializeCloseListBtn()
@@ -161,13 +171,13 @@ class TopBar(
     fun addRoutesToList() {
         routeListContainer.removeAllViews()
         if (routeList.isEmpty()) {
-            val noRoutesHint = LayoutInflater.from(context).inflate(R.layout.no_routes_hint, null)
+            val noRoutesHint = LayoutInflater.from(context).inflate(R.layout.no_session_hint, null)
             routeListContainer.gravity = Gravity.CENTER
             routeListContainer.addView(noRoutesHint)
         } else {
             routeListContainer.gravity = Gravity.NO_GRAVITY
             for (route in routeList) {
-                val newRoute = LayoutInflater.from(context).inflate(R.layout.route_layout, null)
+                val newRoute = LayoutInflater.from(context).inflate(R.layout.session_layout, null)
 
                 newRoute.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 350)
@@ -187,12 +197,44 @@ class TopBar(
                 val sessionDistanceTV = newRoute.findViewById<TextView>(R.id.sessionDistance)
                 sessionDistanceTV.text = String.format("Distance: ${route.totalDistance} km")
 
-                val mapBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
-                mapBtn.setOnClickListener {
-                    //TODO
+                val sessionBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
+                sessionBtn.setOnClickListener {
+                    showSessionDialog(route)
                 }
                 routeListContainer.addView(newRoute)
             }
         }
+    }
+
+    private fun showSessionDialog(route: Route) {
+        val dialog = Dialog(activity)
+
+        dialog.setContentView(R.layout.session_dialog)
+
+        val map = dialog.findViewById<MapView>(R.id.map)
+
+        val sessionTotalDistance = dialog.findViewById<TextView>(R.id.sessionDistance)
+        sessionTotalDistance.text = String.format("Distance: ${route.totalDistance} km")
+
+        val sessionDuration = dialog.findViewById<TextView>(R.id.sessionDuration)
+        sessionDuration.text = String.format("Session duration: ${route.duration} s")
+
+        val sessionAvg = dialog.findViewById<TextView>(R.id.sessionAvg)
+        sessionAvg.text = String.format("Average speed: ${route.averageSpeed} km/h")
+
+        val sessionDate = dialog.findViewById<TextView>(R.id.sessionDate)
+        sessionDate.text = route.date
+
+        val closeBtn = dialog.findViewById<Button>(R.id.closeBtn)
+        closeBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.setCancelable(false)
+        dialog.show()
     }
 }
