@@ -89,7 +89,7 @@
 
         <Button
             android:id="@+id/cancelBtn"
-            style="@style/save_dialog_button"
+            style="@style/dialog_button"
             android:text="@string/cancel" />
 
         <View
@@ -99,7 +99,7 @@
 
         <Button
             android:id="@+id/saveBtn"
-            style="@style/save_dialog_button"
+            style="@style/dialog_button"
             android:alpha="0.3"
             android:text="@string/save_session" />
     </LinearLayout>

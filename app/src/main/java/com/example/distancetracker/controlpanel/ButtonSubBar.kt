@@ -62,7 +62,7 @@ class ButtonSubBar(
     private fun showSaveDialog() {
         val dialog = Dialog(activity)
 
-        dialog.setContentView(R.layout.dialog_save_route)
+        dialog.setContentView(R.layout.save_route_dialog)
 
         val totalDistanceDialog = dialog.findViewById<TextView>(R.id.totalDistance)
         val totalDistanceMetres = distanceTracker.totalDistance / 1000

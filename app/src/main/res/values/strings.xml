@@ -26,4 +26,5 @@
     <string name="enable_auto_pause">Auto-Pause</string>
     <string name="resume_session_if_movement_is_recognized_5_times_in_a_row">Resume session if movement is recognized 5 seconds in a row.</string>
     <string name="pause_session_if_distance_walked_is_too_low_5_times_in_a_row">Pause session if distance walked is too low for 10 seconds in a row</string>
+    <string name="close">Close</string>
 </resources>
