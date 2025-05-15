@@ -15,5 +15,6 @@ data class Route(
     var averageSpeed: String,
     var totalDistance: String,
     var routeId: String = UUID.randomUUID().toString(),
-    @SuppressLint("SimpleDateFormat") var date: String = SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().time)
+    @SuppressLint("SimpleDateFormat") var date: String = SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().time),
+    var geoPointsToConvert: ArrayList<HashMap<String,String>> = ArrayList(),
 )

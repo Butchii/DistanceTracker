@@ -4,26 +4,24 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
 import com.example.distancetracker.Route
+import android.util.Log
+import android.widget.Button
+import androidx.core.content.ContextCompat
+import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
 class TopBar(
     private val context: Context,
@@ -212,15 +210,29 @@ class TopBar(
         dialog.setContentView(R.layout.session_dialog)
 
         val map = dialog.findViewById<MapView>(R.id.map)
+        map.controller.setZoom(15)
+
+        val latitude = route.geoPointsToConvert[0]["latitude"].toString().toDouble()
+        val longitude = route.geoPointsToConvert[0]["longitude"].toString().toDouble()
+        map.controller.animateTo(GeoPoint(latitude, longitude))
+
+
+        val startMarker = Marker(map)
+        startMarker.position = GeoPoint(latitude, longitude)
+        startMarker.setAnchor(0.25f, 0.35f)
+        startMarker.icon = ContextCompat.getDrawable(context, R.drawable.start_marker_map_icon)
+        map.overlays.add(startMarker)
+
 
         val sessionTotalDistance = dialog.findViewById<TextView>(R.id.sessionDistance)
-        sessionTotalDistance.text = String.format("Distance: ${route.totalDistance} km")
+        val distance = route.totalDistance.toDouble() / 1000
+        sessionTotalDistance.text = String.format("Distance: %.4s km", distance)
 
         val sessionDuration = dialog.findViewById<TextView>(R.id.sessionDuration)
         sessionDuration.text = String.format("Session duration: ${route.duration} s")
 
         val sessionAvg = dialog.findViewById<TextView>(R.id.sessionAvg)
-        sessionAvg.text = String.format("Average speed: ${route.averageSpeed} km/h")
+        sessionAvg.text = String.format("Average speed: %.2s km/h", route.averageSpeed)
 
         val sessionDate = dialog.findViewById<TextView>(R.id.sessionDate)
         sessionDate.text = route.date

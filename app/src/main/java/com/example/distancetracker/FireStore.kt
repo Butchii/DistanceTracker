@@ -22,6 +22,7 @@ class FireStore {
                         document.get("routeId") as String,
                         document.get("date") as String
                     )
+                    route.geoPointsToConvert.addAll(document.get("geoPoints") as ArrayList<HashMap<String, String>>)
                     routes.add(route)
                 }
                 topBar.addRoutesToList()
