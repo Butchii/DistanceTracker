@@ -124,8 +124,6 @@ class DistanceTracker(
 
         mapHelper.updateEndMarkerLocation(newLocation)
         mapHelper.resetPauseCounter()
-        mapHelper.resetRejectLocationCounter()
-        mapHelper.clearRejectedLocationList()
 
         geoPointList.add(newLocation)
     }

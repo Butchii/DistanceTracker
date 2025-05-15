@@ -16,12 +16,12 @@ import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
 import com.example.distancetracker.Route
-import android.util.Log
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 
 class TopBar(
     private val context: Context,
@@ -210,19 +210,37 @@ class TopBar(
         dialog.setContentView(R.layout.session_dialog)
 
         val map = dialog.findViewById<MapView>(R.id.map)
-        map.controller.setZoom(15)
+        map.controller.setZoom(18)
 
-        val latitude = route.geoPointsToConvert[0]["latitude"].toString().toDouble()
-        val longitude = route.geoPointsToConvert[0]["longitude"].toString().toDouble()
-        map.controller.animateTo(GeoPoint(latitude, longitude))
-
+        val startLatitude = route.geoPointsToConvert[0]["latitude"].toString().toDouble()
+        val startLongitude = route.geoPointsToConvert[0]["longitude"].toString().toDouble()
+        map.controller.animateTo(GeoPoint(startLatitude, startLongitude))
 
         val startMarker = Marker(map)
-        startMarker.position = GeoPoint(latitude, longitude)
+        startMarker.position = GeoPoint(startLatitude, startLongitude)
         startMarker.setAnchor(0.25f, 0.35f)
         startMarker.icon = ContextCompat.getDrawable(context, R.drawable.start_marker_map_icon)
         map.overlays.add(startMarker)
 
+        val endLatitude =route.geoPointsToConvert.last()["latitude"].toString().toDouble()
+        val endLongitude = route.geoPointsToConvert.last()["longitude"].toString().toDouble()
+
+        val endMarker = Marker(map)
+        endMarker.position = GeoPoint(endLatitude, endLongitude)
+        endMarker.setAnchor(0.25f,0.35f)
+        endMarker.icon = ContextCompat.getDrawable(context,R.drawable.end_marker_map_icon)
+        map.overlays.add(endMarker)
+
+        val routeLine = Polyline()
+        for(geoPoint:HashMap<String,String> in route.geoPointsToConvert){
+            val pointLatitude = geoPoint["latitude"].toString().toDouble()
+            val pointLongitude = geoPoint["longitude"].toString().toDouble()
+            routeLine.addPoint(GeoPoint(pointLatitude, pointLongitude))
+        }
+        map.overlays.add(routeLine)
+
+        val sessionName = dialog.findViewById<TextView>(R.id.sessionName)
+        sessionName.text = route.name
 
         val sessionTotalDistance = dialog.findViewById<TextView>(R.id.sessionDistance)
         val distance = route.totalDistance.toDouble() / 1000
