@@ -130,8 +130,8 @@ class DistanceTracker(
         geoPointList.add(newLocation)
     }
 
-    fun rejectLocation(newLocation: GeoPoint) {
-        mapHelper.updatePauseCounter(newLocation)
+    fun rejectLocation() {
+        mapHelper.updatePauseCounter()
     }
 
     fun resetSession() {

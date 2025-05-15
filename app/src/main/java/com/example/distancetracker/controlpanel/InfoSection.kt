@@ -52,7 +52,6 @@ class InfoSection(
             distanceTracker.averageSpeed =
                 (distanceTracker.totalDistance / (distanceTracker.sessionTimer.sessionSeconds + (distanceTracker.sessionTimer.sessionMinutes * 60) + (distanceTracker.sessionTimer.sessionHours * 3600))) * 3.6
             averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
-            Log.d("myTAg", String.format("this is the other avg ${distanceTracker.averageSpeed}"))
         }
     }
 

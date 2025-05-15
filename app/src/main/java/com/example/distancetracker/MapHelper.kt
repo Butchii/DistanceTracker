@@ -48,16 +48,6 @@ class MapHelper(
 
     private var pauseSessionCounter: Int = 0
 
-    private var prePauseLocation: GeoPoint = GeoPoint(0.0, 0.0)
-    private var prePauseAverageSpeed: Double = 0.0
-
-    private var prePauseSessionSeconds: Int = 0
-    private var prePauseSessionMinutes: Int = 0
-    private var prePauseSessionHours: Int = 0
-
-    private var prePauseTotalDistance: Double = 0.0
-    private var prePauseRoute: Polyline = Polyline()
-
     private var resumeSessionCounter: Int = 0
 
     private var lowerDistanceThreshold: Double = 0.55  //  2  km/h
@@ -237,74 +227,16 @@ class MapHelper(
 
     fun resetPauseCounter() {
         pauseSessionCounter = 0
-        prePauseRoute = Polyline()
     }
 
     private fun checkPauseCounter() {
-        if (pauseSessionCounter == 10 && distanceTracker.activeAutoPause) {
+        if (pauseSessionCounter == 5 && distanceTracker.activeAutoPause) {
             Toast.makeText(context, "Session paused because of idling!", Toast.LENGTH_SHORT).show()
             Log.d("myTag", "Paused session because of idling")
             distanceTracker.pauseSession()
             distanceTracker.controlPanel.buttonSection.enterPauseMode()
-            resetRoute()
             resetPauseCounter()
-            resetSessionInformation()
-            updateEndMarkerLocation(prePauseLocation)
-            Log.d("myTag", "Changed End marker position to pre pause location")
         }
-    }
-
-    private fun resetSessionInformation() {
-        resetSessionTotalDistance()
-        resetSessionAverageSpeed()
-        resetSessionTime()
-    }
-
-    private fun resetSessionAverageSpeed() {
-        Log.d("myTag", String.format("this is the saved avg speed $prePauseAverageSpeed"))
-        distanceTracker.averageSpeed = prePauseAverageSpeed
-        distanceTracker.controlPanel.infoSection.setAverageSpeed()
-    }
-
-    private fun resetSessionTotalDistance() {
-        Log.d("myTag", String.format("this is the saved total distance $prePauseTotalDistance"))
-        distanceTracker.totalDistance = prePauseTotalDistance
-        distanceTracker.controlPanel.infoSection.setTotalDistance()
-    }
-
-    private fun resetSessionTime() {
-        Log.d("myTag", String.format("this is the saved seconds $prePauseSessionSeconds"))
-        distanceTracker.sessionTimer.sessionSeconds = prePauseSessionSeconds
-        distanceTracker.sessionTimer.sessionMinutes = prePauseSessionMinutes
-        distanceTracker.sessionTimer.sessionHours = prePauseSessionHours
-        distanceTracker.sessionTimer.setSessionDurationDisplay()
-    }
-
-    private fun setPauseLocation(geoPoint: GeoPoint) {
-        //save current position for a potential pause activation
-        prePauseLocation = GeoPoint(geoPoint.latitude, geoPoint.longitude)
-    }
-
-    private fun savePauseRoute() {
-        //save current route for a potential pause activation
-        prePauseRoute = Polyline()
-        for (geoPoint in route.actualPoints) {
-            prePauseRoute.addPoint(geoPoint)
-        }
-        Log.d("myTag", String.format("saved route is: ${prePauseRoute.actualPoints} \n"))
-    }
-
-    private fun resetRoute() {
-        //change current route to saved pre pause route
-        map.overlays.remove(route)
-        route = Polyline()
-        if (prePauseRoute.actualPoints.size > 1) {
-            for (geoPoint in prePauseRoute.actualPoints) {
-                route.addPoint(geoPoint)
-            }
-        }
-        map.overlays.add(route)
-        Log.d("myTag", "Changed route to pre pause route")
     }
 
     private fun incrementResumeCounter() {
@@ -323,44 +255,9 @@ class MapHelper(
         return distance > lowerDistanceThreshold
     }
 
-    fun updatePauseCounter(geoPoint: GeoPoint) {
+    fun updatePauseCounter() {
         incrementPauseCounter()
-        if (pauseSessionCounter == 1) {
-            setPauseLocation(geoPoint)
-            saveSessionAverageSpeed()
-            saveSessionTotalDistance()
-            saveSessionTime()
-        }
-        Log.d("myTag", String.format("saved avg speed $prePauseAverageSpeed"))
-        savePauseRoute()
         checkPauseCounter()
-    }
-
-    private fun saveSessionAverageSpeed() {
-        prePauseAverageSpeed = distanceTracker.averageSpeed
-    }
-
-    private fun saveSessionTime() {
-        saveSessionSeconds()
-        saveSessionMinutes()
-        saveSessionHours()
-
-    }
-
-    private fun saveSessionHours() {
-        prePauseSessionHours = distanceTracker.sessionTimer.sessionHours
-    }
-
-    private fun saveSessionMinutes() {
-        prePauseSessionMinutes = distanceTracker.sessionTimer.sessionMinutes
-    }
-
-    private fun saveSessionSeconds() {
-        prePauseSessionSeconds = distanceTracker.sessionTimer.sessionSeconds - 1
-    }
-
-    private fun saveSessionTotalDistance() {
-        prePauseTotalDistance = distanceTracker.totalDistance / 1000
     }
 
     fun updateResumeCounter() {

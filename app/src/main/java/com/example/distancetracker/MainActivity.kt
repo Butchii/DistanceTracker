@@ -1,13 +1,9 @@
 package com.example.distancetracker
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.osmdroid.util.GeoPoint
 import android.util.Log
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 
@@ -57,18 +53,19 @@ open class MainActivity : AppCompatActivity() {
                 val lastLocation = distanceTracker.mapHelper.endMarkerLocation
 
                 val distance = locations[0].distanceTo(lastLocation)
+                Log.d("myTag", String.format("Distance walked $distance"))
                 if (distanceTracker.isRecording()) {
                     if (distanceTracker.mapHelper.isDistanceValid(distance)) {
                         distanceTracker.acceptLocation(distance, newLocationAsGeoPoint)
                     } else {
-                        distanceTracker.rejectLocation(newLocationAsGeoPoint)
+                        distanceTracker.rejectLocation()
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
-                } else {
+                }/* else {
                     if (distanceTracker.mapHelper.isDistanceValid(distance) && distanceTracker.activeAutoResume) {
                         distanceTracker.mapHelper.updateResumeCounter()
                     }
-                }
+                }*/
             }
             if (!distanceTracker.locatedFirstTime) {
                 distanceTracker.mapHelper.centerOnPoint(newLocationAsGeoPoint)
