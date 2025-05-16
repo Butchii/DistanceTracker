@@ -43,9 +43,6 @@ class MapHelper(
 
     var endMarkerLocation: Location = Location("")
 
-    private var rejectedLocations: HashMap<Float, GeoPoint> = HashMap()
-    private var rejectLocationCounter: Int = 0
-
     private var pauseSessionCounter: Int = 0
 
     private var resumeSessionCounter: Int = 0
@@ -62,27 +59,12 @@ class MapHelper(
         getCurrentLocation()
         Configuration.getInstance()
             .load(context, PreferenceManager.getDefaultSharedPreferences(context))
-        setupMap()
-        configureMarkers()
+        setupMap(map)
+        configureMarkers(startMarker, endMarker, context)
         map.overlays.add(route)
+        map.overlays.add(startMarker)
         centerOnPoint(currentLocation)
         startLocationsUpdates()
-    }
-
-    private fun configureMarkers() {
-        startMarker.setAnchor(0.25f, 0.35f)
-        startMarker.icon = ContextCompat.getDrawable(context, R.drawable.start_marker_map_icon)
-        map.overlays.add(startMarker)
-
-        endMarker.setAnchor(0.25f, 0.35f)
-        endMarker.icon = ContextCompat.getDrawable(context, R.drawable.end_marker_map_icon)
-    }
-
-    private fun setupMap() {
-        map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
-        map.setMultiTouchControls(true)
-        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-        map.controller.setZoom(15)
     }
 
     fun centerOnPoint(location: GeoPoint) {
@@ -210,15 +192,6 @@ class MapHelper(
         map.visibility = View.VISIBLE
     }
 
-    fun resetRejectLocationCounter() {
-        rejectLocationCounter = 0
-    }
-
-
-    fun clearRejectedLocationList() {
-        rejectedLocations.clear()
-    }
-
     private fun incrementPauseCounter() {
         Log.d("myTag", "Distance too low, updated Pause Counter")
         pauseSessionCounter++
@@ -263,5 +236,22 @@ class MapHelper(
     fun updateResumeCounter() {
         incrementResumeCounter()
         checkResumeCounter()
+    }
+
+    companion object {
+        fun setupMap(map: MapView) {
+            map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+            map.setMultiTouchControls(true)
+            map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+            map.controller.setZoom(15)
+        }
+
+        fun configureMarkers(startMarker: Marker, endMarker: Marker, context: Context) {
+            startMarker.setAnchor(0.25f, 0.35f)
+            startMarker.icon = ContextCompat.getDrawable(context, R.drawable.start_marker_map_icon)
+
+            endMarker.setAnchor(0.25f, 0.35f)
+            endMarker.icon = ContextCompat.getDrawable(context, R.drawable.end_marker_map_icon)
+        }
     }
 }

@@ -1,7 +1,5 @@
 package com.example.distancetracker
 
-import android.util.Log
-
 class Utility {
     companion object {
         fun calculateAverageSpeed(

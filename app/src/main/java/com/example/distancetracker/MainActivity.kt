@@ -61,11 +61,11 @@ open class MainActivity : AppCompatActivity() {
                         distanceTracker.rejectLocation()
                     }
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
-                }/* else {
+                } else {
                     if (distanceTracker.mapHelper.isDistanceValid(distance) && distanceTracker.activeAutoResume) {
                         distanceTracker.mapHelper.updateResumeCounter()
                     }
-                }*/
+                }
             }
             if (!distanceTracker.locatedFirstTime) {
                 distanceTracker.mapHelper.centerOnPoint(newLocationAsGeoPoint)
