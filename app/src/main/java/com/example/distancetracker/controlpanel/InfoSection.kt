@@ -1,19 +1,20 @@
 package com.example.distancetracker.controlpanel
 
 import android.content.Context
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.R
+import com.example.distancetracker.Utility
+import java.util.Locale
 
 class InfoSection(
     private val infoSectionLayout: LinearLayout,
     private val distanceTracker: DistanceTracker,
     private val context: Context
 ) {
-    lateinit var totalDistanceTV: TextView
+    private lateinit var totalDistanceTV: TextView
     private lateinit var averageSpeedTV: TextView
 
     init {
@@ -42,25 +43,21 @@ class InfoSection(
     fun updateTotalDistance(distanceWalked: Float) {
         distanceTracker.totalDistance += distanceWalked
 
-        val totalDistanceMetres = distanceTracker.totalDistance / 1000
+        val totalDistanceMetres = Utility.transformMetresToKilometres(distanceTracker.totalDistance)
 
-        totalDistanceTV.text = String.format("%.3f km", totalDistanceMetres)
+        totalDistanceTV.text = String.format(Locale.getDefault(),"%.3f km", totalDistanceMetres)
     }
 
     fun updateAverageSpeed() {
         if (distanceTracker.sessionTimer.sessionSeconds > 2) {
-            distanceTracker.averageSpeed =
-                (distanceTracker.totalDistance / (distanceTracker.sessionTimer.sessionSeconds + (distanceTracker.sessionTimer.sessionMinutes * 60) + (distanceTracker.sessionTimer.sessionHours * 3600))) * 3.6
-            averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
+            distanceTracker.averageSpeed = Utility.calculateAverageSpeed(
+                distanceTracker.totalDistance,
+                distanceTracker.sessionTimer.sessionSeconds,
+                distanceTracker.sessionTimer.sessionMinutes,
+                distanceTracker.sessionTimer.sessionHours
+            )
+
+            averageSpeedTV.text = String.format(Locale.getDefault(),"%.2f km/h", distanceTracker.averageSpeed)
         }
     }
-
-    fun setAverageSpeed() {
-        averageSpeedTV.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
-    }
-
-    fun setTotalDistance() {
-        totalDistanceTV.text = String.format("%.2f km", distanceTracker.totalDistance)
-    }
-
 }

@@ -18,7 +18,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
-import com.example.distancetracker.Route
+import com.example.distancetracker.models.Route
 
 class ButtonSubBar(
     private val buttonSubBar: LinearLayout,

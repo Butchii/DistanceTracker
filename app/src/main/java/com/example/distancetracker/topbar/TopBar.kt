@@ -15,7 +15,7 @@ import android.widget.TextView
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
-import com.example.distancetracker.Route
+import com.example.distancetracker.models.Route
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import org.osmdroid.util.GeoPoint

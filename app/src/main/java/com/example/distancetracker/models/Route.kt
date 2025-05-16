@@ -1,11 +1,9 @@
-package com.example.distancetracker
+package com.example.distancetracker.models
 
 import android.annotation.SuppressLint
 import org.osmdroid.util.GeoPoint
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
-import java.util.Date
 import java.util.UUID
 
 data class Route(
