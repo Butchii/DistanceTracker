@@ -1,5 +1,7 @@
 package com.example.distancetracker
 
+import android.util.Log
+
 class Utility {
     companion object {
         fun calculateAverageSpeed(
@@ -12,13 +14,17 @@ class Utility {
         }
 
         fun formatSessionTime(seconds: Int): String {
-            //TODO
-            var sessionTime: String = ""
+            var sessionTime = seconds
 
-            return sessionTime
+            val sessionHours = sessionTime / 3600
+            sessionTime %= 3600
+
+            val sessionMinutes = sessionTime / 60
+            sessionTime %= 60
+            return String.format("Duration: $sessionHours h $sessionMinutes m $sessionTime s")
         }
 
-        fun transformMetresToKilometres(meters:Double):Double{
+        fun transformMetresToKilometres(meters: Double): Double {
             return meters / 1000
         }
     }

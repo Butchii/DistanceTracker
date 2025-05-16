@@ -18,10 +18,13 @@ import com.example.distancetracker.R
 import com.example.distancetracker.models.Route
 import android.widget.Button
 import androidx.core.content.ContextCompat
+import com.example.distancetracker.Utility
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import java.util.Locale
 
 class TopBar(
     private val context: Context,
@@ -48,6 +51,8 @@ class TopBar(
     private lateinit var autoResumeSwitch: Switch
 
     private var routeList: ArrayList<Route> = ArrayList()
+
+    private lateinit var map: MapView
 
     init {
         initializeTopBarExpandLayout()
@@ -187,21 +192,36 @@ class TopBar(
                 routeDate.text = route.date
 
                 val sessionDurationTV = newRoute.findViewById<TextView>(R.id.sessionDuration)
-                sessionDurationTV.text = String.format("Duration: ${route.duration} s")
+                sessionDurationTV.text = Utility.formatSessionTime(route.duration.toInt())
 
                 val sessionAvgTV = newRoute.findViewById<TextView>(R.id.sessionAvg)
-                sessionAvgTV.text = String.format("Avg Speed: ${route.averageSpeed} km/h")
+                sessionAvgTV.text =
+                    String.format(Locale.getDefault(), "Avg Speed: %.4s km/h", route.averageSpeed)
 
                 val sessionDistanceTV = newRoute.findViewById<TextView>(R.id.sessionDistance)
-                sessionDistanceTV.text = String.format("Distance: ${route.totalDistance} km")
+                sessionDistanceTV.text =
+                    String.format(Locale.getDefault(), "Distance: %.4s km", route.totalDistance)
 
                 val sessionBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
                 sessionBtn.setOnClickListener {
                     showSessionDialog(route)
                 }
                 routeListContainer.addView(newRoute)
+
+                val divider = View(context)
+                divider.layoutParams =
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1)
+                divider.setBackgroundColor(ContextCompat.getColor(context, R.color.grey))
+                routeListContainer.addView(divider)
             }
         }
+    }
+
+    private fun setupMap(dialog: Dialog) {
+        map = dialog.findViewById(R.id.map)
+        map.setMultiTouchControls(true)
+        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+        map.controller.setZoom(18)
     }
 
     private fun showSessionDialog(route: Route) {
@@ -209,8 +229,7 @@ class TopBar(
 
         dialog.setContentView(R.layout.session_dialog)
 
-        val map = dialog.findViewById<MapView>(R.id.map)
-        map.controller.setZoom(18)
+        setupMap(dialog)
 
         val startLatitude = route.geoPointsToConvert[0]["latitude"].toString().toDouble()
         val startLongitude = route.geoPointsToConvert[0]["longitude"].toString().toDouble()
@@ -222,17 +241,17 @@ class TopBar(
         startMarker.icon = ContextCompat.getDrawable(context, R.drawable.start_marker_map_icon)
         map.overlays.add(startMarker)
 
-        val endLatitude =route.geoPointsToConvert.last()["latitude"].toString().toDouble()
+        val endLatitude = route.geoPointsToConvert.last()["latitude"].toString().toDouble()
         val endLongitude = route.geoPointsToConvert.last()["longitude"].toString().toDouble()
 
         val endMarker = Marker(map)
         endMarker.position = GeoPoint(endLatitude, endLongitude)
-        endMarker.setAnchor(0.25f,0.35f)
-        endMarker.icon = ContextCompat.getDrawable(context,R.drawable.end_marker_map_icon)
+        endMarker.setAnchor(0.25f, 0.35f)
+        endMarker.icon = ContextCompat.getDrawable(context, R.drawable.end_marker_map_icon)
         map.overlays.add(endMarker)
 
         val routeLine = Polyline()
-        for(geoPoint:HashMap<String,String> in route.geoPointsToConvert){
+        for (geoPoint: HashMap<String, String> in route.geoPointsToConvert) {
             val pointLatitude = geoPoint["latitude"].toString().toDouble()
             val pointLongitude = geoPoint["longitude"].toString().toDouble()
             routeLine.addPoint(GeoPoint(pointLatitude, pointLongitude))
@@ -247,7 +266,7 @@ class TopBar(
         sessionTotalDistance.text = String.format("Distance: %.4s km", distance)
 
         val sessionDuration = dialog.findViewById<TextView>(R.id.sessionDuration)
-        sessionDuration.text = String.format("Session duration: ${route.duration} s")
+        sessionDuration.text = Utility.formatSessionTime(route.duration.toInt())
 
         val sessionAvg = dialog.findViewById<TextView>(R.id.sessionAvg)
         sessionAvg.text = String.format("Average speed: %.2s km/h", route.averageSpeed)
