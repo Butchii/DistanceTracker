@@ -45,7 +45,7 @@ class InfoSection(
 
         val totalDistanceMetres = Utility.transformMetresToKilometres(distanceTracker.totalDistance)
 
-        totalDistanceTV.text = String.format(Locale.getDefault(),"%.3f km", totalDistanceMetres)
+        totalDistanceTV.text = String.format(Locale.getDefault(),"%.2f km", totalDistanceMetres)
     }
 
     fun updateAverageSpeed() {

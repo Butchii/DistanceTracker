@@ -49,8 +49,7 @@
             android:id="@+id/topBarExpandLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical"></LinearLayout>
     </LinearLayout>
 
     <View
@@ -85,7 +84,7 @@
             android:id="@+id/infoSectionLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="3.5"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:padding="15dp">
@@ -93,13 +92,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:gravity="center_vertical">
 
-                <TextView
-                    style="@style/textLayout"
-                    android:text="@string/total_distance"
-                    android:textStyle="bold" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="10dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/distance_icon"
+                    android:contentDescription="@string/distance_icon" />
 
                 <TextView
                     android:id="@+id/totalDistance"
@@ -110,15 +111,17 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                android:gravity="center_vertical">
 
-                <TextView
-                    style="@style/textLayout"
-                    android:text="@string/session_time"
-                    android:textStyle="bold" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="10dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/duration_icon"
+                    android:contentDescription="@string/duration_icon" />
 
                 <TextView
                     android:id="@+id/sessionDuration"
@@ -129,13 +132,15 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:gravity="center_vertical">
 
-                <TextView
-                    style="@style/textLayout"
-                    android:text="@string/average_speed"
-                    android:textStyle="bold" />
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="10dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/avg_icon"
+                    android:contentDescription="@string/average_speed_icon" />
 
                 <TextView
                     android:id="@+id/averageSpeed"

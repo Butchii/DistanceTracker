@@ -6,7 +6,7 @@
     <string name="total_distance">Total distance</string>
     <string name="session_time">Session time</string>
     <string name="average_speed">Average speed</string>
-    <string name="_0_0km">0,000 km</string>
+    <string name="_0_0km">0,00 km</string>
     <string name="_0_0_km_h">0,00 km/h</string>
     <string name="open_saved_tracks_list">open saved tracks list</string>
     <string name="start_session">Start session</string>
@@ -27,4 +27,7 @@
     <string name="resume_session_if_movement_is_recognized_5_times_in_a_row">Resume session if movement is recognized 5 seconds in a row.</string>
     <string name="pause_session_if_distance_walked_is_too_low_5_times_in_a_row">Pause session if distance walked is too low for 10 seconds in a row</string>
     <string name="close">Close</string>
+    <string name="average_speed_icon">average speed icon</string>
+    <string name="distance_icon">distance icon</string>
+    <string name="duration_icon">duration icon</string>
 </resources>
