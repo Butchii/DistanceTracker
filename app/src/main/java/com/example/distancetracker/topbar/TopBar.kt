@@ -91,7 +91,7 @@ class TopBar(
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 7f)
     }
 
-    private fun hideTopBarExpand() {
+    fun hideTopBarExpand() {
         topBarExpand.visibility = View.GONE
         topBarExpand.removeAllViews()
         showingSettings = false

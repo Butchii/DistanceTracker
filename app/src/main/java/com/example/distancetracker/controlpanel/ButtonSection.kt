@@ -47,6 +47,8 @@ class ButtonSection(
                     distanceTracker.startSession()
                     changeSessionButtonDescription(R.string.recording)
                     changeSessionButtonIcon(R.drawable.record_icon)
+                    distanceTracker.topBar.hideTopBarExpand()
+                    distanceTracker.mapHelper.showMap()
                     buttonSubBar.showResetButton()
                 } else {
                     //session already exists

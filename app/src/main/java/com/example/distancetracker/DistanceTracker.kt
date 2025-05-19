@@ -14,7 +14,7 @@ class DistanceTracker(
     private val mainActivity: MainActivity,
     private val locationCallback: LocationCallback
 ) {
-    private lateinit var topBar: TopBar
+    lateinit var topBar: TopBar
     lateinit var mapHelper: MapHelper
     lateinit var controlPanel: ControlPanel
 
@@ -134,17 +134,20 @@ class DistanceTracker(
 
     fun resetSession() {
         stopSession()
+
+        mapHelper.removeRouteFromMap()
+        mapHelper.removeEndMarker()
+        mapHelper.resetPauseCounter()
+        mapHelper.map.invalidate()
+
         sessionTimer.resetSessionTimes()
         sessionTimer.setSessionDurationDisplay()
         controlPanel.infoSection.resetTotalDistance()
         controlPanel.infoSection.resetAverageSpeed()
         controlPanel.buttonSection.changeSessionButtonDescription(R.string.start_session)
         controlPanel.buttonSection.changeSessionButtonIcon(R.drawable.start_icon)
-        mapHelper.removeRouteFromMap()
-        mapHelper.removeEndMarker()
-        mapHelper.resetPauseCounter()
+
         geoPointList.clear()
         controlPanel.buttonSection.buttonSubBar.hideButtonBar()
     }
-
 }
