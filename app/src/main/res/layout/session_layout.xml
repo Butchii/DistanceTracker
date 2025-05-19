@@ -4,12 +4,11 @@
     android:layout_height="100dp"
     android:background="@color/route_bg"
     android:gravity="center_vertical"
-    android:padding="5dp"
     android:paddingStart="20dp"
     android:paddingEnd="20dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
@@ -21,7 +20,7 @@
             android:layout_marginBottom="15dp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -34,18 +33,23 @@
             android:textStyle="italic" />
     </LinearLayout>
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="20dp"
+        android:background="@color/grey" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <LinearLayout
-            style="@style/session_list_info_container">
+        <LinearLayout style="@style/session_list_info_container">
 
             <ImageView
-                style = "@style/session_list_info_icon"
+                style="@style/session_list_info_icon"
                 android:contentDescription="@string/distance_icon"
                 android:src="@drawable/distance_icon" />
 
@@ -62,7 +66,7 @@
             android:layout_marginBottom="8dp">
 
             <ImageView
-                style = "@style/session_list_info_icon"
+                style="@style/session_list_info_icon"
                 android:contentDescription="@string/distance_icon"
                 android:src="@drawable/duration_icon" />
 
@@ -73,11 +77,10 @@
                 android:text="@string/_0_0km" />
         </LinearLayout>
 
-        <LinearLayout
-            style="@style/session_list_info_container">
+        <LinearLayout style="@style/session_list_info_container">
 
             <ImageView
-                style = "@style/session_list_info_icon"
+                style="@style/session_list_info_icon"
                 android:contentDescription="@string/distance_icon"
                 android:src="@drawable/avg_icon" />
 
