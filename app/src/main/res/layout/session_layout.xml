@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/routeName"
+            android:id="@+id/sessionName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -25,7 +25,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/routeDate"
+            android:id="@+id/sessionDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="-15dp"
@@ -42,16 +42,11 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            style="@style/session_list_info_container">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
+                style = "@style/session_list_info_icon"
                 android:contentDescription="@string/distance_icon"
-                android:scaleType="centerCrop"
                 android:src="@drawable/distance_icon" />
 
             <TextView
@@ -62,18 +57,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/session_list_info_container"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="8dp">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
+                style = "@style/session_list_info_icon"
                 android:contentDescription="@string/distance_icon"
-                android:scaleType="centerCrop"
                 android:src="@drawable/duration_icon" />
 
             <TextView
@@ -84,16 +74,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            style="@style/session_list_info_container">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="10dp"
+                style = "@style/session_list_info_icon"
                 android:contentDescription="@string/distance_icon"
-                android:scaleType="centerCrop"
                 android:src="@drawable/avg_icon" />
 
             <TextView

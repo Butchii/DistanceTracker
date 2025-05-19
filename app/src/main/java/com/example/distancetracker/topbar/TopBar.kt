@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat
 import com.example.distancetracker.MapHelper
 import com.example.distancetracker.Utility
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
@@ -33,14 +32,14 @@ class TopBar(
     private val distanceTracker: DistanceTracker,
     private val activity: Activity
 ) {
-    private lateinit var routesBtn: ImageButton
+    private lateinit var sessionsBtn: ImageButton
     private lateinit var settingsBtn: ImageButton
     private lateinit var topBarExpand: LinearLayout
 
-    private lateinit var routeListLayout: View
+    private lateinit var sessionListLayout: View
     private lateinit var settingsLayout: View
 
-    private lateinit var routeListContainer: LinearLayout
+    private lateinit var sessionListContainer: LinearLayout
 
     private var showingRoutes: Boolean = false
     private var showingSettings: Boolean = false
@@ -51,7 +50,7 @@ class TopBar(
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var autoResumeSwitch: Switch
 
-    private var routeList: ArrayList<Route> = ArrayList()
+    private var sessionList: ArrayList<Route> = ArrayList()
 
     private lateinit var map: MapView
 
@@ -106,8 +105,8 @@ class TopBar(
 
     @SuppressLint("InflateParams")
     private fun initializeRouteListLayout() {
-        routeListLayout = LayoutInflater.from(context).inflate(R.layout.session_list, null)
-        routeListContainer = routeListLayout.findViewById(R.id.routeListContainer)
+        sessionListLayout = LayoutInflater.from(context).inflate(R.layout.session_list, null)
+        sessionListContainer = sessionListLayout.findViewById(R.id.sessionListContainer)
 
         initializeCloseListBtn()
     }
@@ -134,13 +133,13 @@ class TopBar(
     }
 
     private fun initializeRoutesBtn() {
-        routesBtn = topBarLayout.findViewById(R.id.listBtn)
+        sessionsBtn = topBarLayout.findViewById(R.id.listBtn)
 
-        routesBtn.setOnClickListener {
+        sessionsBtn.setOnClickListener {
             if (!showingRoutes) {
                 topBarExpand.removeAllViews()
                 showingSettings = false
-                FireStore.getRoutes(routeList, this)
+                FireStore.getRoutes(sessionList, this)
                 showTopBarExpand()
                 showRouteList()
                 distanceTracker.mapHelper.hideMap()
@@ -153,12 +152,12 @@ class TopBar(
 
     private fun showRouteList() {
         showingRoutes = true
-        topBarExpand.addView(routeListLayout)
+        topBarExpand.addView(sessionListLayout)
     }
 
 
     private fun initializeCloseListBtn() {
-        val closeListBtn = routeListLayout.findViewById<ImageButton>(R.id.closeListBtn)
+        val closeListBtn = sessionListLayout.findViewById<ImageButton>(R.id.closeListBtn)
         closeListBtn.setOnClickListener {
             topBarExpand.visibility = View.GONE
             distanceTracker.mapHelper.map.visibility = View.VISIBLE
@@ -173,47 +172,47 @@ class TopBar(
 
     @SuppressLint("InflateParams")
     fun addRoutesToList() {
-        routeListContainer.removeAllViews()
-        if (routeList.isEmpty()) {
+        sessionListContainer.removeAllViews()
+        if (sessionList.isEmpty()) {
             val noRoutesHint = LayoutInflater.from(context).inflate(R.layout.no_session_hint, null)
-            routeListContainer.gravity = Gravity.CENTER
-            routeListContainer.addView(noRoutesHint)
+            sessionListContainer.gravity = Gravity.CENTER
+            sessionListContainer.addView(noRoutesHint)
         } else {
-            routeListContainer.gravity = Gravity.NO_GRAVITY
-            for (route in routeList) {
+            sessionListContainer.gravity = Gravity.NO_GRAVITY
+            for (session in sessionList) {
                 val newRoute = LayoutInflater.from(context).inflate(R.layout.session_layout, null)
 
                 newRoute.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 350)
 
-                val routeName = newRoute.findViewById<TextView>(R.id.routeName)
-                routeName.text = route.name
+                val sessionName = newRoute.findViewById<TextView>(R.id.sessionName)
+                sessionName.text = session.name
 
-                val routeDate = newRoute.findViewById<TextView>(R.id.routeDate)
-                routeDate.text = route.date
+                val sessionDate = newRoute.findViewById<TextView>(R.id.sessionDate)
+                sessionDate.text = session.date
 
                 val sessionDurationTV = newRoute.findViewById<TextView>(R.id.sessionDuration)
-                sessionDurationTV.text = Utility.formatSessionTime(route.duration.toInt())
+                sessionDurationTV.text = Utility.formatSessionTime(session.duration.toInt())
 
                 val sessionAvgTV = newRoute.findViewById<TextView>(R.id.sessionAvg)
                 sessionAvgTV.text =
-                    String.format(Locale.getDefault(), "%.4s km/h", route.averageSpeed)
+                    String.format(Locale.getDefault(), "%.4s km/h", session.averageSpeed)
 
                 val sessionDistanceTV = newRoute.findViewById<TextView>(R.id.sessionDistance)
                 sessionDistanceTV.text =
-                    String.format(Locale.getDefault(), "%.4s km", route.totalDistance)
+                    String.format(Locale.getDefault(), "%.4s km", session.totalDistance)
 
                 val sessionBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
                 sessionBtn.setOnClickListener {
-                    showSessionDialog(route)
+                    showSessionDialog(session)
                 }
-                routeListContainer.addView(newRoute)
+                sessionListContainer.addView(newRoute)
 
                 val divider = View(context)
                 divider.layoutParams =
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1)
                 divider.setBackgroundColor(ContextCompat.getColor(context, R.color.grey))
-                routeListContainer.addView(divider)
+                sessionListContainer.addView(divider)
             }
         }
     }

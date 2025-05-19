@@ -60,7 +60,18 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/black</item>
+    </style>
 
+    <style name="session_list_info_container">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
 
+    <style name="session_list_info_icon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:layout_marginEnd">10dp</item>
     </style>
 </resources>
