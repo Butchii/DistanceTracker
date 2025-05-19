@@ -4,7 +4,7 @@
     android:layout_height="100dp"
     android:background="@color/route_bg"
     android:gravity="center_vertical"
-    android:padding="15dp"
+    android:padding="5dp"
     android:paddingStart="20dp"
     android:paddingEnd="20dp">
 
@@ -18,9 +18,9 @@
             android:id="@+id/routeName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:layout_marginBottom="15dp"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -28,45 +28,80 @@
             android:id="@+id/routeDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey"
             android:layout_marginBottom="-15dp"
+            android:textColor="@color/grey"
             android:textSize="12sp"
             android:textStyle="italic" />
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="0dp"
-        android:gravity="center"
-        android:layout_weight="1"
         android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/sessionDistance"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textStyle="italic"
-            android:textSize="13sp" />
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/sessionAvg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/black"
-            android:textStyle="italic"
-            android:textSize="13sp" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/distance_icon"
+                android:scaleType="centerCrop"
+                android:src="@drawable/distance_icon" />
 
-        <TextView
-            android:id="@+id/sessionDuration"
+            <TextView
+                android:id="@+id/sessionDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_0_0km" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textStyle="italic"
-            android:textSize="13sp" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/distance_icon"
+                android:scaleType="centerCrop"
+                android:src="@drawable/duration_icon" />
+
+            <TextView
+                android:id="@+id/sessionDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_0_0km" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/distance_icon"
+                android:scaleType="centerCrop"
+                android:src="@drawable/avg_icon" />
+
+            <TextView
+                android:id="@+id/sessionAvg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_0_0km" />
+        </LinearLayout>
     </LinearLayout>
 
     <ImageButton

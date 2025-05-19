@@ -197,11 +197,11 @@ class TopBar(
 
                 val sessionAvgTV = newRoute.findViewById<TextView>(R.id.sessionAvg)
                 sessionAvgTV.text =
-                    String.format(Locale.getDefault(), "Avg Speed: %.4s km/h", route.averageSpeed)
+                    String.format(Locale.getDefault(), "%.4s km/h", route.averageSpeed)
 
                 val sessionDistanceTV = newRoute.findViewById<TextView>(R.id.sessionDistance)
                 sessionDistanceTV.text =
-                    String.format(Locale.getDefault(), "Distance: %.4s km", route.totalDistance)
+                    String.format(Locale.getDefault(), "%.4s km", route.totalDistance)
 
                 val sessionBtn = newRoute.findViewById<ImageButton>(R.id.showOnMapBtn)
                 sessionBtn.setOnClickListener {

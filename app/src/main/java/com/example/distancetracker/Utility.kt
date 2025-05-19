@@ -19,7 +19,7 @@ class Utility {
 
             val sessionMinutes = sessionTime / 60
             sessionTime %= 60
-            return String.format("Duration: $sessionHours h $sessionMinutes m $sessionTime s")
+            return String.format("$sessionHours h $sessionMinutes m $sessionTime s")
         }
 
         fun transformMetresToKilometres(meters: Double): Double {
