@@ -77,4 +77,10 @@
         <item name="android:scaleType">centerCrop</item>
         <item name="android:layout_marginEnd">10dp</item>
     </style>
+    <style name="session_layout_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>
