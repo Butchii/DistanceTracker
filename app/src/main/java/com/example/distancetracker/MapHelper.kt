@@ -243,7 +243,7 @@ class MapHelper(
             map.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
             map.setMultiTouchControls(true)
             map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
-            map.controller.setZoom(15)
+            map.controller.setZoom(18)
         }
 
         fun configureMarkers(startMarker: Marker, endMarker: Marker, context: Context) {

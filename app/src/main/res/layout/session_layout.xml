@@ -57,7 +57,8 @@
                 android:id="@+id/sessionDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_0_0km" />
+                android:text="@string/_0_0km"
+                android:textStyle="italic" />
         </LinearLayout>
 
         <LinearLayout
@@ -74,7 +75,8 @@
                 android:id="@+id/sessionDuration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_0_0km" />
+                android:text="@string/_0_0km"
+                android:textStyle="italic" />
         </LinearLayout>
 
         <LinearLayout style="@style/session_list_info_container">
@@ -88,7 +90,8 @@
                 android:id="@+id/sessionAvg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_0_0km" />
+                android:text="@string/_0_0km"
+                android:textStyle="italic" />
         </LinearLayout>
     </LinearLayout>
 

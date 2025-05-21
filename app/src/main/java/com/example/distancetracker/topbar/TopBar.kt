@@ -256,13 +256,13 @@ class TopBar(
 
         val sessionTotalDistance = dialog.findViewById<TextView>(R.id.sessionDistance)
         val distance = Utility.transformMetresToKilometres(route.totalDistance.toDouble())
-        sessionTotalDistance.text = String.format("Distance: %.4s km", distance)
+        sessionTotalDistance.text = String.format("%.4s km", distance)
 
         val sessionDuration = dialog.findViewById<TextView>(R.id.sessionDuration)
         sessionDuration.text = Utility.formatSessionTime(route.duration.toInt())
 
         val sessionAvg = dialog.findViewById<TextView>(R.id.sessionAvg)
-        sessionAvg.text = String.format("Average speed: %.4s km/h", route.averageSpeed)
+        sessionAvg.text = String.format("%.4s km/h", route.averageSpeed)
 
         val sessionDate = dialog.findViewById<TextView>(R.id.sessionDate)
         sessionDate.text = route.date

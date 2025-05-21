@@ -26,7 +26,7 @@
 
         <TextView
             android:id="@+id/sessionDate"
-            style="@style/route_dialog_text"
+            style="@style/session_dialog_text"
             android:textStyle="italic" />
     </LinearLayout>
 
@@ -48,53 +48,75 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="20dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:padding="15dp"
             tools:ignore="NestedWeights">
 
-            <TextView
-                android:id="@+id/sessionDuration"
-                style="@style/route_dialog_text" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/sessionDistance"
-                style="@style/route_dialog_text"
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/distance_icon"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/distance_icon" />
+
+                <TextView
+                    android:id="@+id/sessionDistance"
+                    style="@style/session_dialog_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp" />
+                android:layout_marginBottom="10dp">
 
-            <TextView
-                android:id="@+id/sessionAvg"
-                style="@style/route_dialog_text" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/duration_icon"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/duration_icon" />
+
+                <TextView
+                    android:id="@+id/sessionDuration"
+                    style="@style/session_dialog_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/average_speed_icon"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/avg_icon" />
+
+                <TextView
+                    android:id="@+id/sessionAvg"
+                    style="@style/session_dialog_text" />
+            </LinearLayout>
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/grey" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="15dp">
+        <Button
+            android:id="@+id/closeBtn"
+            style="@style/dialog_button"
+            android:text="@string/close" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
 
-            <Button
-                android:id="@+id/closeBtn"
-                style="@style/dialog_button"
-                android:text="@string/close" />
-        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

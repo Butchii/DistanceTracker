@@ -13,7 +13,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">10dp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">italic</item>
         <item name="android:textColor">@color/black</item>
     </style>
 
@@ -55,11 +55,13 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="route_dialog_text">
+    <style name="session_dialog_text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:layout_marginStart">20dp</item>
     </style>
 
     <style name="session_list_info_container">
