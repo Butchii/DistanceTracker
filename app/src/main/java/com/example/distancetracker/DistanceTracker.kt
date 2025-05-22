@@ -2,6 +2,7 @@ package com.example.distancetracker
 
 
 import android.content.Context
+import android.util.Log
 import android.widget.LinearLayout
 import com.example.distancetracker.controlpanel.ControlPanel
 import com.example.distancetracker.topbar.TopBar
@@ -133,6 +134,8 @@ class DistanceTracker(
     }
 
     fun resetSession() {
+        Log.d("myTag", isRecording().toString())
+        Log.d("myTag", hasStartedSession().toString())
         stopSession()
 
         mapHelper.removeRouteFromMap()

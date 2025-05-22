@@ -48,34 +48,26 @@ open class MainActivity : AppCompatActivity() {
                 GeoPoint(locations[0].latitude, locations[0].longitude)
             distanceTracker.mapHelper.updateCurrentLocation(newLocationAsGeoPoint)
             if (!distanceTracker.hasStartedSession()) {
-                distanceTracker.mapHelper.updateStartMarkerLocation(newLocationAsGeoPoint)
-                distanceTracker.mapHelper.updateEndMarkerLocation(newLocationAsGeoPoint)
+                //no session is running
+                distanceTracker.mapHelper.updateMarkerLocations(newLocationAsGeoPoint)
             } else {
+                //session is running
                 val lastLocation = distanceTracker.mapHelper.endMarkerLocation
-
                 val distance = locations[0].distanceTo(lastLocation)
                 if (distanceTracker.isRecording()) {
-                    if (distanceTracker.mapHelper.isDistanceValid(distance)) {
-                        distanceTracker.acceptLocation(distance, newLocationAsGeoPoint)
-                    } else {
-                        distanceTracker.rejectLocation()
-                    }
+                    // session is recording
+                    distanceTracker.mapHelper.processLocation(distance,newLocationAsGeoPoint)
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {
+                    // session is in pause mode
                     if (distanceTracker.mapHelper.isDistanceValid(distance) && distanceTracker.activeAutoResume) {
                         distanceTracker.mapHelper.updateResumeCounter()
                     }
                 }
             }
             if (!distanceTracker.locatedFirstTime) {
-                distanceTracker.mapHelper.centerOnPoint(newLocationAsGeoPoint)
-                distanceTracker.locatedFirstTime = !distanceTracker.locatedFirstTime
-
-                distanceTracker.mapHelper.updateStartMarkerLocation(newLocationAsGeoPoint)
-                distanceTracker.mapHelper.updateEndMarkerLocation(newLocationAsGeoPoint)
-
-                distanceTracker.mapHelper.endMarkerLocation.latitude = locations[0].latitude
-                distanceTracker.mapHelper.endMarkerLocation.longitude = locations[0].longitude
+                //first location received
+                distanceTracker.mapHelper.checkForFirstLocation(newLocationAsGeoPoint)
             }
         }
     }

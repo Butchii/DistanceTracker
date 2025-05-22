@@ -88,7 +88,7 @@ class MapHelper(
         map.invalidate()
     }
 
-    fun updateCurrentLocation(geoPoint: GeoPoint){
+    fun updateCurrentLocation(geoPoint: GeoPoint) {
         currentLocation = geoPoint
     }
 
@@ -150,6 +150,22 @@ class MapHelper(
                 updateStartMarkerLocation(currentLocation)
             }
         }
+    }
+
+    fun processLocation(distance: Float, geoPoint: GeoPoint) {
+        //check if calculated distance is higher then thresh hold
+        //if  higher then accept location
+        //otherwise reject location
+        if (isDistanceValid(distance)) {
+            distanceTracker.acceptLocation(distance, geoPoint)
+        } else {
+            distanceTracker.rejectLocation()
+        }
+    }
+
+    fun updateMarkerLocations(geoPoint: GeoPoint) {
+        updateStartMarkerLocation(geoPoint)
+        updateEndMarkerLocation(geoPoint)
     }
 
     private fun requestPermissions() {
@@ -240,6 +256,14 @@ class MapHelper(
     fun updateResumeCounter() {
         incrementResumeCounter()
         checkResumeCounter()
+    }
+
+    fun checkForFirstLocation(geoPoint: GeoPoint) {
+        centerOnPoint(geoPoint)
+        distanceTracker.locatedFirstTime = !distanceTracker.locatedFirstTime
+
+        updateStartMarkerLocation(geoPoint)
+        updateEndMarkerLocation(geoPoint)
     }
 
     companion object {
