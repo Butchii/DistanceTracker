@@ -54,7 +54,6 @@ open class MainActivity : AppCompatActivity() {
                 val lastLocation = distanceTracker.mapHelper.endMarkerLocation
 
                 val distance = locations[0].distanceTo(lastLocation)
-                Log.d("myTag", String.format("Distance walked $distance"))
                 if (distanceTracker.isRecording()) {
                     if (distanceTracker.mapHelper.isDistanceValid(distance)) {
                         distanceTracker.acceptLocation(distance, newLocationAsGeoPoint)
