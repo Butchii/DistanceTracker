@@ -41,8 +41,6 @@ class MapHelper(
     private var startMarker: Marker = Marker(map)
     private var endMarker: Marker = Marker(map)
 
-    var endMarkerLocation: Location = Location("")
-
     private var pauseSessionCounter: Int = 0
 
     private var resumeSessionCounter: Int = 0
@@ -67,8 +65,15 @@ class MapHelper(
         startLocationsUpdates()
     }
 
-    fun centerOnPoint(location: GeoPoint) {
+    private fun centerOnPoint(location: GeoPoint) {
         map.controller.animateTo(location)
+    }
+
+    fun getEndMarkerLocation(): Location {
+        val endMarkerLocation = Location("")
+        endMarkerLocation.latitude = endMarker.position.latitude
+        endMarkerLocation.longitude = endMarker.position.longitude
+        return endMarkerLocation
     }
 
     fun isLocationEnabled(): Boolean {
@@ -99,9 +104,6 @@ class MapHelper(
         )
         endMarker.position = location
 
-        endMarkerLocation.latitude = location.latitude
-        endMarkerLocation.longitude = location.longitude
-
         route.addPoint(location)
         map.invalidate()
     }
@@ -118,9 +120,6 @@ class MapHelper(
 
     fun addEndMarker(location: GeoPoint) {
         endMarker.position = location
-
-        endMarkerLocation.latitude = location.latitude
-        endMarkerLocation.longitude = location.longitude
         map.overlays.add(endMarker)
     }
 
@@ -165,7 +164,6 @@ class MapHelper(
 
     fun updateMarkerLocations(geoPoint: GeoPoint) {
         updateStartMarkerLocation(geoPoint)
-        updateEndMarkerLocation(geoPoint)
     }
 
     private fun requestPermissions() {
@@ -223,7 +221,7 @@ class MapHelper(
     }
 
     private fun checkPauseCounter() {
-        if (pauseSessionCounter == 5 && distanceTracker.activeAutoPause) {
+        if (pauseSessionCounter == 10 && distanceTracker.activeAutoPause) {
             Toast.makeText(context, "Session paused because of idling!", Toast.LENGTH_SHORT).show()
             Log.d("myTag", "Paused session because of idling")
             distanceTracker.pauseSession()

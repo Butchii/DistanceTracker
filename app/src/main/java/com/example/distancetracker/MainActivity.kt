@@ -44,19 +44,18 @@ open class MainActivity : AppCompatActivity() {
         override fun onLocationResult(newLocation: LocationResult) {
             super.onLocationResult(newLocation)
             val locations = newLocation.locations
-            val newLocationAsGeoPoint =
-                GeoPoint(locations[0].latitude, locations[0].longitude)
-            distanceTracker.mapHelper.updateCurrentLocation(newLocationAsGeoPoint)
+            distanceTracker.mapHelper.updateCurrentLocation(GeoPoint(locations[0].latitude, locations[0].longitude))
+            val currentLocation = distanceTracker.mapHelper.currentLocation
             if (!distanceTracker.hasStartedSession()) {
                 //no session is running
-                distanceTracker.mapHelper.updateMarkerLocations(newLocationAsGeoPoint)
+                distanceTracker.mapHelper.updateMarkerLocations(currentLocation)
             } else {
                 //session is running
-                val lastLocation = distanceTracker.mapHelper.endMarkerLocation
+                val lastLocation = distanceTracker.mapHelper.getEndMarkerLocation()
                 val distance = locations[0].distanceTo(lastLocation)
                 if (distanceTracker.isRecording()) {
                     // session is recording
-                    distanceTracker.mapHelper.processLocation(distance,newLocationAsGeoPoint)
+                    distanceTracker.mapHelper.processLocation(distance,currentLocation)
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {
                     // session is in pause mode
@@ -67,9 +66,8 @@ open class MainActivity : AppCompatActivity() {
             }
             if (!distanceTracker.locatedFirstTime) {
                 //first location received
-                distanceTracker.mapHelper.checkForFirstLocation(newLocationAsGeoPoint)
+                distanceTracker.mapHelper.checkForFirstLocation(currentLocation)
             }
         }
     }
-
 }
