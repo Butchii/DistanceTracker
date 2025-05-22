@@ -88,6 +88,10 @@ class MapHelper(
         map.invalidate()
     }
 
+    fun updateCurrentLocation(geoPoint: GeoPoint){
+        currentLocation = geoPoint
+    }
+
     fun updateEndMarkerLocation(location: GeoPoint) {
         Log.d(
             "myTag",

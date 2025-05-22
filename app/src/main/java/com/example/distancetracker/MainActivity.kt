@@ -46,6 +46,7 @@ open class MainActivity : AppCompatActivity() {
             val locations = newLocation.locations
             val newLocationAsGeoPoint =
                 GeoPoint(locations[0].latitude, locations[0].longitude)
+            distanceTracker.mapHelper.updateCurrentLocation(newLocationAsGeoPoint)
             if (!distanceTracker.hasStartedSession()) {
                 distanceTracker.mapHelper.updateStartMarkerLocation(newLocationAsGeoPoint)
                 distanceTracker.mapHelper.updateEndMarkerLocation(newLocationAsGeoPoint)
@@ -70,6 +71,9 @@ open class MainActivity : AppCompatActivity() {
             if (!distanceTracker.locatedFirstTime) {
                 distanceTracker.mapHelper.centerOnPoint(newLocationAsGeoPoint)
                 distanceTracker.locatedFirstTime = !distanceTracker.locatedFirstTime
+
+                distanceTracker.mapHelper.updateStartMarkerLocation(newLocationAsGeoPoint)
+                distanceTracker.mapHelper.updateEndMarkerLocation(newLocationAsGeoPoint)
 
                 distanceTracker.mapHelper.endMarkerLocation.latitude = locations[0].latitude
                 distanceTracker.mapHelper.endMarkerLocation.longitude = locations[0].longitude
