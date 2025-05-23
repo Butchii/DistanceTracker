@@ -17,11 +17,10 @@ class ForeGroundService : Service() {
 
     private val CHANNEL_ID = "123"
 
-   // private val locationRequest =LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY,1000).build()
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
-        return super.onStartCommand(intent, flags, startId)
+        startForeground(1, getNotification())
+        return START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -55,4 +54,5 @@ class ForeGroundService : Service() {
         }
         return builder.build()
     }
+
 }

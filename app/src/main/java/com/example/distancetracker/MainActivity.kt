@@ -1,5 +1,6 @@
 package com.example.distancetracker
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.osmdroid.util.GeoPoint
@@ -13,6 +14,12 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        //notification starting TODO location using in background
+        val intent = Intent(this,ForeGroundService::class.java)
+        startForegroundService(intent)
+
         createDistanceTracker()
     }
 
