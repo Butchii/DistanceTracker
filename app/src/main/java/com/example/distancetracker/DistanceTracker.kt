@@ -1,6 +1,7 @@
 package com.example.distancetracker
 
 
+import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -24,7 +25,7 @@ class DistanceTracker(
     private val context: Context,
     private val mainActivity: MainActivity,
     private val locationCallback: LocationCallback
-) {
+) : Service(){
     lateinit var topBar: TopBar
     lateinit var mapHelper: MapHelper
     lateinit var controlPanel: ControlPanel
@@ -180,6 +181,10 @@ class DistanceTracker(
 
         geoPointList.clear()
         controlPanel.buttonSection.buttonSubBar.hideButtonBar()
+    }
+
+    override fun onBind(p0: Intent?): IBinder? {
+        TODO("Not yet implemented")
     }
 
 }
