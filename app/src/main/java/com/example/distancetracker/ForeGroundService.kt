@@ -32,8 +32,9 @@ class ForeGroundService : Service() {
             val serviceChannel = NotificationChannel(
                 CHANNEL_ID,
                 "Location Service Channel",
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             )
+            serviceChannel.setSound(null,null)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
         }
