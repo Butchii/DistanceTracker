@@ -1,6 +1,5 @@
 package com.example.distancetracker.controlpanel
 
-import android.app.Activity
 import android.content.Context
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -13,7 +12,7 @@ import com.example.distancetracker.R
 class ButtonSection(
     private val buttonSectionLayout: LinearLayout,
     private val context: Context,
-    private val activity: Activity,
+    private val activity: Context,
     private val distanceTracker: DistanceTracker
 ) {
     lateinit var buttonSubBar: ButtonSubBar

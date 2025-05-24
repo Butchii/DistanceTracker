@@ -1,17 +1,16 @@
 package com.example.distancetracker
 
-
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import org.osmdroid.util.GeoPoint
 import android.util.Log
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import org.osmdroid.util.GeoPoint
 
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
 
-     override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         createDistanceTracker()

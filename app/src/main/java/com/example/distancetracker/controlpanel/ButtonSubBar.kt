@@ -1,6 +1,5 @@
 package com.example.distancetracker.controlpanel
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -22,7 +21,7 @@ import com.example.distancetracker.models.Route
 
 class ButtonSubBar(
     private val buttonSubBar: LinearLayout,
-    private val activity: Activity,
+    private val activity: Context,
     private val context: Context,
     private val distanceTracker: DistanceTracker
 ) {

@@ -1,10 +1,12 @@
 package com.example.distancetracker
 
+import android.app.Activity
+import android.content.Context
 import android.widget.TextView
 import java.util.Timer
 import java.util.TimerTask
 
-class CustomTimer(private val sessionDurationTV: TextView, private val activity: MainActivity) {
+class CustomTimer(private val sessionDurationTV: TextView, private val activity: Activity) {
     var sessionSeconds: Int = 0
     var sessionMinutes: Int = 0
     var sessionHours: Int = 0
@@ -28,6 +30,7 @@ class CustomTimer(private val sessionDurationTV: TextView, private val activity:
                 sessionMinutes = 0
                 sessionHours++
             }
+
             activity.runOnUiThread {
                 setSessionDurationDisplay()
             }
@@ -41,7 +44,7 @@ class CustomTimer(private val sessionDurationTV: TextView, private val activity:
             String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
     }
 
-    fun getFormattedSessionDuration():String{
+    fun getFormattedSessionDuration(): String {
         return String.format("$sessionHours h $sessionMinutes m $sessionSeconds s")
     }
 
@@ -66,4 +69,5 @@ class CustomTimer(private val sessionDurationTV: TextView, private val activity:
     private fun resetSessionSeconds() {
         sessionSeconds = 0
     }
+
 }

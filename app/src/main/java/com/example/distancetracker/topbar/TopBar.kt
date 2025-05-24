@@ -1,7 +1,6 @@
 package com.example.distancetracker.topbar
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.view.Gravity
@@ -30,7 +29,7 @@ class TopBar(
     private val context: Context,
     private val topBarLayout: LinearLayout,
     private val distanceTracker: DistanceTracker,
-    private val activity: Activity
+    private val activity: Context
 ) {
     private lateinit var sessionsBtn: ImageButton
     private lateinit var settingsBtn: ImageButton
