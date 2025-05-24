@@ -1,6 +1,6 @@
 package com.example.distancetracker
 
-import android.content.Intent
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.osmdroid.util.GeoPoint
@@ -11,15 +11,9 @@ import com.google.android.gms.location.LocationResult
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
-        //notification starting TODO location using in background
-        val intent = Intent(this,ForeGroundService::class.java)
-        startForegroundService(intent)
-
         createDistanceTracker()
     }
 
@@ -51,7 +45,12 @@ open class MainActivity : AppCompatActivity() {
         override fun onLocationResult(newLocation: LocationResult) {
             super.onLocationResult(newLocation)
             val locations = newLocation.locations
-            distanceTracker.mapHelper.updateCurrentLocation(GeoPoint(locations[0].latitude, locations[0].longitude))
+            distanceTracker.mapHelper.updateCurrentLocation(
+                GeoPoint(
+                    locations[0].latitude,
+                    locations[0].longitude
+                )
+            )
             val currentLocation = distanceTracker.mapHelper.currentLocation
             if (!distanceTracker.hasStartedSession()) {
                 //no session is running
@@ -62,7 +61,7 @@ open class MainActivity : AppCompatActivity() {
                 val distance = locations[0].distanceTo(lastLocation)
                 if (distanceTracker.isRecording()) {
                     // session is recording
-                    distanceTracker.mapHelper.processLocation(distance,currentLocation)
+                    distanceTracker.mapHelper.processLocation(distance, currentLocation)
                     distanceTracker.controlPanel.infoSection.updateAverageSpeed()
                 } else {
                     // session is in pause mode

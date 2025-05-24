@@ -1,13 +1,23 @@
 package com.example.distancetracker
 
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.location.Location
+import android.os.IBinder
 import android.util.Log
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import com.example.distancetracker.controlpanel.ControlPanel
 import com.example.distancetracker.topbar.TopBar
 import com.google.android.gms.location.LocationCallback
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
 class DistanceTracker(
     private val distanceTrackerLayout: LinearLayout,
@@ -33,6 +43,20 @@ class DistanceTracker(
 
     var activeAutoPause: Boolean = true
     var activeAutoResume: Boolean = true
+
+    private lateinit var mService: ForeGroundService
+    private var mBound = false
+    private val mConnection = object:ServiceConnection{
+        override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
+            val service = binder as ForeGroundService.MyBinder
+            mService = service.getService()
+            mBound = true
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            mBound = false
+        }
+    }
 
     init {
         initializeTopBar()
@@ -91,6 +115,10 @@ class DistanceTracker(
     }
 
     fun startSession() {
+        //notification starting TODO location using in background and  timer
+        val intent = Intent(context,ForeGroundService::class.java)
+        context.startForegroundService(intent)
+
         geoPointList.add(mapHelper.currentLocation)
         mapHelper.updateStartMarkerLocation(mapHelper.currentLocation)
         mapHelper.addEndMarker(mapHelper.currentLocation)
@@ -153,4 +181,5 @@ class DistanceTracker(
         geoPointList.clear()
         controlPanel.buttonSection.buttonSubBar.hideButtonBar()
     }
+
 }
