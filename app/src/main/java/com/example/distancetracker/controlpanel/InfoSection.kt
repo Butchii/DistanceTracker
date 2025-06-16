@@ -14,12 +14,18 @@ class InfoSection(
     private val distanceTracker: DistanceTracker,
     private val context: Context
 ) {
+    private lateinit var sessionDurationTV: TextView
     private lateinit var totalDistanceTV: TextView
     private lateinit var averageSpeedTV: TextView
 
     init {
+        initializeSessionDurationInfo()
         initializeTotalDistanceInfo()
         initializeAverageSpeedInfo()
+    }
+
+    private fun initializeSessionDurationInfo() {
+        sessionDurationTV = infoSectionLayout.findViewById(R.id.sessionDuration)
     }
 
     private fun initializeAverageSpeedInfo() {
@@ -40,24 +46,21 @@ class InfoSection(
         averageSpeedTV.text = ContextCompat.getString(context, R.string._0_0_km_h)
     }
 
-    fun updateTotalDistance(distanceWalked: Float) {
-        distanceTracker.totalDistance += distanceWalked
-
-        val totalDistanceMetres = Utility.transformMetresToKilometres(distanceTracker.totalDistance)
-
-        totalDistanceTV.text = String.format(Locale.getDefault(),"%.2f km", totalDistanceMetres)
+    fun updateSessionDuration(formattedDuration: String) {
+        sessionDurationTV.text = formattedDuration
     }
 
-    fun updateAverageSpeed() {
-        if (distanceTracker.sessionTimer.sessionSeconds > 2) {
-            distanceTracker.averageSpeed = Utility.calculateAverageSpeed(
-                distanceTracker.totalDistance,
-                distanceTracker.sessionTimer.sessionSeconds,
-                distanceTracker.sessionTimer.sessionMinutes,
-                distanceTracker.sessionTimer.sessionHours
-            )
+    fun updateTotalDistance(distanceWalked: Float) {
+        totalDistanceTV.text = String.format(Locale.getDefault(), "%.2f km", distanceWalked)
+    }
 
-            averageSpeedTV.text = String.format(Locale.getDefault(),"%.2f km/h", distanceTracker.averageSpeed)
-        }
+    fun updateAverageSpeed(avgSpeed: String) {
+        averageSpeedTV.text =
+            String.format(Locale.getDefault(), "%.2f km/h", avgSpeed)
+    }
+
+    fun reset() {
+        resetTotalDistance()
+        resetAverageSpeed()
     }
 }

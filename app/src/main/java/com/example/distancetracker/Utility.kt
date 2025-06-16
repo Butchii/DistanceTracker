@@ -1,5 +1,10 @@
 package com.example.distancetracker
 
+import android.app.ActivityManager
+import android.content.Context
+import android.location.LocationManager
+import android.util.Log
+
 class Utility {
     companion object {
         fun calculateAverageSpeed(
@@ -24,6 +29,28 @@ class Utility {
 
         fun transformMetresToKilometres(meters: Double): Double {
             return meters / 1000
+        }
+
+        fun isServiceRunningInForeground(context: Context): Boolean {
+            val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+                if (RecordingService::class.java.name == service.service.className) {
+                    if (service.foreground) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+
+        fun isGPSEnabled(context: Context):Boolean{
+            val locationManager =
+                context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            val isNetworkEnabled =
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+            return !isGpsEnabled && !isNetworkEnabled
         }
     }
 }

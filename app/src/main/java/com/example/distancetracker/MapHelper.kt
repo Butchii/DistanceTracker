@@ -4,21 +4,19 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.location.Location
-import android.content.pm.PackageManager
-import android.location.LocationManager
-import android.os.Looper
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -31,12 +29,11 @@ class MapHelper(
     private val context: Context,
     private val activity: Activity,
     val map: MapView,
-    private val locationCallback: LocationCallback,
     private val distanceTracker: DistanceTracker
 ) {
-    var route: Polyline = Polyline()
+    var locationScope: CoroutineScope
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    var route: Polyline = Polyline()
 
     private var startMarker: Marker = Marker(map)
     private var endMarker: Marker = Marker(map)
@@ -49,23 +46,46 @@ class MapHelper(
 
     var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
 
-    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationClient: LocationClient
+
+    private var firstLocation: Boolean = true
 
     init {
-        setFusedLocationClient()
-        createLocationRequest()
-        getCurrentLocation()
         Configuration.getInstance()
             .load(context, PreferenceManager.getDefaultSharedPreferences(context))
         setupMap(map)
+        initializeLocationClient()
+        locationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         configureMarkers(startMarker, endMarker, context)
         map.overlays.add(route)
         map.overlays.add(startMarker)
-        centerOnPoint(currentLocation)
-        startLocationsUpdates()
+        locationClient.getInitialLocation()
+        if (firstLocation) {
+            map.controller.animateTo(currentLocation)
+            firstLocation = false
+        }
     }
 
-    private fun centerOnPoint(location: GeoPoint) {
+    private fun initializeLocationClient() {
+        locationClient = DefaultLocationClient(
+            context,
+            LocationServices.getFusedLocationProviderClient(context), this, activity
+        )
+    }
+
+    fun startLocationUpdates() {
+        locationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        locationClient.getLocationUpdates(1000L).catch { e -> e.printStackTrace() }
+            .onEach { location ->
+                val lat = location.latitude
+                val long = location.longitude
+                val currentLocationAsGeoPoint = GeoPoint(lat, long)
+                updateCurrentLocation(currentLocationAsGeoPoint)
+                updateStartMarkerLocation(currentLocation)
+            }.launchIn(locationScope)
+    }
+
+    fun centerOnPoint(location: GeoPoint) {
         map.controller.animateTo(location)
     }
 
@@ -76,19 +96,11 @@ class MapHelper(
         return endMarkerLocation
     }
 
-    fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager =
-            context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
-        )
-    }
-
     fun updateStartMarkerLocation(location: GeoPoint) {
-        Log.d(
+        /*Log.d(
             "myTag",
             String.format("Updated STARTMARKER position from ${startMarker.position} to $location")
-        )
+        )*/
         startMarker.position = location
         map.invalidate()
     }
@@ -123,34 +135,6 @@ class MapHelper(
         map.overlays.add(endMarker)
     }
 
-    private fun setFusedLocationClient() {
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(context)
-    }
-
-    private fun getCurrentLocation() {
-        if (isLocationEnabled()) {
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions()
-                return
-            }
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    currentLocation.latitude = location.latitude
-                    currentLocation.longitude = location.longitude
-                }
-                updateStartMarkerLocation(currentLocation)
-            }
-        }
-    }
-
     fun processLocation(distance: Float, geoPoint: GeoPoint) {
         //check if calculated distance is higher then thresh hold
         //if  higher then accept location
@@ -160,10 +144,6 @@ class MapHelper(
         } else {
             distanceTracker.rejectLocation()
         }
-    }
-
-    fun updateMarkerLocations(geoPoint: GeoPoint) {
-        updateStartMarkerLocation(geoPoint)
     }
 
     private fun requestPermissions() {
@@ -176,30 +156,6 @@ class MapHelper(
             ),
             LOCATION_REQUEST
         )
-    }
-
-    fun startLocationsUpdates() {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            fusedLocationProviderClient.requestLocationUpdates(
-                locationRequest, locationCallback,
-                Looper.getMainLooper()
-            )
-        }
-    }
-
-    fun stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
-    private fun createLocationRequest() {
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
     }
 
     fun hideMap() {
@@ -234,15 +190,15 @@ class MapHelper(
         resumeSessionCounter++
     }
 
-    private fun checkResumeCounter() {
-        if (resumeSessionCounter > 5) {
-            Toast.makeText(context, "Session resumed", Toast.LENGTH_SHORT).show()
-            distanceTracker.resumeSession()
-            distanceTracker.controlPanel.buttonSection.enterRecordingMode()
-        }
-    }
+    /* private fun checkResumeCounter() {
+         if (resumeSessionCounter > 5) {
+             Toast.makeText(context, "Session resumed", Toast.LENGTH_SHORT).show()
+             distanceTracker.resumeSession()
+             distanceTracker.controlPanel.buttonSection.enterRecordingMode()
+         }
+     }*/
 
-    fun isDistanceValid(distance: Float): Boolean {
+    private fun isDistanceValid(distance: Float): Boolean {
         return distance > lowerDistanceThreshold
     }
 
@@ -251,18 +207,10 @@ class MapHelper(
         checkPauseCounter()
     }
 
-    fun updateResumeCounter() {
-        incrementResumeCounter()
-        checkResumeCounter()
-    }
-
-    fun checkForFirstLocation(geoPoint: GeoPoint) {
-        centerOnPoint(geoPoint)
-        distanceTracker.locatedFirstTime = !distanceTracker.locatedFirstTime
-
-        updateStartMarkerLocation(geoPoint)
-        updateEndMarkerLocation(geoPoint)
-    }
+    /*fun updateResumeCounter() {
+         incrementResumeCounter()
+         checkResumeCounter()
+     }*/
 
     companion object {
         fun setupMap(map: MapView) {

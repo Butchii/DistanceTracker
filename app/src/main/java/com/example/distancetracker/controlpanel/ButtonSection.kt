@@ -4,10 +4,11 @@ import android.content.Context
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.R
+import com.example.distancetracker.Utility
+import kotlinx.coroutines.cancel
 
 class ButtonSection(
     private val buttonSectionLayout: LinearLayout,
@@ -40,50 +41,50 @@ class ButtonSection(
         sessionBtnDescription = buttonSectionLayout.findViewById(R.id.sessionBtnDescription)
 
         sessionBtn.setOnClickListener {
-            if (distanceTracker.mapHelper.isLocationEnabled()) {
-                if (!distanceTracker.startedSession) {
-                    //no session started yet
-                    distanceTracker.startSession()
-                    changeSessionButtonDescription(R.string.recording)
-                    changeSessionButtonIcon(R.drawable.record_icon)
-                    distanceTracker.topBar.hideTopBarExpand()
-                    distanceTracker.mapHelper.showMap()
-                    buttonSubBar.showResetButton()
-                } else {
-                    //session already exists
-                    if (distanceTracker.recording) {
-                        distanceTracker.pauseSession()
-                        enterPauseMode()
-                    } else {
-                        distanceTracker.resumeSession()
-                        enterRecordingMode()
-                    }
-                }
+            if (!Utility.isServiceRunningInForeground(context)) {
+                //no session started yet
+                distanceTracker.startSession()
             } else {
-                Toast.makeText(context, "Please enable your GPS!", Toast.LENGTH_SHORT)
-                    .show()
+                //session started
+                if (distanceTracker.recording) {
+                    //recording
+                    distanceTracker.pauseSession()
+                    enterPauseMode()
+                } else {
+                    //paused
+                    distanceTracker.resumeSession()
+                    distanceTracker.topBar.hideTopBarExpand()
+                    enterRecordingMode()
+                }
             }
         }
     }
 
-    fun enterRecordingMode(){
+    fun enterRecordingMode() {
         changeSessionButtonDescription(R.string.recording)
         changeSessionButtonIcon(R.drawable.record_icon)
+        buttonSubBar.showButtonBar()
         buttonSubBar.deactivateSaveBtn()
     }
 
-    fun enterPauseMode(){
+    fun enterPauseMode() {
         changeSessionButtonDescription(R.string.paused)
         changeSessionButtonIcon(R.drawable.pause_icon)
         buttonSubBar.activateSaveBtn()
     }
 
-    fun changeSessionButtonIcon(iconId: Int) {
+    private fun changeSessionButtonIcon(iconId: Int) {
         sessionBtn.setImageResource(iconId)
     }
 
-    fun changeSessionButtonDescription(stringId: Int) {
+    private fun changeSessionButtonDescription(stringId: Int) {
         sessionBtnDescription.text =
             ContextCompat.getString(context, stringId)
+    }
+
+    fun reset(){
+        changeSessionButtonDescription(R.string.start_session)
+        changeSessionButtonIcon(R.drawable.start_icon)
+        buttonSubBar.hideButtonBar()
     }
 }

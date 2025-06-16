@@ -31,5 +31,8 @@ class ControlPanel(
         infoSection = InfoSection(infoSectionLayout, distanceTracker, context)
     }
 
-
+    fun reset(){
+        infoSection.reset()
+        buttonSection.reset()
+    }
 }

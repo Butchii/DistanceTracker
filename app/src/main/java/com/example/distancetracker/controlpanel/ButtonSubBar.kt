@@ -68,7 +68,6 @@ class ButtonSubBar(
         totalDistanceDialog.text = String.format("%.2f km", totalDistanceMetres)
 
         val sessionTimeDialog = dialog.findViewById<TextView>(R.id.sessionTime)
-        sessionTimeDialog.text = distanceTracker.sessionTimer.getFormattedSessionDuration()
 
         val averageSpeedDialog = dialog.findViewById<TextView>(R.id.averageSpeed)
         averageSpeedDialog.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
@@ -138,19 +137,13 @@ class ButtonSubBar(
         FireStore.uploadRoute(
             Route(
                 routeName,
-                String.format(
-                    "${distanceTracker.sessionTimer.sessionSeconds + distanceTracker.sessionTimer.sessionMinutes * 60 + distanceTracker.sessionTimer.sessionHours * 3600}"
-                ),
+                "",
                 distanceTracker.geoPointList,
                 distanceTracker.averageSpeed.toString(),
                 distanceTracker.totalDistance.toString()
             )
         )
         distanceTracker.resetSession()
-    }
-
-    fun showResetButton() {
-        resetBtn.visibility = View.VISIBLE
     }
 
     fun activateSaveBtn() {

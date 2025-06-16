@@ -1,10 +1,15 @@
 package com.example.distancetracker
 
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
+import android.widget.Toast
+import kotlinx.coroutines.cancel
 import org.osmdroid.util.GeoPoint
 
 open class MainActivity : AppCompatActivity() {
@@ -21,58 +26,32 @@ open class MainActivity : AppCompatActivity() {
             DistanceTracker(
                 findViewById(R.id.distanceTrackerLayout),
                 applicationContext,
-                this,
-                locationCallback
+                this
             )
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onDestroy() {
+        super.onDestroy()
+        distanceTracker.unregisterReceiver()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
         Log.d("myTag", "Resuming tracking")
-        distanceTracker.mapHelper.startLocationsUpdates()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (!distanceTracker.recording) {
-            Log.d("myTag", "Stopped tracking")
-            distanceTracker.mapHelper.stopLocationUpdates()
-        }
-    }
-
-    private var locationCallback: LocationCallback = object : LocationCallback() {
-        override fun onLocationResult(newLocation: LocationResult) {
-            super.onLocationResult(newLocation)
-            val locations = newLocation.locations
-            distanceTracker.mapHelper.updateCurrentLocation(
-                GeoPoint(
-                    locations[0].latitude,
-                    locations[0].longitude
-                )
-            )
-            val currentLocation = distanceTracker.mapHelper.currentLocation
-            if (!distanceTracker.hasStartedSession()) {
-                //no session is running
-                distanceTracker.mapHelper.updateMarkerLocations(currentLocation)
+        if (!Utility.isServiceRunningInForeground(applicationContext)) {
+            if (!Utility.isGPSEnabled(applicationContext)) {
+                distanceTracker.mapHelper.startLocationUpdates()
             } else {
-                //session is running
-                val lastLocation = distanceTracker.mapHelper.getEndMarkerLocation()
-                val distance = locations[0].distanceTo(lastLocation)
-                if (distanceTracker.isRecording()) {
-                    // session is recording
-                    distanceTracker.mapHelper.processLocation(distance, currentLocation)
-                    distanceTracker.controlPanel.infoSection.updateAverageSpeed()
-                } else {
-                    // session is in pause mode
-                    if (distanceTracker.mapHelper.isDistanceValid(distance) && distanceTracker.activeAutoResume) {
-                        distanceTracker.mapHelper.updateResumeCounter()
-                    }
-                }
+                throw LocationClient.LocationException("GPS is disabled")
             }
-            if (!distanceTracker.locatedFirstTime) {
-                //first location received
-                distanceTracker.mapHelper.checkForFirstLocation(currentLocation)
-            }
+        } else {
+            distanceTracker.startedSession = true
+            distanceTracker.controlPanel.buttonSection.enterRecordingMode()
         }
+    }
+
+    override fun onStop() {
+        distanceTracker.mapHelper.locationScope.cancel()
+        super.onStop()
     }
 }

@@ -22,10 +22,9 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
 
-
-        <service android:name=".DistanceTracker"
-            android:exported="false"
-            android:foregroundServiceType="location"/>
+        <service android:name=".RecordingService"
+            android:exported="true"
+            android:foregroundServiceType="location" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
