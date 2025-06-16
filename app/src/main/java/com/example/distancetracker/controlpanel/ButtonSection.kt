@@ -6,17 +6,17 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.distancetracker.DistanceTracker
+import com.example.distancetracker.MainActivity
 import com.example.distancetracker.R
 import com.example.distancetracker.Utility
-import kotlinx.coroutines.cancel
 
 class ButtonSection(
     private val buttonSectionLayout: LinearLayout,
     private val context: Context,
-    private val activity: Context,
+    private val activity: MainActivity,
     private val distanceTracker: DistanceTracker
 ) {
-    lateinit var buttonSubBar: ButtonSubBar
+    private lateinit var buttonSubBar: ButtonSubBar
 
     private lateinit var sessionBtn: ImageButton
     private lateinit var sessionBtnDescription: TextView
@@ -43,7 +43,11 @@ class ButtonSection(
         sessionBtn.setOnClickListener {
             if (!Utility.isServiceRunningInForeground(context)) {
                 //no session started yet
-                distanceTracker.startSession()
+                if(Utility.isLocationPermissionGranted(activity)){
+                    distanceTracker.startSession()
+                }else{
+                    Utility.requestLocationPermission(activity)
+                }
             } else {
                 //session started
                 if (distanceTracker.recording) {

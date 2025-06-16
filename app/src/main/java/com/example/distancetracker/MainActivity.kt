@@ -1,16 +1,9 @@
 package com.example.distancetracker
 
-import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
-import android.widget.Toast
 import kotlinx.coroutines.cancel
-import org.osmdroid.util.GeoPoint
 
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker

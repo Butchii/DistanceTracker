@@ -3,11 +3,12 @@ package com.example.distancetracker.controlpanel
 import android.content.Context
 import android.widget.LinearLayout
 import com.example.distancetracker.DistanceTracker
+import com.example.distancetracker.MainActivity
 import com.example.distancetracker.R
 
 class ControlPanel(
     private val context: Context,
-    private val activity: Context,
+    private val activity: MainActivity,
     private val controlPanelLayout: LinearLayout,
     private val distanceTracker: DistanceTracker
 ) {

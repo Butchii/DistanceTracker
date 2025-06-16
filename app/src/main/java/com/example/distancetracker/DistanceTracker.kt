@@ -47,8 +47,12 @@ class DistanceTracker(
             startedSession = true
             controlPanel.buttonSection.enterRecordingMode()
         } else {
-            if (!Utility.isGPSEnabled(context)) {
-                mapHelper.startLocationUpdates()
+            if (Utility.isGPSEnabled(context)) {
+                if(Utility.isLocationPermissionGranted(mainActivity)){
+                    mapHelper.startLocationUpdates()
+                }else{
+                    Utility.requestLocationPermission(mainActivity)
+                }
             } else {
                 throw LocationClient.LocationException("GPS is disabled")
             }
