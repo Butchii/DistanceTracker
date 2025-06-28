@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.util.Log
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.distancetracker.controlpanel.ControlPanel
 import com.example.distancetracker.topbar.TopBar
@@ -48,9 +50,9 @@ class DistanceTracker(
             controlPanel.buttonSection.enterRecordingMode()
         } else {
             if (Utility.isGPSEnabled(context)) {
-                if(Utility.isLocationPermissionGranted(mainActivity)){
+                if (Utility.isLocationPermissionGranted(mainActivity)) {
                     mapHelper.startLocationUpdates()
-                }else{
+                } else {
                     Utility.requestLocationPermission(mainActivity)
                 }
             } else {
@@ -141,7 +143,7 @@ class DistanceTracker(
         mapHelper.updatePauseCounter()
     }
 
-    fun startSession(){
+    fun startSession() {
         mapHelper.locationScope.cancel()
         startRecordingService()
         startedSession = true
@@ -173,6 +175,8 @@ class DistanceTracker(
     private fun startRecordingService() {
         val intent = Intent(context, RecordingService::class.java)
         intent.action = RecordingService.ACTION_RECORD
+        intent.putExtra("latitude", mapHelper.currentLocation.latitude.toString())
+        intent.putExtra("longitude", mapHelper.currentLocation.longitude.toString())
         context.startService(intent)
     }
 
@@ -197,13 +201,18 @@ class DistanceTracker(
     }
 
     fun processData(intent: Intent) {
-
-        Log.d("myTag",intent.getParcelableArrayExtra("geoPoints").toString())
-
+        // TODO processRoutePoints(intent)
         processSessionDuration(intent)
         processLastDistance(intent)
         processAverageSpeed(intent)
         processTotalDistance(intent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun processRoutePoints(intent: Intent) {
+        val routePoints =
+            intent.getParcelableArrayListExtra("test", GeoPoint::class.java) as ArrayList<GeoPoint>
+        //TODO
     }
 
     fun unregisterReceiver() {
@@ -220,19 +229,16 @@ class DistanceTracker(
     }
 
     private fun processLastDistance(intent: Intent) {
-        val lastDistance = intent.getStringExtra("distance")?.toDouble()
         val endMarkerLatitude = intent.getStringExtra("latitude")
         val endMarkerLongitude = intent.getStringExtra("longitude")
 
-        if (endMarkerLatitude != null && endMarkerLongitude != null && lastDistance != null) {
-            if (lastDistance > 0.55) {
-                mapHelper.updateEndMarkerLocation(
-                    GeoPoint(
-                        endMarkerLatitude.toDouble(),
-                        endMarkerLongitude.toDouble()
-                    )
+        if (endMarkerLatitude != null && endMarkerLongitude != null) {
+            mapHelper.updateEndMarkerLocation(
+                GeoPoint(
+                    endMarkerLatitude.toDouble(),
+                    endMarkerLongitude.toDouble()
                 )
-            }
+            )
         }
     }
 

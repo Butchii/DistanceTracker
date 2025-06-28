@@ -7,7 +7,9 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.IBinder
+import android.os.Parcelable
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
@@ -23,12 +25,12 @@ import java.util.Locale
 
 class RecordingService : Service() {
     private var serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private lateinit var locationClient: LocationClient
+    lateinit var locationClient: LocationClient
     private lateinit var timerClient: TimerClient
 
     private val CHANNEL_ID = "123"
 
-    private var geoPoints: ArrayList<GeoPoint> = ArrayList()
+    var geoPoints: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
 
@@ -51,16 +53,34 @@ class RecordingService : Service() {
             applicationContext,
             LocationServices.getFusedLocationProviderClient(applicationContext), null, null
         )
-        timerClient = TimerClient()
+        timerClient = TimerClient(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent != null) {
+            addStartMarkerLocation(intent)
+        }
+
         when (intent?.action) {
             ACTION_RECORD -> checkState()
             ACTION_RESET -> reset()
             ACTION_PAUSE -> pause()
         }
         return START_STICKY
+    }
+
+    private fun addStartMarkerLocation(intent: Intent) {
+        val startMarkerLatitude = intent.getStringExtra("latitude")
+        val startMarkerLongitude = intent.getStringExtra("longitude")
+        Log.d("myTag",String.format("$startMarkerLatitude $startMarkerLongitude"))
+        if (startMarkerLatitude != null && startMarkerLongitude != null) {
+            val startMarkerLocation =
+                GeoPoint(startMarkerLatitude.toDouble(), startMarkerLongitude.toDouble())
+            geoPoints.add(startMarkerLocation)
+
+            locationClient.currentLocation.latitude = startMarkerLatitude.toDouble()
+            locationClient.currentLocation.longitude = startMarkerLongitude.toDouble()
+        }
     }
 
     private fun reset() {
@@ -107,37 +127,17 @@ class RecordingService : Service() {
             .onEach { location ->
                 val lat = location.latitude
                 val long = location.longitude
-                var lastDistance = 0.0
-                if ((locationClient.startLocation.latitude != locationClient.currentLocation.latitude) && (locationClient.startLocation.longitude != locationClient.currentLocation.longitude)) {
-                    lastDistance = locationClient.calculateDistance(lat, long)
+                val lastDistance: Double = locationClient.calculateDistance(lat, long)
 
-                    if (timerClient.sessionSeconds > 30) {
-                        locationClient.calculateAverageSpeed(timerClient.sessionSeconds)
-                    }
-
-                    if (lastDistance > 0.55) {
-                        locationClient.totalDistance += (lastDistance / 1000)
-                        geoPoints.add(GeoPoint(lat, long))
-
-                        sendData(
-                            latitude = lat.toString(),
-                            longitude = long.toString(),
-                            sessionDurationInSeconds = timerClient.getTotalTimeInSeconds(),
-                            lastDistance = lastDistance.toString(),
-                            totalDistance = locationClient.totalDistance.toString(),
-                            avgSpeed = locationClient.averageSpeed
-                        )
-                    } else {
-                        sendData(
-                            latitude = null,
-                            longitude = null,
-                            sessionDurationInSeconds = timerClient.getTotalTimeInSeconds(),
-                            lastDistance = null,
-                            totalDistance = locationClient.totalDistance.toString(),
-                            avgSpeed = locationClient.averageSpeed
-                        )
-                    }
+                if (timerClient.sessionSeconds > 30) {
+                    locationClient.calculateAverageSpeed(timerClient.sessionSeconds)
                 }
+
+                if (lastDistance > 0.55) {
+                    locationClient.totalDistance += (lastDistance / 1000)
+                    geoPoints.add(GeoPoint(lat, long))
+                }
+
                 locationClient.currentLocation = GeoPoint(lat, long)
                 logInformation(lat, long, lastDistance)
                 updateNotification(notification)
@@ -195,23 +195,23 @@ class RecordingService : Service() {
         return null
     }
 
-    private fun sendData(
-        latitude: String? = null,
-        longitude: String? = null,
+    fun sendData(
+        latitude: Double,
+        longitude: Double,
         sessionDurationInSeconds: Int,
-        lastDistance: String? = null,
         totalDistance: String,
-        avgSpeed: Double
+        avgSpeed: Double,
+        geoPoints: ArrayList<GeoPoint>? = null
     ) {
         Intent().run {
             action = DistanceTracker.ACTION_DATA
-            this.putExtra("latitude", latitude)
-            this.putExtra("longitude", longitude)
+            this.putExtra("latitude", latitude.toString())
+            this.putExtra("longitude", longitude.toString())
             this.putExtra("time", sessionDurationInSeconds.toString())
-            this.putExtra("distance", lastDistance)
             this.putExtra("totalDistance", totalDistance)
             this.putExtra("averageSpeed", avgSpeed)
-            this.putParcelableArrayListExtra("geoPoints", geoPoints)
+            this.putParcelableArrayListExtra("test", geoPoints)
+
             this@RecordingService.sendBroadcast(this)
         }
     }

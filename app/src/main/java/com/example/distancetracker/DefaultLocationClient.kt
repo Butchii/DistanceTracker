@@ -28,8 +28,7 @@ class DefaultLocationClient(
 ) : LocationClient {
     override var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
     override var totalDistance: Double = 0.0
-    override var averageSpeed: Double = 0.00
-    override var startLocation: GeoPoint = GeoPoint(0.0, 0.0)
+    override var totalAverageSpeed: Double = 0.0
 
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
@@ -72,13 +71,7 @@ class DefaultLocationClient(
 
     @SuppressLint("MissingPermission")
     override fun getInitialLocation() {
-        val locationManager =
-            context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        val isNetworkEnabled =
-            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-        if (!isGpsEnabled && !isNetworkEnabled) {
+        if (!Utility.isGPSEnabled(context)) {
             throw LocationClient.LocationException("GPS is disabled")
         }
 
@@ -117,6 +110,7 @@ class DefaultLocationClient(
 
     override fun calculateAverageSpeed(durationInSeconds: Int): String {
         val averageSpeed = totalDistance / durationInSeconds.toDouble()
+        totalAverageSpeed = averageSpeed
         Log.d("myTag", averageSpeed.toString())
         return String.format(Locale.getDefault(), "%.2f km/h", averageSpeed)
     }

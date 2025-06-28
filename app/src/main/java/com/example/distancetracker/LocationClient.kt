@@ -8,8 +8,7 @@ interface LocationClient {
 
     var currentLocation: GeoPoint
     var totalDistance: Double
-    var averageSpeed: Double
-    var startLocation: GeoPoint
+    var totalAverageSpeed: Double
 
     fun getLocationUpdates(interval: Long): Flow<Location>
 

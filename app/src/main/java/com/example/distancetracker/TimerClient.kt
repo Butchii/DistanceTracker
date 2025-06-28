@@ -3,7 +3,7 @@ package com.example.distancetracker
 import java.util.Timer
 import java.util.TimerTask
 
-class TimerClient {
+class TimerClient(val recordingService: RecordingService) {
     var sessionSeconds: Int = 0
     var sessionMinutes: Int = 0
     var sessionHours: Int = 0
@@ -28,6 +28,15 @@ class TimerClient {
                 sessionMinutes = 0
                 sessionHours++
             }
+
+            recordingService.sendData(
+                recordingService.locationClient.currentLocation.latitude,
+                recordingService.locationClient.currentLocation.longitude,
+                getTotalTimeInSeconds(),
+                recordingService.locationClient.totalDistance.toString(),
+                recordingService.locationClient.totalAverageSpeed,
+                recordingService.geoPoints
+            )
         }
     }
 
