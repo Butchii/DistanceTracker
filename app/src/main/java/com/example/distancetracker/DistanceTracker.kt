@@ -204,7 +204,6 @@ class DistanceTracker(
         // TODO processRoutePoints(intent)
         processSessionDuration(intent)
         processLastDistance(intent)
-        processAverageSpeed(intent)
         processTotalDistance(intent)
     }
 
@@ -223,8 +222,11 @@ class DistanceTracker(
         val sessionDuration = intent.getStringExtra("time")
         if (sessionDuration != null) {
             sessionDurationInSeconds = sessionDuration.toInt()
-            val formattedSessionDuration = Utility.formatSessionTime(sessionDuration.toInt())
+            val formattedSessionDuration = Utility.formatSessionTime(sessionDurationInSeconds)
             controlPanel.infoSection.updateSessionDuration(formattedSessionDuration)
+            if (sessionDurationInSeconds > 25) {
+                processAverageSpeed(intent)
+            }
         }
     }
 
@@ -246,7 +248,7 @@ class DistanceTracker(
     private fun processAverageSpeed(intent: Intent) {
         val averageSpeed = intent.getStringExtra("averageSpeed")
         if (averageSpeed != null) {
-           controlPanel.infoSection.updateAverageSpeed(averageSpeed)
+            controlPanel.infoSection.updateAverageSpeed(averageSpeed)
         }
     }
 
