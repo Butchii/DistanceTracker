@@ -104,7 +104,7 @@ class DistanceTracker(
 
     fun pauseSession() {
         Intent(context, RecordingService::class.java).apply {
-            action = RecordingService.ACTION_PAUSE
+            action = RecordingService.ACTION_RECORD
             context.startService(this)
         }
 
@@ -231,8 +231,9 @@ class DistanceTracker(
     private fun processLastDistance(intent: Intent) {
         val endMarkerLatitude = intent.getStringExtra("latitude")
         val endMarkerLongitude = intent.getStringExtra("longitude")
+        val lastDistance = intent.getStringExtra("lastDistance")
 
-        if (endMarkerLatitude != null && endMarkerLongitude != null) {
+        if (endMarkerLatitude != null && endMarkerLongitude != null && lastDistance != null && lastDistance.toDouble() > 0.55) {
             mapHelper.updateEndMarkerLocation(
                 GeoPoint(
                     endMarkerLatitude.toDouble(),
@@ -243,9 +244,9 @@ class DistanceTracker(
     }
 
     private fun processAverageSpeed(intent: Intent) {
-        val averageSpeed = intent.getStringExtra("averageSpeed")?.toDouble()
+        val averageSpeed = intent.getStringExtra("averageSpeed")
         if (averageSpeed != null) {
-            controlPanel.infoSection.updateAverageSpeed(averageSpeed.toString())
+           controlPanel.infoSection.updateAverageSpeed(averageSpeed)
         }
     }
 

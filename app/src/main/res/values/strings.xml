@@ -7,7 +7,7 @@
     <string name="session_time">Session time</string>
     <string name="average_speed">Average speed</string>
     <string name="_0_0km">0,00 km</string>
-    <string name="_0_0_km_h">0,00 km/h</string>
+    <string name="_0_0_km_h">0,0 km/h</string>
     <string name="open_saved_tracks_list">open saved tracks list</string>
     <string name="start_session">Start session</string>
     <string name="distance_tracker"><i><b>Distance Tracker</b></i></string>

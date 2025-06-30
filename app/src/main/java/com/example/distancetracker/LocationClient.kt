@@ -7,21 +7,18 @@ import org.osmdroid.util.GeoPoint
 interface LocationClient {
 
     var currentLocation: GeoPoint
-    var totalDistance: Double
+    var totalDistanceInKilometres: Double
     var totalAverageSpeed: Double
+    var lastDistance: Double
 
     fun getLocationUpdates(interval: Long): Flow<Location>
-
-    fun pauseLocationUpdates()
-
-    fun stopLocationUpdates()
 
     fun getInitialLocation()
 
     fun calculateDistance(
         lat: Double,
         long: Double
-    ): Double
+    )
 
     fun calculateAverageSpeed(durationInSeconds: Int): String
 

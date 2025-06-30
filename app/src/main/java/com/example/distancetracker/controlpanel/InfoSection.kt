@@ -36,12 +36,12 @@ class InfoSection(
         totalDistanceTV = infoSectionLayout.findViewById(R.id.totalDistance)
     }
 
-    fun resetTotalDistance() {
+    private fun resetTotalDistance() {
         distanceTracker.totalDistance = 0.0
         totalDistanceTV.text = ContextCompat.getString(context, R.string._0_0km)
     }
 
-    fun resetAverageSpeed() {
+    private fun resetAverageSpeed() {
         distanceTracker.averageSpeed = 0.0
         averageSpeedTV.text = ContextCompat.getString(context, R.string._0_0_km_h)
     }
@@ -55,8 +55,10 @@ class InfoSection(
     }
 
     fun updateAverageSpeed(avgSpeed: String) {
+        val formattedAvgSpeed = avgSpeed.replace(".", ",")
+
         averageSpeedTV.text =
-            String.format(Locale.getDefault(), "%.2f km/h", avgSpeed)
+            String.format(Locale.getDefault(), "%.4s km/h", formattedAvgSpeed)
     }
 
     fun reset() {

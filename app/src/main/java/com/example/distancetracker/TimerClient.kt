@@ -30,12 +30,8 @@ class TimerClient(val recordingService: RecordingService) {
             }
 
             recordingService.sendData(
-                recordingService.locationClient.currentLocation.latitude,
-                recordingService.locationClient.currentLocation.longitude,
                 getTotalTimeInSeconds(),
-                recordingService.locationClient.totalDistance.toString(),
-                recordingService.locationClient.totalAverageSpeed,
-                recordingService.geoPoints
+                recordingService.locationClient.totalAverageSpeed
             )
         }
     }

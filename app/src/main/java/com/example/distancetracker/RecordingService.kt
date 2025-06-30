@@ -7,9 +7,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
-import android.os.Parcelable
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.LocationServices
@@ -30,7 +28,7 @@ class RecordingService : Service() {
 
     private val CHANNEL_ID = "123"
 
-    var geoPoints: ArrayList<GeoPoint> = ArrayList()
+    private var geoPoints: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
 
@@ -64,7 +62,6 @@ class RecordingService : Service() {
         when (intent?.action) {
             ACTION_RECORD -> checkState()
             ACTION_RESET -> reset()
-            ACTION_PAUSE -> pause()
         }
         return START_STICKY
     }
@@ -72,7 +69,6 @@ class RecordingService : Service() {
     private fun addStartMarkerLocation(intent: Intent) {
         val startMarkerLatitude = intent.getStringExtra("latitude")
         val startMarkerLongitude = intent.getStringExtra("longitude")
-        Log.d("myTag",String.format("$startMarkerLatitude $startMarkerLongitude"))
         if (startMarkerLatitude != null && startMarkerLongitude != null) {
             val startMarkerLocation =
                 GeoPoint(startMarkerLatitude.toDouble(), startMarkerLongitude.toDouble())
@@ -119,7 +115,6 @@ class RecordingService : Service() {
 
     private fun start() {
         serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-
         val notification = createRecordNotification(pendingIntent)
 
         timerClient.startTimer()
@@ -127,19 +122,15 @@ class RecordingService : Service() {
             .onEach { location ->
                 val lat = location.latitude
                 val long = location.longitude
-                val lastDistance: Double = locationClient.calculateDistance(lat, long)
+                locationClient.calculateDistance(lat, long)
+                locationClient.calculateAverageSpeed(timerClient.sessionSeconds + timerClient.sessionMinutes * 60 + timerClient.sessionHours * 3600)
 
-                if (timerClient.sessionSeconds > 30) {
-                    locationClient.calculateAverageSpeed(timerClient.sessionSeconds)
-                }
-
-                if (lastDistance > 0.55) {
-                    locationClient.totalDistance += (lastDistance / 1000)
+                if (locationClient.lastDistance > 0.55) {
+                    locationClient.totalDistanceInKilometres += (locationClient.lastDistance / 1000)
                     geoPoints.add(GeoPoint(lat, long))
                 }
-
+                logInformation(lat, long, locationClient.lastDistance)
                 locationClient.currentLocation = GeoPoint(lat, long)
-                logInformation(lat, long, lastDistance)
                 updateNotification(notification)
             }.launchIn(serviceScope)
         startForeground(1, notification.build())
@@ -151,7 +142,7 @@ class RecordingService : Service() {
                 String.format(
                     Locale.getDefault(),
                     "Recording: ${timerClient.getFormattedSessionDuration()} \nDistance: %.2f km ",
-                    locationClient.totalDistance
+                    locationClient.totalDistanceInKilometres
                 )
             )
         notificationManager.notify(1, updatedNotification.build())
@@ -187,7 +178,6 @@ class RecordingService : Service() {
 
     companion object {
         const val ACTION_RECORD = "ACTION_RECORD"
-        const val ACTION_PAUSE = "ACTION_PAUSE"
         const val ACTION_RESET = "ACTION_RESET"
     }
 
@@ -196,21 +186,18 @@ class RecordingService : Service() {
     }
 
     fun sendData(
-        latitude: Double,
-        longitude: Double,
         sessionDurationInSeconds: Int,
-        totalDistance: String,
-        avgSpeed: Double,
-        geoPoints: ArrayList<GeoPoint>? = null
+        avgSpeed: Double
     ) {
         Intent().run {
             action = DistanceTracker.ACTION_DATA
-            this.putExtra("latitude", latitude.toString())
-            this.putExtra("longitude", longitude.toString())
+            this.putExtra("lastDistance", locationClient.lastDistance)
+            this.putExtra("latitude", locationClient.currentLocation.latitude.toString())
+            this.putExtra("longitude", locationClient.currentLocation.longitude.toString())
             this.putExtra("time", sessionDurationInSeconds.toString())
-            this.putExtra("totalDistance", totalDistance)
-            this.putExtra("averageSpeed", avgSpeed)
-            this.putParcelableArrayListExtra("test", geoPoints)
+            this.putExtra("totalDistance", locationClient.totalDistanceInKilometres.toString())
+            this.putExtra("averageSpeed", avgSpeed.toString())
+            this.putParcelableArrayListExtra("routePoints", geoPoints)
 
             this@RecordingService.sendBroadcast(this)
         }
@@ -221,7 +208,14 @@ class RecordingService : Service() {
             "myTag",
             String.format(
                 Locale.getDefault(),
-                "new $lat $long old ${locationClient.currentLocation}  distance $lastDistance  total distance ${locationClient.totalDistance}"
+                "New Latitude: $lat \n" +
+                        "New Longitude: $long \n" +
+                        "Old Location: ${locationClient.currentLocation} \n" +
+                        "Distance walked: $lastDistance \n" +
+                        "Total distance walked: ${locationClient.totalDistanceInKilometres}\n" +
+                        "Session duration: ${timerClient.sessionHours}h ${timerClient.sessionMinutes}m ${timerClient.sessionSeconds}s\n"+
+                        "Average speed: ${locationClient.totalAverageSpeed}\n"+
+                        "Saved geopoints: $geoPoints"
             )
         )
     }
@@ -233,7 +227,7 @@ class RecordingService : Service() {
                 String.format(
                     Locale.getDefault(),
                     "Recording: ${timerClient.getFormattedSessionDuration()} \nDistance: %.2f km ",
-                    locationClient.totalDistance
+                    locationClient.totalDistanceInKilometres
                 )
             )
             .setSmallIcon(R.drawable.avg_icon)
@@ -249,8 +243,8 @@ class RecordingService : Service() {
             .setContentText(
                 String.format(
                     Locale.getDefault(),
-                    "Recording: ${timerClient.getFormattedSessionDuration()} \nDistance: %.2f km ",
-                    locationClient.totalDistance
+                    "Paused: ${timerClient.getFormattedSessionDuration()} \nDistance: %.2f km ",
+                    locationClient.totalDistanceInKilometres
                 )
             )
             .setSmallIcon(R.drawable.avg_icon)

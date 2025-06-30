@@ -6,7 +6,6 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
-import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -19,7 +18,6 @@ import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import java.util.Locale
 
-
 class DefaultLocationClient(
     private val context: Context,
     private val client: FusedLocationProviderClient,
@@ -27,8 +25,9 @@ class DefaultLocationClient(
     private val activity: Activity?
 ) : LocationClient {
     override var currentLocation: GeoPoint = GeoPoint(0.0, 0.0)
-    override var totalDistance: Double = 0.0
+    override var totalDistanceInKilometres: Double = 0.0
     override var totalAverageSpeed: Double = 0.0
+    override var lastDistance: Double = 0.0
 
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
@@ -61,14 +60,6 @@ class DefaultLocationClient(
         }
     }
 
-    override fun pauseLocationUpdates() {
-        TODO("Not yet implemented")
-    }
-
-    override fun stopLocationUpdates() {
-        TODO("Not yet implemented")
-    }
-
     @SuppressLint("MissingPermission")
     override fun getInitialLocation() {
         if (!Utility.isGPSEnabled(context)) {
@@ -96,7 +87,7 @@ class DefaultLocationClient(
     override fun calculateDistance(
         lat: Double,
         long: Double
-    ): Double {
+    ) {
         val oldLocation = Location("")
         oldLocation.latitude = currentLocation.latitude
         oldLocation.longitude = currentLocation.longitude
@@ -105,14 +96,13 @@ class DefaultLocationClient(
         newLocation.latitude = lat
         newLocation.longitude = long
 
-        return (oldLocation.distanceTo(newLocation)).toDouble()
+        lastDistance = (oldLocation.distanceTo(newLocation)).toDouble()
     }
 
     override fun calculateAverageSpeed(durationInSeconds: Int): String {
-        val averageSpeed = totalDistance / durationInSeconds.toDouble()
+        val averageSpeed = totalDistanceInKilometres / (durationInSeconds.toDouble() / 3600)
         totalAverageSpeed = averageSpeed
-        Log.d("myTag", averageSpeed.toString())
-        return String.format(Locale.getDefault(), "%.2f km/h", averageSpeed)
+        return String.format(Locale.getDefault(), "%.3f km/h", averageSpeed)
     }
 
     private val locationCallback = object : LocationCallback() {
