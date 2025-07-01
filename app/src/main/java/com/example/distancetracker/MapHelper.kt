@@ -24,6 +24,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import java.util.Locale
 
 class MapHelper(
     private val context: Context,
@@ -82,7 +83,9 @@ class MapHelper(
                 val currentLocationAsGeoPoint = GeoPoint(lat, long)
                 updateCurrentLocation(currentLocationAsGeoPoint)
                 updateStartMarkerLocation(currentLocation)
+                Log.d("myTag", String.format( "start marker location ${startMarker.position}"))
             }.launchIn(locationScope)
+
     }
 
     fun centerOnPoint(location: GeoPoint) {

@@ -166,6 +166,8 @@ class DistanceTracker(
         mapHelper.resetPauseCounter()
         mapHelper.map.invalidate()
 
+        mapHelper.startLocationUpdates()
+
         controlPanel.reset()
 
         geoPointList.clear()
