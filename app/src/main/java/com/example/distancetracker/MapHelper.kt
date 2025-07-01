@@ -34,7 +34,7 @@ class MapHelper(
 ) {
     var locationScope: CoroutineScope
 
-    var route: Polyline = Polyline()
+    private var route: Polyline = Polyline()
 
     private var startMarker: Marker = Marker(map)
     private var endMarker: Marker = Marker(map)
@@ -58,13 +58,22 @@ class MapHelper(
         initializeLocationClient()
         locationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         configureMarkers(startMarker, endMarker, context)
-        map.overlays.add(route)
-        map.overlays.add(startMarker)
-        locationClient.getInitialLocation()
+        map.overlays.add(route)         // TODO processRoute in distancetracker
+        map.overlays.add(startMarker)   // TODO nicht automatisch
         if (firstLocation) {
             map.controller.animateTo(currentLocation)
             firstLocation = false
         }
+    }
+
+    fun addRouteToMap(routeList: ArrayList<GeoPoint>){
+        map.overlays.remove(route)
+        route = Polyline()
+        for(routePoint:GeoPoint in routeList){
+            route.addPoint(routePoint)
+        }
+        map.overlays.add(route)
+        map.invalidate()
     }
 
     private fun initializeLocationClient() {

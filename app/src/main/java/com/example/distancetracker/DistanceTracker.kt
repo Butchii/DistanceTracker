@@ -35,6 +35,8 @@ class DistanceTracker(
     var activeAutoPause: Boolean = true
     var activeAutoResume: Boolean = true
 
+    var firstLocation: Boolean = true
+
     init {
         initializeTopBar()
         initializeMapHelper()
@@ -192,6 +194,7 @@ class DistanceTracker(
     }
 
     inner class DataBroadCastReceiver : BroadcastReceiver() {
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent != null) {
                 when (intent.action) {
@@ -201,8 +204,9 @@ class DistanceTracker(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun processData(intent: Intent) {
-        // TODO processRoutePoints(intent)
+        processRoutePoints(intent)
         processSessionDuration(intent)
         processLastDistance(intent)
         processTotalDistance(intent)
@@ -211,8 +215,29 @@ class DistanceTracker(
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun processRoutePoints(intent: Intent) {
         val routePoints =
-            intent.getParcelableArrayListExtra("test", GeoPoint::class.java) as ArrayList<GeoPoint>
-        //TODO
+            intent.getParcelableArrayListExtra(
+                "routePoints",
+                GeoPoint::class.java
+            ) as ArrayList<GeoPoint>
+
+        geoPointList = routePoints
+
+        if (firstLocation) {
+            val startMarkerLocation = GeoPoint(geoPointList[0].latitude, geoPointList[0].longitude)
+            val endMarkerLocation = GeoPoint(
+                geoPointList[geoPointList.size - 1].latitude,
+                geoPointList[geoPointList.size - 1].longitude
+            )
+            mapHelper.updateStartMarkerLocation(
+                GeoPoint(
+                    startMarkerLocation
+                )
+            )
+            mapHelper.addEndMarker(endMarkerLocation)
+            mapHelper.map.controller.animateTo(startMarkerLocation)
+            firstLocation != firstLocation
+        }
+        mapHelper.addRouteToMap(routePoints)
     }
 
     fun unregisterReceiver() {

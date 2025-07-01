@@ -28,7 +28,10 @@ class TimerClient(val recordingService: RecordingService) {
                 sessionMinutes = 0
                 sessionHours++
             }
-
+            recordingService.logInformation(
+                recordingService.locationClient.currentLocation.latitude,
+                recordingService.locationClient.currentLocation.longitude
+            )
             recordingService.sendData(
                 getTotalTimeInSeconds(),
                 recordingService.locationClient.totalAverageSpeed

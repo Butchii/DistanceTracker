@@ -84,7 +84,6 @@ class RecordingService : Service() {
                     locationClient.totalDistanceInKilometres += (locationClient.lastDistance / 1000)
                     geoPoints.add(GeoPoint(lat, long))
                 }
-                logInformation(lat, long)
                 locationClient.currentLocation = GeoPoint(lat, long)
                 updateNotification(notification)
             }.launchIn(serviceScope)
@@ -191,7 +190,7 @@ class RecordingService : Service() {
         const val ACTION_RESET = "ACTION_RESET"
     }
 
-    private fun logInformation(lat: Double, long: Double) {
+    fun logInformation(lat: Double, long: Double) {
         Log.d(
             "myTag",
             String.format(
