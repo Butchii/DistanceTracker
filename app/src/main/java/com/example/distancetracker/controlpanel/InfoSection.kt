@@ -46,6 +46,10 @@ class InfoSection(
         averageSpeedTV.text = ContextCompat.getString(context, R.string._0_0_km_h)
     }
 
+    private fun resetSessionTime(){
+        sessionDurationTV.text = ContextCompat.getString(context,R.string._0h_0m_0s)
+    }
+
     fun updateSessionDuration(formattedDuration: String) {
         sessionDurationTV.text = formattedDuration
     }
@@ -63,6 +67,7 @@ class InfoSection(
 
     fun reset() {
         resetTotalDistance()
+        resetSessionTime()
         resetAverageSpeed()
     }
 }

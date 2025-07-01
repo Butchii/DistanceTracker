@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import android.util.Log
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -234,7 +233,6 @@ class DistanceTracker(
         val endMarkerLatitude = intent.getStringExtra("latitude")
         val endMarkerLongitude = intent.getStringExtra("longitude")
         val lastDistance = intent.getStringExtra("lastDistance")
-
         if (endMarkerLatitude != null && endMarkerLongitude != null && lastDistance != null && lastDistance.toDouble() > 0.55) {
             mapHelper.updateEndMarkerLocation(
                 GeoPoint(

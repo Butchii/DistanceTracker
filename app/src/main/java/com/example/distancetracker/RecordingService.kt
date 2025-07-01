@@ -31,6 +31,7 @@ class RecordingService : Service() {
     private var geoPoints: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
+    private var sessionStarted: Boolean = false
 
     private lateinit var notificationIntent: Intent
     private lateinit var pendingIntent: PendingIntent
@@ -55,65 +56,19 @@ class RecordingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent != null) {
-            addStartMarkerLocation(intent)
-        }
-
         when (intent?.action) {
-            ACTION_RECORD -> checkState()
+            ACTION_RECORD -> checkState(intent)
             ACTION_RESET -> reset()
         }
         return START_STICKY
     }
 
-    private fun addStartMarkerLocation(intent: Intent) {
-        val startMarkerLatitude = intent.getStringExtra("latitude")
-        val startMarkerLongitude = intent.getStringExtra("longitude")
-        if (startMarkerLatitude != null && startMarkerLongitude != null) {
-            val startMarkerLocation =
-                GeoPoint(startMarkerLatitude.toDouble(), startMarkerLongitude.toDouble())
-            geoPoints.add(startMarkerLocation)
-
-            locationClient.currentLocation.latitude = startMarkerLatitude.toDouble()
-            locationClient.currentLocation.longitude = startMarkerLongitude.toDouble()
+    private fun start(intent: Intent) {
+        if(!sessionStarted){
+            addStartMarkerLocation(intent)
+            sessionStarted = true
         }
-    }
 
-    private fun reset() {
-        geoPoints.clear()
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
-    }
-
-    override fun onDestroy() {
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
-    }
-
-    private fun pauseTimer() {
-        timerClient.stopTimer()
-    }
-
-    private fun pause() {
-        pauseTimer()
-        serviceScope.cancel()
-
-        val notification = createPauseNotification(pendingIntent)
-
-        notificationManager.notify(1, notification.build())
-    }
-
-    private fun checkState() {
-        recording = if (recording) {
-            pause()
-            false
-        } else {
-            start()
-            true
-        }
-    }
-
-    private fun start() {
         serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         val notification = createRecordNotification(pendingIntent)
 
@@ -129,11 +84,48 @@ class RecordingService : Service() {
                     locationClient.totalDistanceInKilometres += (locationClient.lastDistance / 1000)
                     geoPoints.add(GeoPoint(lat, long))
                 }
-                logInformation(lat, long, locationClient.lastDistance)
+                logInformation(lat, long)
                 locationClient.currentLocation = GeoPoint(lat, long)
                 updateNotification(notification)
             }.launchIn(serviceScope)
         startForeground(1, notification.build())
+    }
+
+    private fun pause() {
+        pauseTimer()
+        serviceScope.cancel()
+
+        val notification = createPauseNotification(pendingIntent)
+
+        notificationManager.notify(1, notification.build())
+    }
+
+    private fun pauseTimer() {
+        timerClient.stopTimer()
+    }
+
+
+    private fun checkState(intent: Intent) {
+        recording = if (recording) {
+            pause()
+            false
+        } else {
+            start(intent)
+            true
+        }
+    }
+
+    private fun addStartMarkerLocation(intent: Intent) {
+        val startMarkerLatitude = intent.getStringExtra("latitude")
+        val startMarkerLongitude = intent.getStringExtra("longitude")
+        if (startMarkerLatitude != null && startMarkerLongitude != null) {
+            val startMarkerLocation =
+                GeoPoint(startMarkerLatitude.toDouble(), startMarkerLongitude.toDouble())
+            geoPoints.add(startMarkerLocation)
+
+            locationClient.currentLocation.latitude = startMarkerLatitude.toDouble()
+            locationClient.currentLocation.longitude = startMarkerLongitude.toDouble()
+        }
     }
 
     private fun updateNotification(notification: NotificationCompat.Builder) {
@@ -176,22 +168,13 @@ class RecordingService : Service() {
         return PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_MUTABLE)
     }
 
-    companion object {
-        const val ACTION_RECORD = "ACTION_RECORD"
-        const val ACTION_RESET = "ACTION_RESET"
-    }
-
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
-    }
-
     fun sendData(
         sessionDurationInSeconds: Int,
         avgSpeed: Double
     ) {
         Intent().run {
             action = DistanceTracker.ACTION_DATA
-            this.putExtra("lastDistance", locationClient.lastDistance)
+            this.putExtra("lastDistance", locationClient.lastDistance.toString())
             this.putExtra("latitude", locationClient.currentLocation.latitude.toString())
             this.putExtra("longitude", locationClient.currentLocation.longitude.toString())
             this.putExtra("time", sessionDurationInSeconds.toString())
@@ -203,7 +186,12 @@ class RecordingService : Service() {
         }
     }
 
-    private fun logInformation(lat: Double, long: Double, lastDistance: Double) {
+    companion object {
+        const val ACTION_RECORD = "ACTION_RECORD"
+        const val ACTION_RESET = "ACTION_RESET"
+    }
+
+    private fun logInformation(lat: Double, long: Double) {
         Log.d(
             "myTag",
             String.format(
@@ -211,10 +199,10 @@ class RecordingService : Service() {
                 "New Latitude: $lat \n" +
                         "New Longitude: $long \n" +
                         "Old Location: ${locationClient.currentLocation} \n" +
-                        "Distance walked: $lastDistance \n" +
+                        "Distance walked: ${locationClient.lastDistance} \n" +
                         "Total distance walked: ${locationClient.totalDistanceInKilometres}\n" +
-                        "Session duration: ${timerClient.sessionHours}h ${timerClient.sessionMinutes}m ${timerClient.sessionSeconds}s\n"+
-                        "Average speed: ${locationClient.totalAverageSpeed}\n"+
+                        "Session duration: ${timerClient.sessionHours}h ${timerClient.sessionMinutes}m ${timerClient.sessionSeconds}s\n" +
+                        "Average speed: ${locationClient.totalAverageSpeed}\n" +
                         "Saved geopoints: $geoPoints"
             )
         )
@@ -252,5 +240,21 @@ class RecordingService : Service() {
             .setOngoing(true)
             .addAction(0, "Reset", getResetPendingIntent())
             .addAction(0, "Resume", getRecordPendingIntent())
+    }
+
+    private fun reset() {
+        timerClient.stopTimer()
+        serviceScope.cancel()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    override fun onDestroy() {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    override fun onBind(p0: Intent?): IBinder? {
+        return null
     }
 }
