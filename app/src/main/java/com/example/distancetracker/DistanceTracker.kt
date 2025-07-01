@@ -35,7 +35,7 @@ class DistanceTracker(
     var activeAutoPause: Boolean = true
     var activeAutoResume: Boolean = true
 
-    var firstLocation: Boolean = true
+    private var firstLocation: Boolean = true
 
     init {
         initializeTopBar()
@@ -48,6 +48,7 @@ class DistanceTracker(
             //if running -> bind to service
             //and create handler which takes data from service every second
             startedSession = true
+            startRecording()
             controlPanel.buttonSection.enterRecordingMode()
         } else {
             if (Utility.isGPSEnabled(context)) {
