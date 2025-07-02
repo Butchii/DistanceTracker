@@ -24,7 +24,7 @@ class DistanceTracker(
     private lateinit var broadcastReceiver: BroadcastReceiver
 
     var recording: Boolean = false
-    var startedSession: Boolean = false
+    var runningSession: Boolean = false
 
     private var sessionDurationInSeconds: Int = 0
     var totalDistance: Double = 0.0
@@ -47,7 +47,7 @@ class DistanceTracker(
             //checks if fore ground service is running
             //if running -> bind to service
             //and create handler which takes data from service every second
-            startedSession = true
+            runningSession = true
             startRecording()
             controlPanel.buttonSection.enterRecordingMode()
         } else {
@@ -114,7 +114,7 @@ class DistanceTracker(
     }
 
     private fun stopSession() {
-        startedSession = false
+        runningSession = false
         stopRecording()
     }
 
@@ -148,7 +148,7 @@ class DistanceTracker(
     fun startSession() {
         mapHelper.locationScope.cancel()
         startRecordingService()
-        startedSession = true
+        runningSession = true
         startRecording()
         mapHelper.showMap()
         mapHelper.addEndMarker(mapHelper.currentLocation)
@@ -235,8 +235,8 @@ class DistanceTracker(
                 )
             )
             mapHelper.addEndMarker(endMarkerLocation)
-            mapHelper.map.controller.animateTo(startMarkerLocation)
-            firstLocation != firstLocation
+            mapHelper.map.controller.animateTo(endMarkerLocation)
+            firstLocation = false
         }
         mapHelper.addRouteToMap(routePoints)
     }

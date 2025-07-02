@@ -38,7 +38,7 @@ open class MainActivity : AppCompatActivity() {
                 throw LocationClient.LocationException("GPS is disabled")
             }
         } else {
-            distanceTracker.startedSession = true
+            distanceTracker.runningSession = true
             distanceTracker.controlPanel.buttonSection.enterRecordingMode()
         }
     }
