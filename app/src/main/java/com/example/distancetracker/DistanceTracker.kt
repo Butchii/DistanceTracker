@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.util.Log
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +31,7 @@ class DistanceTracker(
     var totalDistance: Double = 0.0
     var averageSpeed: Double = 0.0
 
-    var geoPointList: ArrayList<GeoPoint> = ArrayList()
+    var routePoints: ArrayList<GeoPoint> = ArrayList()
 
     var activeAutoPause: Boolean = true
     var activeAutoResume: Boolean = true
@@ -138,7 +139,7 @@ class DistanceTracker(
         mapHelper.updateEndMarkerLocation(newLocation)
         mapHelper.resetPauseCounter()
 
-        geoPointList.add(newLocation)
+        routePoints.add(newLocation)
     }
 
     fun rejectLocation() {
@@ -173,7 +174,7 @@ class DistanceTracker(
 
         controlPanel.reset()
 
-        geoPointList.clear()
+        routePoints.clear()
     }
 
     private fun startRecordingService() {
@@ -207,6 +208,7 @@ class DistanceTracker(
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun processData(intent: Intent) {
+        processRecordingState(intent)
         processRoutePoints(intent)
         processSessionDuration(intent)
         processLastDistance(intent)
@@ -221,13 +223,13 @@ class DistanceTracker(
                 GeoPoint::class.java
             ) as ArrayList<GeoPoint>
 
-        geoPointList = routePoints
+        this.routePoints = routePoints
 
         if (firstLocation) {
-            val startMarkerLocation = GeoPoint(geoPointList[0].latitude, geoPointList[0].longitude)
+            val startMarkerLocation = GeoPoint(this.routePoints[0].latitude, this.routePoints[0].longitude)
             val endMarkerLocation = GeoPoint(
-                geoPointList[geoPointList.size - 1].latitude,
-                geoPointList[geoPointList.size - 1].longitude
+                this.routePoints[this.routePoints.size - 1].latitude,
+                this.routePoints[this.routePoints.size - 1].longitude
             )
             mapHelper.updateStartMarkerLocation(
                 GeoPoint(
@@ -243,6 +245,15 @@ class DistanceTracker(
 
     fun unregisterReceiver() {
         context.unregisterReceiver(broadcastReceiver)
+    }
+
+    private fun processRecordingState(intent: Intent){
+        val isServiceRecording = intent.getBooleanExtra("recording", true)
+        if(!isServiceRecording){
+            stopRecording()
+            controlPanel.buttonSection.enterPauseMode()
+        }
+        Log.d("myTag",String.format("recording? : $isServiceRecording"))
     }
 
     private fun processSessionDuration(intent: Intent) {

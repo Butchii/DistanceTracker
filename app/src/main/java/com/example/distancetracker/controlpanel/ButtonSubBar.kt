@@ -138,7 +138,7 @@ class ButtonSubBar(
             Route(
                 routeName,
                 "",
-                distanceTracker.geoPointList,
+                distanceTracker.routePoints,
                 distanceTracker.averageSpeed.toString(),
                 distanceTracker.totalDistance.toString()
             )

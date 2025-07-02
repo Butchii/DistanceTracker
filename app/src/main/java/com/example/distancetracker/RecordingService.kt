@@ -28,7 +28,7 @@ class RecordingService : Service() {
 
     private val CHANNEL_ID = "123"
 
-    private var geoPoints: ArrayList<GeoPoint> = ArrayList()
+    private var routePoints: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
     private var sessionStarted: Boolean = false
@@ -36,6 +36,8 @@ class RecordingService : Service() {
     private lateinit var notificationIntent: Intent
     private lateinit var pendingIntent: PendingIntent
     private lateinit var notificationManager: NotificationManager
+
+    private var autoPauseCounter: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -63,8 +65,32 @@ class RecordingService : Service() {
         return START_STICKY
     }
 
+    private fun isDistanceTooLow(): Boolean {
+        return locationClient.lastDistance < 0.55
+    }
+
+    private fun increasePauseCounter() {
+        autoPauseCounter++
+    }
+
+    fun checkPauseCounter() {
+        if (autoPauseCounter >= 10) {
+            pause()
+        }
+    }
+
+    private fun resetPauseCounter() {
+        autoPauseCounter = 0
+    }
+
+    private fun setRecordingState() {
+        recording = true
+    }
+
     private fun start(intent: Intent) {
-        if(!sessionStarted){
+        setRecordingState()
+        resetPauseCounter()
+        if (!sessionStarted) {
             addStartMarkerLocation(intent)
             sessionStarted = true
         }
@@ -78,11 +104,14 @@ class RecordingService : Service() {
                 val lat = location.latitude
                 val long = location.longitude
                 locationClient.calculateDistance(lat, long)
+                if (isDistanceTooLow()) {
+                    increasePauseCounter()
+                }
                 locationClient.calculateAverageSpeed(timerClient.sessionSeconds + timerClient.sessionMinutes * 60 + timerClient.sessionHours * 3600)
 
                 if (locationClient.lastDistance > 0.55) {
                     locationClient.totalDistanceInKilometres += (locationClient.lastDistance / 1000)
-                    geoPoints.add(GeoPoint(lat, long))
+                    routePoints.add(GeoPoint(lat, long))
                 }
                 locationClient.currentLocation = GeoPoint(lat, long)
                 updateNotification(notification)
@@ -90,7 +119,17 @@ class RecordingService : Service() {
         startForeground(1, notification.build())
     }
 
+    private fun setPauseState() {
+        recording = false
+    }
+
     private fun pause() {
+        setPauseState()
+        sendData(
+            timerClient.getTotalTimeInSeconds(),
+            locationClient.totalAverageSpeed
+        )
+
         pauseTimer()
         serviceScope.cancel()
 
@@ -120,7 +159,7 @@ class RecordingService : Service() {
         if (startMarkerLatitude != null && startMarkerLongitude != null) {
             val startMarkerLocation =
                 GeoPoint(startMarkerLatitude.toDouble(), startMarkerLongitude.toDouble())
-            geoPoints.add(startMarkerLocation)
+            routePoints.add(startMarkerLocation)
 
             locationClient.currentLocation.latitude = startMarkerLatitude.toDouble()
             locationClient.currentLocation.longitude = startMarkerLongitude.toDouble()
@@ -179,7 +218,8 @@ class RecordingService : Service() {
             this.putExtra("time", sessionDurationInSeconds.toString())
             this.putExtra("totalDistance", locationClient.totalDistanceInKilometres.toString())
             this.putExtra("averageSpeed", avgSpeed.toString())
-            this.putParcelableArrayListExtra("routePoints", geoPoints)
+            this.putExtra("recording", recording)
+            this.putParcelableArrayListExtra("routePoints", routePoints)
 
             this@RecordingService.sendBroadcast(this)
         }
@@ -202,7 +242,7 @@ class RecordingService : Service() {
                         "Total distance walked: ${locationClient.totalDistanceInKilometres}\n" +
                         "Session duration: ${timerClient.sessionHours}h ${timerClient.sessionMinutes}m ${timerClient.sessionSeconds}s\n" +
                         "Average speed: ${locationClient.totalAverageSpeed}\n" +
-                        "Saved geopoints: $geoPoints"
+                        "Saved geopoints: $routePoints"
             )
         )
     }
