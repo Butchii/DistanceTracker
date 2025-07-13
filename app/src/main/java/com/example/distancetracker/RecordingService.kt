@@ -123,22 +123,28 @@ class RecordingService : Service() {
         recording = false
     }
 
+    private fun stopLocationUpdates() {
+        serviceScope.cancel()
+    }
+
+    private fun showPauseNotification(){
+        val notification = createPauseNotification(pendingIntent)
+        notificationManager.notify(1, notification.build())
+    }
+
     private fun pause() {
+        resetPauseCounter()
         setPauseState()
         sendData(
             timerClient.getTotalTimeInSeconds(),
             locationClient.totalAverageSpeed
         )
-
-        pauseTimer()
-        serviceScope.cancel()
-
-        val notification = createPauseNotification(pendingIntent)
-
-        notificationManager.notify(1, notification.build())
+        stopTimer()
+        stopLocationUpdates()
+        showPauseNotification()
     }
 
-    private fun pauseTimer() {
+    private fun stopTimer() {
         timerClient.stopTimer()
     }
 
