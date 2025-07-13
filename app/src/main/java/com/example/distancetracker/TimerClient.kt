@@ -1,5 +1,6 @@
 package com.example.distancetracker
 
+import android.util.Log
 import java.util.Timer
 import java.util.TimerTask
 

@@ -6,7 +6,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.R
-import com.example.distancetracker.Utility
 import java.util.Locale
 
 class InfoSection(
@@ -37,12 +36,12 @@ class InfoSection(
     }
 
     private fun resetTotalDistance() {
-        distanceTracker.totalDistance = 0.0
+        distanceTracker.sessionTotalDistance = 0.0
         totalDistanceTV.text = ContextCompat.getString(context, R.string._0_0km)
     }
 
     private fun resetAverageSpeed() {
-        distanceTracker.averageSpeed = 0.0
+        distanceTracker.sessionAverageSpeed = 0.0
         averageSpeedTV.text = ContextCompat.getString(context, R.string._0_0_km_h)
     }
 

@@ -28,8 +28,10 @@ class DistanceTracker(
     var runningSession: Boolean = false
 
     private var sessionDurationInSeconds: Int = 0
-    var totalDistance: Double = 0.0
-    var averageSpeed: Double = 0.0
+    var sessionTotalDistance: Double = 0.0
+    var sessionAverageSpeed: Double = 0.0
+    var sessionDuration: Int = 0
+     var formattedSessionDuration: String = "0h 0m 0s"
 
     var routePoints: ArrayList<GeoPoint> = ArrayList()
 
@@ -226,7 +228,8 @@ class DistanceTracker(
         this.routePoints = routePoints
 
         if (firstLocation) {
-            val startMarkerLocation = GeoPoint(this.routePoints[0].latitude, this.routePoints[0].longitude)
+            val startMarkerLocation =
+                GeoPoint(this.routePoints[0].latitude, this.routePoints[0].longitude)
             val endMarkerLocation = GeoPoint(
                 this.routePoints[this.routePoints.size - 1].latitude,
                 this.routePoints[this.routePoints.size - 1].longitude
@@ -247,21 +250,24 @@ class DistanceTracker(
         context.unregisterReceiver(broadcastReceiver)
     }
 
-    private fun processRecordingState(intent: Intent){
+    private fun processRecordingState(intent: Intent) {
         val isServiceRecording = intent.getBooleanExtra("recording", true)
-        if(!isServiceRecording){
+        if (!isServiceRecording) {
             stopRecording()
             controlPanel.buttonSection.enterPauseMode()
         }
-        Log.d("myTag",String.format("recording? : $isServiceRecording"))
+        Log.d("myTag", String.format("recording? : $isServiceRecording"))
     }
 
     private fun processSessionDuration(intent: Intent) {
-        val sessionDuration = intent.getStringExtra("time")
-        if (sessionDuration != null) {
-            sessionDurationInSeconds = sessionDuration.toInt()
-            val formattedSessionDuration = Utility.formatSessionTime(sessionDurationInSeconds)
-            controlPanel.infoSection.updateSessionDuration(formattedSessionDuration)
+        val duration = intent.getStringExtra("time")
+        if (duration != null) {
+            val formattedDuration = Utility.formatSessionTime(duration)
+            sessionDurationInSeconds = duration.toInt()
+            sessionDuration = sessionDurationInSeconds
+
+            formattedSessionDuration = formattedDuration
+            controlPanel.infoSection.updateSessionDuration(formattedDuration)
             if (sessionDurationInSeconds > 25) {
                 processAverageSpeed(intent)
             }
@@ -283,9 +289,10 @@ class DistanceTracker(
     }
 
     private fun processAverageSpeed(intent: Intent) {
-        val averageSpeed = intent.getStringExtra("averageSpeed")
+        val averageSpeed = intent.getStringExtra("averageSpeed")?.toDouble()
         if (averageSpeed != null) {
-            controlPanel.infoSection.updateAverageSpeed(averageSpeed)
+            controlPanel.infoSection.updateAverageSpeed(averageSpeed.toString())
+            sessionAverageSpeed = averageSpeed
         }
     }
 
@@ -293,6 +300,7 @@ class DistanceTracker(
         val totalDistance = intent.getStringExtra("totalDistance")?.toDouble()
         if (totalDistance != null) {
             controlPanel.infoSection.updateTotalDistance(totalDistance.toFloat())
+            sessionTotalDistance = totalDistance
         }
     }
 }

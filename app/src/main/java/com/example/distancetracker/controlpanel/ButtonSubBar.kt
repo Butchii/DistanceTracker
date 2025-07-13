@@ -64,13 +64,14 @@ class ButtonSubBar(
         dialog.setContentView(R.layout.save_session_dialog)
 
         val totalDistanceDialog = dialog.findViewById<TextView>(R.id.totalDistance)
-        val totalDistanceMetres = distanceTracker.totalDistance / 1000
+        val totalDistanceMetres = distanceTracker.sessionTotalDistance / 1000
         totalDistanceDialog.text = String.format("%.2f km", totalDistanceMetres)
 
         val sessionTimeDialog = dialog.findViewById<TextView>(R.id.sessionTime)
+        sessionTimeDialog.text = String.format(distanceTracker.formattedSessionDuration)
 
         val averageSpeedDialog = dialog.findViewById<TextView>(R.id.averageSpeed)
-        averageSpeedDialog.text = String.format("%.2f km/h", distanceTracker.averageSpeed)
+        averageSpeedDialog.text = String.format("%.2f km/h", distanceTracker.sessionAverageSpeed)
 
         val routeNameWarning = dialog.findViewById<TextView>(R.id.routeNameWarning)
         val routeNameEntry = dialog.findViewById<EditText>(R.id.routeNameEntry)
@@ -137,10 +138,10 @@ class ButtonSubBar(
         FireStore.uploadRoute(
             Route(
                 routeName,
-                "",
+                distanceTracker.sessionDuration.toString(),
                 distanceTracker.routePoints,
-                distanceTracker.averageSpeed.toString(),
-                distanceTracker.totalDistance.toString()
+                distanceTracker.sessionAverageSpeed.toString(),
+                distanceTracker.sessionTotalDistance.toString()
             )
         )
         distanceTracker.resetSession()

@@ -19,8 +19,8 @@ class Utility {
             return (distance / (seconds + (minutes * 60) + (hours * 3600))) * 3.6
         }
 
-        fun formatSessionTime(seconds: Int): String {
-            var sessionTime = seconds
+        fun formatSessionTime(seconds: String): String {
+            var sessionTime = seconds.toInt()
 
             val sessionHours = sessionTime / 3600
             sessionTime %= 3600
