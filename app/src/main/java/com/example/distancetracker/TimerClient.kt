@@ -36,7 +36,12 @@ class TimerClient(val recordingService: RecordingService) {
                 getTotalTimeInSeconds(),
                 recordingService.locationClient.totalAverageSpeed
             )
-            recordingService.checkPauseCounter()
+            if(recordingService.isRecording()){
+                recordingService.checkPauseCounter()
+            }else{
+                recordingService.checkResumeCounter()
+            }
+
         }
     }
 

@@ -38,6 +38,7 @@ class RecordingService : Service() {
     private lateinit var notificationManager: NotificationManager
 
     private var autoPauseCounter: Int = 0
+    private var autoResumeCounter: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -69,6 +70,10 @@ class RecordingService : Service() {
         return locationClient.lastDistance < 0.55
     }
 
+    private fun isDistanceValid(): Boolean {
+        return locationClient.lastDistance > 0.55
+    }
+
     private fun increasePauseCounter() {
         autoPauseCounter++
     }
@@ -79,18 +84,33 @@ class RecordingService : Service() {
         }
     }
 
+    fun checkResumeCounter() {
+        if (autoResumeCounter >= 10) {
+            start()
+        }
+    }
+
     private fun resetPauseCounter() {
         autoPauseCounter = 0
+    }
+
+    private fun resetResumeCounter() {
+        autoResumeCounter = 0
     }
 
     private fun setRecordingState() {
         recording = true
     }
 
-    private fun start(intent: Intent) {
+    fun isRecording(): Boolean {
+        return recording
+    }
+
+    private fun start(intent: Intent? = null) {
         setRecordingState()
         resetPauseCounter()
-        if (!sessionStarted) {
+        resetResumeCounter()
+        if (!sessionStarted && intent != null) {
             addStartMarkerLocation(intent)
             sessionStarted = true
         }
@@ -104,9 +124,17 @@ class RecordingService : Service() {
                 val lat = location.latitude
                 val long = location.longitude
                 locationClient.calculateDistance(lat, long)
-                if (isDistanceTooLow()) {
-                    increasePauseCounter()
+
+                if (recording) {
+                    if (isDistanceTooLow()) {
+                        increasePauseCounter()
+                    }
+                } else {
+                    if (isDistanceValid()) {
+                        increaseResumeCounter()
+                    }
                 }
+
                 locationClient.calculateAverageSpeed(timerClient.sessionSeconds + timerClient.sessionMinutes * 60 + timerClient.sessionHours * 3600)
 
                 if (locationClient.lastDistance > 0.55) {
@@ -119,6 +147,10 @@ class RecordingService : Service() {
         startForeground(1, notification.build())
     }
 
+    private fun increaseResumeCounter() {
+        autoResumeCounter++
+    }
+
     private fun setPauseState() {
         recording = false
     }
@@ -127,13 +159,12 @@ class RecordingService : Service() {
         serviceScope.cancel()
     }
 
-    private fun showPauseNotification(){
+    private fun showPauseNotification() {
         val notification = createPauseNotification(pendingIntent)
         notificationManager.notify(1, notification.build())
     }
 
     private fun pause() {
-        resetPauseCounter()
         setPauseState()
         sendData(
             timerClient.getTotalTimeInSeconds(),
