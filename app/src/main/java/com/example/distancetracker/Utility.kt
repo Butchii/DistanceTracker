@@ -5,6 +5,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
@@ -94,6 +98,22 @@ class Utility {
                 BASIC_PERMISSION,
                 BASIC_PERMISSION_REQUESTCODE
             )
+        }
+
+        fun showSettingsDialog(activity:Activity){
+            val gpsDialog = AlertDialog.Builder(activity)
+            gpsDialog.setTitle("GPS settings")
+            gpsDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
+
+            gpsDialog.setPositiveButton("Settings") { _, _ ->
+                val intent = Intent(
+                    Settings.ACTION_LOCATION_SOURCE_SETTINGS
+                )
+                activity.startActivity(intent)
+            }
+
+            gpsDialog.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+            gpsDialog.show()
         }
     }
 }

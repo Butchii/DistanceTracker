@@ -26,10 +26,27 @@
                 android:textColor="@color/black"
                 android:textSize="24sp" />
 
-            <View
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gps"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/gpsIcon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/gps_enabled"
+                    android:scaleType="centerCrop" />
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/settingsBtn"
@@ -49,7 +66,7 @@
             android:id="@+id/topBarExpandLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"/>
+            android:orientation="vertical" />
     </LinearLayout>
 
     <View
@@ -98,9 +115,9 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="10dp"
+                    android:contentDescription="@string/distance_icon"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/distance_icon"
-                    android:contentDescription="@string/distance_icon" />
+                    android:src="@drawable/distance_icon" />
 
                 <TextView
                     android:id="@+id/totalDistance"
@@ -119,9 +136,9 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="10dp"
+                    android:contentDescription="@string/duration_icon"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/duration_icon"
-                    android:contentDescription="@string/duration_icon" />
+                    android:src="@drawable/duration_icon" />
 
                 <TextView
                     android:id="@+id/sessionDuration"
@@ -138,9 +155,9 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="10dp"
+                    android:contentDescription="@string/average_speed_icon"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/avg_icon"
-                    android:contentDescription="@string/average_speed_icon" />
+                    android:src="@drawable/avg_icon" />
 
                 <TextView
                     android:id="@+id/averageSpeed"

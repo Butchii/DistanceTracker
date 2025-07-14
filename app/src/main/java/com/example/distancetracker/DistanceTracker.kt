@@ -65,21 +65,7 @@ class DistanceTracker(
                     Utility.requestLocationPermission(mainActivity)
                 }
             } else {
-
-                val gpsDialog = AlertDialog.Builder(mainActivity)
-                gpsDialog.setTitle("GPS settings")
-                gpsDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
-
-                gpsDialog.setPositiveButton("Settings") { _, _ ->
-                    val intent = Intent(
-                        Settings.ACTION_LOCATION_SOURCE_SETTINGS
-                    )
-                    mainActivity.startActivity(intent)
-                }
-
-                gpsDialog.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
-                gpsDialog.show()
-                //throw LocationClient.LocationException("GPS is disabled")
+                Utility.showSettingsDialog(mainActivity)
             }
         }
     }

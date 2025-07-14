@@ -30,4 +30,5 @@
     <string name="average_speed_icon">average speed icon</string>
     <string name="distance_icon">distance icon</string>
     <string name="duration_icon">duration icon</string>
+    <string name="gps">GPS</string>
 </resources>

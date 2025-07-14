@@ -16,6 +16,7 @@ import com.example.distancetracker.FireStore
 import com.example.distancetracker.R
 import com.example.distancetracker.models.Route
 import android.widget.Button
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.example.distancetracker.MapHelper
 import com.example.distancetracker.Utility
@@ -33,6 +34,9 @@ class TopBar(
 ) {
     private lateinit var sessionsBtn: ImageButton
     private lateinit var settingsBtn: ImageButton
+
+    private lateinit var gpsIndicator: ImageView
+
     private lateinit var topBarExpand: LinearLayout
 
     private lateinit var sessionListLayout: View
@@ -55,6 +59,7 @@ class TopBar(
 
     init {
         initializeTopBarExpandLayout()
+        initializeGPSIndicator()
         initializeRouteListLayout()
         initializeSettingsLayout()
         initializeRoutesBtn()
@@ -100,6 +105,10 @@ class TopBar(
 
     private fun initializeTopBarExpandLayout() {
         topBarExpand = topBarLayout.findViewById(R.id.topBarExpandLayout)
+    }
+
+    private fun initializeGPSIndicator() {
+        gpsIndicator = topBarLayout.findViewById(R.id.gpsIcon)
     }
 
     @SuppressLint("InflateParams")

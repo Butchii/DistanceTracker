@@ -2,11 +2,12 @@ package com.example.distancetracker
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import android.util.Log
 import kotlinx.coroutines.cancel
 
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
+
+    private var checkedGPSAlready: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,16 +31,15 @@ open class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        Log.d("myTag", "Resuming tracking")
         if (!Utility.isServiceRunningInForeground(applicationContext)) {
             if (Utility.isGPSEnabled(applicationContext)) {
                 distanceTracker.mapHelper.startLocationUpdates()
             } else {
-                throw LocationClient.LocationException("GPS is disabled")
+                if (!checkedGPSAlready) {
+                    Utility.showSettingsDialog(this)
+                    checkedGPSAlready != checkedGPSAlready
+                }
             }
-        } else {
-            distanceTracker.isSessionRunning = true
-            distanceTracker.controlPanel.buttonSection.enterRecordingMode()
         }
     }
 
