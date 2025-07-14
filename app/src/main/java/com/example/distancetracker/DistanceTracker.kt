@@ -1,15 +1,10 @@
 package com.example.distancetracker
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import android.provider.Settings
-import android.util.Log
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -25,11 +20,11 @@ class DistanceTracker(
 ) {
     lateinit var topBar: TopBar
     lateinit var mapHelper: MapHelper
-    lateinit var controlPanel: ControlPanel
+    private lateinit var controlPanel: ControlPanel
     private lateinit var broadcastReceiver: BroadcastReceiver
 
     var isRecording: Boolean = false
-    var isSessionRunning: Boolean = false
+    private var isSessionRunning: Boolean = false
 
     private var sessionDurationInSeconds: Int = 0
     var sessionTotalDistance: Double = 0.0
@@ -92,8 +87,7 @@ class DistanceTracker(
         mapHelper = MapHelper(
             context,
             mainActivity,
-            distanceTrackerLayout.findViewById(R.id.map),
-            this
+            distanceTrackerLayout.findViewById(R.id.map)
         )
     }
 
@@ -116,7 +110,6 @@ class DistanceTracker(
             action = RecordingService.ACTION_RECORD
             context.startService(this)
         }
-
         stopRecording()
     }
 
@@ -131,25 +124,10 @@ class DistanceTracker(
         val intent = Intent(context, RecordingService::class.java)
         intent.action = RecordingService.ACTION_RECORD
         context.startService(intent)
-
-        mapHelper.resetPauseCounter()
     }
 
     private fun startRecording() {
         isRecording = true
-    }
-
-    fun acceptLocation(distance: Float, newLocation: GeoPoint) {
-        controlPanel.infoSection.updateTotalDistance(distance)
-
-        mapHelper.updateEndMarkerLocation(newLocation)
-        mapHelper.resetPauseCounter()
-
-        routePoints.add(newLocation)
-    }
-
-    fun rejectLocation() {
-        mapHelper.updatePauseCounter()
     }
 
     fun startSession() {
@@ -158,7 +136,6 @@ class DistanceTracker(
         isSessionRunning = true
         startRecording()
         mapHelper.showMap()
-        mapHelper.addEndMarker(mapHelper.currentLocation)
         mapHelper.centerOnPoint(mapHelper.currentLocation)
         controlPanel.buttonSection.enterRecordingMode()
     }
@@ -171,16 +148,13 @@ class DistanceTracker(
         }
         context.startService(intent)
 
-        mapHelper.removeRouteFromMap()
-        mapHelper.removeEndMarker()
-        mapHelper.resetPauseCounter()
-        mapHelper.map.invalidate()
-
         mapHelper.startLocationUpdates()
 
         controlPanel.reset()
 
         routePoints.clear()
+        mapHelper.removeRouteFromMap()
+        mapHelper.removeEndMarker()
     }
 
     private fun startRecordingService() {
@@ -260,7 +234,6 @@ class DistanceTracker(
             stopRecording()
             controlPanel.buttonSection.enterPauseMode()
         }
-        Log.d("myTag", String.format("recording? : $isServiceRecording"))
     }
 
     private fun processSessionDuration(intent: Intent) {
