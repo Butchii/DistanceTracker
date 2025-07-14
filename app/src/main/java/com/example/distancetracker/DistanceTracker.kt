@@ -1,10 +1,14 @@
 package com.example.distancetracker
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
@@ -24,19 +28,19 @@ class DistanceTracker(
     lateinit var controlPanel: ControlPanel
     private lateinit var broadcastReceiver: BroadcastReceiver
 
-    var recording: Boolean = false
-    var runningSession: Boolean = false
+    var isRecording: Boolean = false
+    var isSessionRunning: Boolean = false
 
     private var sessionDurationInSeconds: Int = 0
     var sessionTotalDistance: Double = 0.0
     var sessionAverageSpeed: Double = 0.0
     var sessionDuration: Int = 0
-     var formattedSessionDuration: String = "0h 0m 0s"
+    var formattedSessionDuration: String = "0h 0m 0s"
 
     var routePoints: ArrayList<GeoPoint> = ArrayList()
 
-    var activeAutoPause: Boolean = true
-    var activeAutoResume: Boolean = true
+    var isAutoPauseActivated: Boolean = true
+    var isAutoResumeActivated: Boolean = true
 
     private var firstLocation: Boolean = true
 
@@ -50,7 +54,7 @@ class DistanceTracker(
             //checks if fore ground service is running
             //if running -> bind to service
             //and create handler which takes data from service every second
-            runningSession = true
+            isSessionRunning = true
             startRecording()
             controlPanel.buttonSection.enterRecordingMode()
         } else {
@@ -61,7 +65,21 @@ class DistanceTracker(
                     Utility.requestLocationPermission(mainActivity)
                 }
             } else {
-                throw LocationClient.LocationException("GPS is disabled")
+
+                val gpsDialog = AlertDialog.Builder(mainActivity)
+                gpsDialog.setTitle("GPS settings")
+                gpsDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?")
+
+                gpsDialog.setPositiveButton("Settings") { _, _ ->
+                    val intent = Intent(
+                        Settings.ACTION_LOCATION_SOURCE_SETTINGS
+                    )
+                    mainActivity.startActivity(intent)
+                }
+
+                gpsDialog.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+                gpsDialog.show()
+                //throw LocationClient.LocationException("GPS is disabled")
             }
         }
     }
@@ -104,7 +122,7 @@ class DistanceTracker(
     }
 
     private fun stopRecording() {
-        recording = false
+        isRecording = false
     }
 
     fun pauseSession() {
@@ -117,7 +135,7 @@ class DistanceTracker(
     }
 
     private fun stopSession() {
-        runningSession = false
+        isSessionRunning = false
         stopRecording()
     }
 
@@ -132,7 +150,7 @@ class DistanceTracker(
     }
 
     private fun startRecording() {
-        recording = true
+        isRecording = true
     }
 
     fun acceptLocation(distance: Float, newLocation: GeoPoint) {
@@ -151,7 +169,7 @@ class DistanceTracker(
     fun startSession() {
         mapHelper.locationScope.cancel()
         startRecordingService()
-        runningSession = true
+        isSessionRunning = true
         startRecording()
         mapHelper.showMap()
         mapHelper.addEndMarker(mapHelper.currentLocation)

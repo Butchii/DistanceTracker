@@ -37,7 +37,7 @@ class ButtonSubBar(
         saveSessionBtn = buttonSubBar.findViewById(R.id.saveBtn)
 
         saveSessionBtn.setOnClickListener {
-            if (!distanceTracker.recording) {
+            if (!distanceTracker.isRecording) {
                 showSaveDialog()
             } else {
                 Toast.makeText(

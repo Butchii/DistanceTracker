@@ -188,7 +188,7 @@ class MapHelper(
     }
 
     private fun checkPauseCounter() {
-        if (pauseSessionCounter == 10 && distanceTracker.activeAutoPause) {
+        if (pauseSessionCounter == 10 && distanceTracker.isAutoPauseActivated) {
             Toast.makeText(context, "Session paused because of idling!", Toast.LENGTH_SHORT).show()
             Log.d("myTag", "Paused session because of idling")
             distanceTracker.pauseSession()

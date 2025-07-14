@@ -32,13 +32,13 @@ open class MainActivity : AppCompatActivity() {
         super.onRestart()
         Log.d("myTag", "Resuming tracking")
         if (!Utility.isServiceRunningInForeground(applicationContext)) {
-            if (!Utility.isGPSEnabled(applicationContext)) {
+            if (Utility.isGPSEnabled(applicationContext)) {
                 distanceTracker.mapHelper.startLocationUpdates()
             } else {
                 throw LocationClient.LocationException("GPS is disabled")
             }
         } else {
-            distanceTracker.runningSession = true
+            distanceTracker.isSessionRunning = true
             distanceTracker.controlPanel.buttonSection.enterRecordingMode()
         }
     }

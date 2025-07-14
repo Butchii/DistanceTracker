@@ -120,14 +120,14 @@ class TopBar(
     private fun initializeAutoResumeSwitch() {
         autoResumeSwitch = settingsLayout.findViewById(R.id.resumeSwitch)
         autoResumeSwitch.setOnClickListener {
-            distanceTracker.activeAutoResume = autoResumeSwitch.isChecked
+            distanceTracker.isAutoResumeActivated = autoResumeSwitch.isChecked
         }
     }
 
     private fun initializeAutoPauseSwitch() {
         autoPauseSwitch = settingsLayout.findViewById(R.id.pauseSwitch)
         autoPauseSwitch.setOnClickListener {
-            distanceTracker.activeAutoPause = autoPauseSwitch.isChecked
+            distanceTracker.isAutoPauseActivated = autoPauseSwitch.isChecked
         }
     }
 

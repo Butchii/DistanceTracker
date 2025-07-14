@@ -50,7 +50,7 @@ class ButtonSection(
                 }
             } else {
                 //session started
-                if (distanceTracker.recording) {
+                if (distanceTracker.isRecording) {
                     //recording
                     distanceTracker.pauseSession()
                     enterPauseMode()
