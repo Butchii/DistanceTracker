@@ -31,11 +31,14 @@ open class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
+
         if (!Utility.isServiceRunningInForeground(applicationContext)) {
             if (Utility.isGPSEnabled(applicationContext)) {
                 distanceTracker.mapHelper.startLocationUpdates()
+                distanceTracker.topBar.gpsIndicator.setImageResource(R.drawable.gps_enabled)
             } else {
                 if (!checkedGPSAlready) {
+                    distanceTracker.topBar.gpsIndicator.setImageResource(R.drawable.gps_disabled)
                     Utility.showSettingsDialog(this)
                     checkedGPSAlready != checkedGPSAlready
                 }

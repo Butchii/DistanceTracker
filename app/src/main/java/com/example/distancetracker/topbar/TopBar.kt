@@ -35,7 +35,7 @@ class TopBar(
     private lateinit var sessionsBtn: ImageButton
     private lateinit var settingsBtn: ImageButton
 
-    private lateinit var gpsIndicator: ImageView
+    lateinit var gpsIndicator: ImageView
 
     private lateinit var topBarExpand: LinearLayout
 

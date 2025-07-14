@@ -44,7 +44,19 @@ class DistanceTracker(
         initializeMapHelper()
         initializeControlPanel()
         initializeBroadCastReceiver()
+        isGPSEnabled()
+        isForegroundRunning()
+    }
 
+    private fun isGPSEnabled() {
+        if (Utility.isGPSEnabled(context)) {
+            topBar.gpsIndicator.setImageResource(R.drawable.gps_enabled)
+        } else {
+            topBar.gpsIndicator.setImageResource(R.drawable.gps_disabled)
+        }
+    }
+
+    private fun isForegroundRunning() {
         if (Utility.isServiceRunningInForeground(context)) {
             //checks if fore ground service is running
             //if running -> bind to service
@@ -257,6 +269,12 @@ class DistanceTracker(
         val lastDistance = intent.getStringExtra("lastDistance")
         if (endMarkerLatitude != null && endMarkerLongitude != null && lastDistance != null && lastDistance.toDouble() > 0.55) {
             mapHelper.updateEndMarkerLocation(
+                GeoPoint(
+                    endMarkerLatitude.toDouble(),
+                    endMarkerLongitude.toDouble()
+                )
+            )
+            mapHelper.updateCurrentLocation(
                 GeoPoint(
                     endMarkerLatitude.toDouble(),
                     endMarkerLongitude.toDouble()

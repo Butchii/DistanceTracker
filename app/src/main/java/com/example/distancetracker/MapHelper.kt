@@ -49,16 +49,12 @@ class MapHelper(
         configureMarkers(startMarker, endMarker, context)
         map.overlays.add(route)
         map.overlays.add(startMarker)
-        if (firstLocation) {
-            map.controller.animateTo(currentLocation)
-            firstLocation = false
-        }
     }
 
-    fun addRouteToMap(routeList: ArrayList<GeoPoint>){
+    fun addRouteToMap(routeList: ArrayList<GeoPoint>) {
         map.overlays.remove(route)
         route = Polyline()
-        for(routePoint:GeoPoint in routeList){
+        for (routePoint: GeoPoint in routeList) {
             route.addPoint(routePoint)
         }
         map.overlays.add(route)
@@ -81,8 +77,14 @@ class MapHelper(
                 val currentLocationAsGeoPoint = GeoPoint(lat, long)
                 updateCurrentLocation(currentLocationAsGeoPoint)
                 updateStartMarkerLocation(currentLocation)
-            }.launchIn(locationScope)
 
+               /* activity.runOnUiThread {
+                    if (firstLocation) {
+                        map.controller.animateTo(currentLocationAsGeoPoint)
+                        firstLocation = false
+                    }
+                }*/
+            }.launchIn(locationScope)
     }
 
     fun centerOnPoint(location: GeoPoint) {
