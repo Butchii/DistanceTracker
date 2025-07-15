@@ -164,7 +164,7 @@ class RecordingService : Service() {
         notificationManager.notify(1, notification.build())
     }
 
-    private fun pause() {
+    fun pause() {
         setPauseState()
         sendData(
             timerClient.getTotalTimeInSeconds(),
