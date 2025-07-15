@@ -77,13 +77,6 @@ class MapHelper(
                 val currentLocationAsGeoPoint = GeoPoint(lat, long)
                 updateCurrentLocation(currentLocationAsGeoPoint)
                 updateStartMarkerLocation(currentLocation)
-
-               /* activity.runOnUiThread {
-                    if (firstLocation) {
-                        map.controller.animateTo(currentLocationAsGeoPoint)
-                        firstLocation = false
-                    }
-                }*/
             }.launchIn(locationScope)
     }
 

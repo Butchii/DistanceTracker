@@ -150,6 +150,7 @@ class DistanceTracker(
         mapHelper.showMap()
         mapHelper.centerOnPoint(mapHelper.currentLocation)
         controlPanel.buttonSection.enterRecordingMode()
+        topBar.hideTopBarExpand()
     }
 
     fun resetSession() {

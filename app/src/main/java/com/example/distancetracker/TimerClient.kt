@@ -42,7 +42,7 @@ class TimerClient(val recordingService: RecordingService) {
             }else{
                 recordingService.checkResumeCounter()
             }
-            if(!Utility.isGPSEnabled(recordingService.applicationContext)){
+            if(recordingService.isRecording() && !Utility.isGPSEnabled(recordingService.applicationContext)){
                 recordingService.pause()
             }
         }
