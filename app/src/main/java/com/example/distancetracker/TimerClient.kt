@@ -1,6 +1,5 @@
 package com.example.distancetracker
 
-import android.widget.Toast
 import java.util.Timer
 import java.util.TimerTask
 
@@ -45,6 +44,8 @@ class TimerClient(val recordingService: RecordingService) {
             if(recordingService.isRecording() && !Utility.isGPSEnabled(recordingService.applicationContext)){
                 recordingService.pause()
             }
+
+            recordingService.updateNotification()
         }
     }
 

@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Builder
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,12 +37,21 @@ class RecordingService : Service() {
     private lateinit var notificationIntent: Intent
     private lateinit var pendingIntent: PendingIntent
     private lateinit var notificationManager: NotificationManager
+    private lateinit var notification: Builder
+
 
     private var autoPauseCounter: Int = 0
     private var autoResumeCounter: Int = 0
 
     override fun onCreate() {
         super.onCreate()
+
+        locationClient = DefaultLocationClient(
+            applicationContext,
+            LocationServices.getFusedLocationProviderClient(applicationContext), null, null
+        )
+
+        timerClient = TimerClient(this)
 
         notificationIntent = Intent(this, MainActivity::class.java)
         pendingIntent =
@@ -50,12 +60,8 @@ class RecordingService : Service() {
         notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        notification = createRecordNotification(pendingIntent)
         createNotificationChannel()
-        locationClient = DefaultLocationClient(
-            applicationContext,
-            LocationServices.getFusedLocationProviderClient(applicationContext), null, null
-        )
-        timerClient = TimerClient(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -116,7 +122,6 @@ class RecordingService : Service() {
         }
 
         serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-        val notification = createRecordNotification(pendingIntent)
 
         timerClient.startTimer()
         locationClient.getLocationUpdates(1000L).catch { e -> e.printStackTrace() }
@@ -133,7 +138,7 @@ class RecordingService : Service() {
                     if (isDistanceValid()) {
                         increaseResumeCounter()
                     }
-                }
+                }// TODO move in timer task?
 
                 locationClient.calculateAverageSpeed(timerClient.sessionSeconds + timerClient.sessionMinutes * 60 + timerClient.sessionHours * 3600)
 
@@ -142,7 +147,6 @@ class RecordingService : Service() {
                     routePoints.add(GeoPoint(lat, long))
                 }
                 locationClient.currentLocation = GeoPoint(lat, long)
-                updateNotification(notification)
             }.launchIn(serviceScope)
         startForeground(1, notification.build())
     }
@@ -203,7 +207,7 @@ class RecordingService : Service() {
         }
     }
 
-    private fun updateNotification(notification: NotificationCompat.Builder) {
+    fun updateNotification() {
         val updatedNotification =
             notification.setContentText(
                 String.format(
@@ -274,7 +278,6 @@ class RecordingService : Service() {
                 Locale.getDefault(),
                 "New Latitude: $lat \n" +
                         "New Longitude: $long \n" +
-                        "Old Location: ${locationClient.currentLocation} \n" +
                         "Distance walked: ${locationClient.lastDistance} \n" +
                         "Total distance walked: ${locationClient.totalDistanceInKilometres}\n" +
                         "Session duration: ${timerClient.sessionHours}h ${timerClient.sessionMinutes}m ${timerClient.sessionSeconds}s\n" +
@@ -284,8 +287,8 @@ class RecordingService : Service() {
         )
     }
 
-    private fun createRecordNotification(pendingIntent: PendingIntent): NotificationCompat.Builder {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+    private fun createRecordNotification(pendingIntent: PendingIntent): Builder {
+        return Builder(this, CHANNEL_ID)
             .setContentTitle("Distance Tracker")
             .setContentText(
                 String.format(
@@ -301,8 +304,8 @@ class RecordingService : Service() {
             .addAction(0, "Pause", getRecordPendingIntent())
     }
 
-    private fun createPauseNotification(pendingIntent: PendingIntent): NotificationCompat.Builder {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+    private fun createPauseNotification(pendingIntent: PendingIntent): Builder {
+        return Builder(this, CHANNEL_ID)
             .setContentTitle("Distance Tracker")
             .setContentText(
                 String.format(

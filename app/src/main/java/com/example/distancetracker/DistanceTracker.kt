@@ -21,10 +21,9 @@ class DistanceTracker(
     lateinit var topBar: TopBar
     lateinit var mapHelper: MapHelper
     private lateinit var controlPanel: ControlPanel
-    private lateinit var broadcastReceiver: BroadcastReceiver
+    private lateinit var recordingBroadcastReceiver: BroadcastReceiver
 
     var isRecording: Boolean = false
-    private var isSessionRunning: Boolean = false
 
     private var sessionDurationInSeconds: Int = 0
     var sessionTotalDistance: Double = 0.0
@@ -59,9 +58,6 @@ class DistanceTracker(
     private fun isForegroundRunning() {
         if (Utility.isRecordingServiceRunning(context)) {
             //checks if fore ground service is running
-            //if running -> bind to service
-            //and create handler which takes data from service every second
-            isSessionRunning = true
             startRecording()
             controlPanel.buttonSection.enterRecordingMode()
         } else {
@@ -78,9 +74,9 @@ class DistanceTracker(
     }
 
     private fun initializeBroadCastReceiver() {
-        broadcastReceiver = DataBroadCastReceiver()
+        recordingBroadcastReceiver = DataBroadCastReceiver()
         context.registerReceiver(
-            broadcastReceiver,
+            recordingBroadcastReceiver,
             intentFilter,
             AppCompatActivity.RECEIVER_EXPORTED
         )
@@ -126,7 +122,6 @@ class DistanceTracker(
     }
 
     private fun stopSession() {
-        isSessionRunning = false
         stopRecording()
     }
 
@@ -145,7 +140,6 @@ class DistanceTracker(
     fun startSession() {
         mapHelper.locationScope.cancel()
         startRecordingService()
-        isSessionRunning = true
         startRecording()
         mapHelper.showMap()
         mapHelper.centerOnPoint(mapHelper.currentLocation)
@@ -238,7 +232,7 @@ class DistanceTracker(
     }
 
     fun unregisterReceiver() {
-        context.unregisterReceiver(broadcastReceiver)
+        context.unregisterReceiver(recordingBroadcastReceiver)
     }
 
     private fun processRecordingState(intent: Intent) {
