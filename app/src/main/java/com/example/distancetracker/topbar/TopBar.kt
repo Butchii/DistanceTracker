@@ -1,6 +1,7 @@
 package com.example.distancetracker.topbar
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.view.Gravity
@@ -286,5 +287,17 @@ class TopBar(
         )
         dialog.setCancelable(false)
         dialog.show()
+    }
+
+    fun showGPSDisabled(activity: Activity) {
+        gpsIndicator.setImageResource(R.drawable.gps_disabled)
+        gpsIndicator.setOnClickListener {
+            Utility.showSettingsDialog(activity)
+        }
+    }
+
+    fun showGPSEnabled() {
+        gpsIndicator.setImageResource(R.drawable.gps_enabled)
+        gpsIndicator.setOnClickListener(null)
     }
 }

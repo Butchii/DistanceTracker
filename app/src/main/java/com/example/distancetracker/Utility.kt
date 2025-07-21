@@ -38,7 +38,7 @@ class Utility {
             return meters / 1000
         }
 
-        fun isServiceRunningInForeground(context: Context): Boolean {
+        fun isRecordingServiceRunning(context: Context): Boolean {
             val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             for (service in manager.getRunningServices(Int.MAX_VALUE)) {
                 if (RecordingService::class.java.name == service.service.className) {

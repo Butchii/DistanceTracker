@@ -41,7 +41,7 @@ class ButtonSection(
         sessionBtnDescription = buttonSectionLayout.findViewById(R.id.sessionBtnDescription)
 
         sessionBtn.setOnClickListener {
-            if (!Utility.isServiceRunningInForeground(context)) {
+            if (!Utility.isRecordingServiceRunning(context)) {
                 //no session started yet
                 if(Utility.isLocationPermissionGranted(activity)){
                     distanceTracker.startSession()

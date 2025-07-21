@@ -57,7 +57,7 @@ class DistanceTracker(
     }
 
     private fun isForegroundRunning() {
-        if (Utility.isServiceRunningInForeground(context)) {
+        if (Utility.isRecordingServiceRunning(context)) {
             //checks if fore ground service is running
             //if running -> bind to service
             //and create handler which takes data from service every second
