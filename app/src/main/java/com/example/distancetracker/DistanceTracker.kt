@@ -299,4 +299,9 @@ class DistanceTracker(
             sessionTotalDistance = totalDistance
         }
     }
+
+    fun startLocating(){
+        mapHelper.startLocationUpdates()
+        topBar.showGPSEnabled()
+    }
 }

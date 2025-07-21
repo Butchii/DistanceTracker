@@ -6,7 +6,6 @@ import kotlinx.coroutines.cancel
 
 open class MainActivity : AppCompatActivity() {
     private lateinit var distanceTracker: DistanceTracker
-
     private var checkedGPSAlready: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,8 +32,7 @@ open class MainActivity : AppCompatActivity() {
         super.onRestart()
         if (!Utility.isRecordingServiceRunning(applicationContext)) {
             if (Utility.isGPSEnabled(applicationContext)) {
-                distanceTracker.mapHelper.startLocationUpdates()
-                distanceTracker.topBar.showGPSEnabled()
+                distanceTracker.startLocating()
             } else {
                 if (!checkedGPSAlready) {
                     distanceTracker.topBar.showGPSDisabled(this)
