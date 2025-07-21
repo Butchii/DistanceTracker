@@ -128,8 +128,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="25dp"
+                android:layout_marginTop="15dp"
                 android:gravity="center_vertical">
 
                 <ImageView
@@ -149,6 +148,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:gravity="center_vertical">
 
                 <ImageView
@@ -163,6 +163,26 @@
                     android:id="@+id/averageSpeed"
                     style="@style/textLayout"
                     android:text="@string/_0_0_km_h" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginEnd="10dp"
+                    android:contentDescription="@string/distance_icon"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/elevation_icon" />
+
+                <TextView
+                    android:id="@+id/totalHeight"
+                    style="@style/textLayout"
+                    android:text="@string/_0_m" />
             </LinearLayout>
         </LinearLayout>
 
