@@ -1,5 +1,6 @@
 package com.example.distancetracker
 
+import org.osmdroid.util.GeoPoint
 import java.util.Timer
 import java.util.TimerTask
 
@@ -10,44 +11,59 @@ class TimerClient(val recordingService: RecordingService) {
 
     private var sessionTimer: Timer = Timer()
 
+    private var startedTimer: Boolean = false
+
     fun startTimer() {
-        val timerTask = createTimerTask()
-        sessionTimer = Timer()
-        sessionTimer.schedule(timerTask, 0, 1000)
+        if (!startedTimer) {
+            val timerTask = createTimerTask()
+            sessionTimer = Timer()
+            sessionTimer.schedule(timerTask, 0, 1000)
+            startedTimer = true
+        }
     }
 
     private fun createTimerTask(
     ) = object : TimerTask() {
         override fun run() {
-            sessionSeconds++
-            if (sessionSeconds > 0 && sessionSeconds % 60 == 0) {
-                sessionSeconds = 0
-                sessionMinutes++
+            if (recordingService.isRecording()) {
+                //recording service is on record
+                runClock()
+                checkGPSStatus()
+                if (recordingService.isDistanceHighEnough()) {
+                    recordingService.locationClient.totalDistanceInKilometres += (recordingService.locationClient.lastDistance / 1000)
+                    recordingService.routePoints.add(recordingService.locationClient.currentLocation)
+                } else {
+                    recordingService.increasePauseCounter()
+                    recordingService.checkPauseCounter()
+                }
+                recordingService.locationClient.calculateAverageSpeed(sessionSeconds + sessionMinutes * 60 + sessionHours * 3600)
+                recordingService.updateNotification()
+            } else {
+                //recording service is paused
+                if (recordingService.isDistanceHighEnough()) {
+                    recordingService.increaseResumeCounter()
+                    recordingService.checkResumeCounter()
+                }
             }
-            if (sessionMinutes > 0 && sessionMinutes % 60 == 0) {
-                sessionMinutes = 0
-                sessionHours++
-            }
-            recordingService.logInformation(
-                recordingService.locationClient.currentLocation.latitude,
-                recordingService.locationClient.currentLocation.longitude
-            )
+
+            recordingService.logInformation()
+
             recordingService.sendData(
                 getTotalTimeInSeconds(),
                 recordingService.locationClient.totalAverageSpeed
             )
-            if(recordingService.isRecording()){
-                recordingService.checkPauseCounter()
-            }else{
-                recordingService.checkResumeCounter()
-            }
-            if(recordingService.isRecording() && !Utility.isGPSEnabled(recordingService.applicationContext)){
-                recordingService.pause()
-            }
+        }
+    }
 
-            recordingService.locationClient.calculateAverageSpeed(sessionSeconds +sessionMinutes * 60 + sessionHours * 3600)
-
-            recordingService.updateNotification()
+    private fun runClock() {
+        sessionSeconds++
+        if (sessionSeconds > 0 && sessionSeconds % 60 == 0) {
+            sessionSeconds = 0
+            sessionMinutes++
+        }
+        if (sessionMinutes > 0 && sessionMinutes % 60 == 0) {
+            sessionMinutes = 0
+            sessionHours++
         }
     }
 
@@ -61,5 +77,11 @@ class TimerClient(val recordingService: RecordingService) {
 
     fun getTotalTimeInSeconds(): Int {
         return sessionSeconds + sessionMinutes * 60 + sessionHours * 3600
+    }
+
+    fun checkGPSStatus() {
+        if (!Utility.isGPSEnabled(recordingService.applicationContext)) {
+            recordingService.pause()
+        }
     }
 }

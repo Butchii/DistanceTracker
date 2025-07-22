@@ -158,6 +158,7 @@ class DistanceTracker(
         mapHelper.startLocationUpdates()
 
         controlPanel.reset()
+        firstLocation = true
 
         routePoints.clear()
         mapHelper.removeRouteFromMap()
@@ -294,7 +295,7 @@ class DistanceTracker(
         }
     }
 
-    fun startLocating(){
+    fun startLocating() {
         mapHelper.startLocationUpdates()
         topBar.showGPSEnabled()
     }

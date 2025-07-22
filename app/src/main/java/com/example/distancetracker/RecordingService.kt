@@ -28,7 +28,7 @@ class RecordingService : Service() {
 
     private val CHANNEL_ID = "123"
 
-    private var routePoints: ArrayList<GeoPoint> = ArrayList()
+    var routePoints: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
     private var sessionStarted: Boolean = false
@@ -37,7 +37,6 @@ class RecordingService : Service() {
     private lateinit var pendingIntent: PendingIntent
     private lateinit var notificationManager: NotificationManager
     private lateinit var notification: Builder
-
 
     private var autoPauseCounter: Int = 0
     private var autoResumeCounter: Int = 0
@@ -71,15 +70,11 @@ class RecordingService : Service() {
         return START_STICKY
     }
 
-    private fun isDistanceTooLow(): Boolean {
-        return locationClient.lastDistance < 0.55
-    }
-
-    private fun isDistanceHighEnough(): Boolean {
+    fun isDistanceHighEnough(): Boolean {
         return locationClient.lastDistance > 0.55
     }
 
-    private fun increasePauseCounter() {
+    fun increasePauseCounter() {
         autoPauseCounter++
     }
 
@@ -128,36 +123,17 @@ class RecordingService : Service() {
                 val lat = location.latitude
                 val long = location.longitude
                 locationClient.calculateDistance(lat, long)
-
-                if (recording) {
-                    if (isDistanceTooLow()) {
-                        increasePauseCounter()
-                    }
-                } else {
-                    if (isDistanceHighEnough()) {
-                        increaseResumeCounter()
-                    }
-                }// TODO move in timer task?
-
-                if (locationClient.lastDistance > 0.55) {
-                    locationClient.totalDistanceInKilometres += (locationClient.lastDistance / 1000)
-                    routePoints.add(GeoPoint(lat, long))
-                }
                 locationClient.currentLocation = GeoPoint(lat, long)
             }.launchIn(serviceScope)
         startForeground(1, notification.build())
     }
 
-    private fun increaseResumeCounter() {
+    fun increaseResumeCounter() {
         autoResumeCounter++
     }
 
     private fun setPauseState() {
         recording = false
-    }
-
-    private fun stopLocationUpdates() {
-        serviceScope.cancel()
     }
 
     private fun showPauseNotification() {
@@ -167,19 +143,8 @@ class RecordingService : Service() {
 
     fun pause() {
         setPauseState()
-        sendData(
-            timerClient.getTotalTimeInSeconds(),
-            locationClient.totalAverageSpeed
-        )
-        stopTimer()
-        stopLocationUpdates()
         showPauseNotification()
     }
-
-    private fun stopTimer() {
-        timerClient.stopTimer()
-    }
-
 
     private fun checkState(intent: Intent) {
         recording = if (recording) {
@@ -268,13 +233,13 @@ class RecordingService : Service() {
         const val ACTION_RESET = "ACTION_RESET"
     }
 
-    fun logInformation(lat: Double, long: Double) {
+    fun logInformation() {
         Log.d(
             "myTag",
             String.format(
                 Locale.getDefault(),
-                "New Latitude: $lat \n" +
-                        "New Longitude: $long \n" +
+                "New Latitude: ${locationClient.currentLocation.latitude} \n" +
+                        "New Longitude: ${locationClient.currentLocation.longitude} \n" +
                         "Distance walked: ${locationClient.lastDistance} \n" +
                         "Total distance walked: ${locationClient.totalDistanceInKilometres}\n" +
                         "Session duration: ${timerClient.sessionHours}h ${timerClient.sessionMinutes}m ${timerClient.sessionSeconds}s\n" +
