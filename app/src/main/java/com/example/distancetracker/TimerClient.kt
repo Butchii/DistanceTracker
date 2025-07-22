@@ -45,6 +45,8 @@ class TimerClient(val recordingService: RecordingService) {
                 recordingService.pause()
             }
 
+            recordingService.locationClient.calculateAverageSpeed(sessionSeconds +sessionMinutes * 60 + sessionHours * 3600)
+
             recordingService.updateNotification()
         }
     }

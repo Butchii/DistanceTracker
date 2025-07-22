@@ -75,7 +75,7 @@ class RecordingService : Service() {
         return locationClient.lastDistance < 0.55
     }
 
-    private fun isDistanceValid(): Boolean {
+    private fun isDistanceHighEnough(): Boolean {
         return locationClient.lastDistance > 0.55
     }
 
@@ -134,12 +134,10 @@ class RecordingService : Service() {
                         increasePauseCounter()
                     }
                 } else {
-                    if (isDistanceValid()) {
+                    if (isDistanceHighEnough()) {
                         increaseResumeCounter()
                     }
                 }// TODO move in timer task?
-
-                locationClient.calculateAverageSpeed(timerClient.sessionSeconds + timerClient.sessionMinutes * 60 + timerClient.sessionHours * 3600)
 
                 if (locationClient.lastDistance > 0.55) {
                     locationClient.totalDistanceInKilometres += (locationClient.lastDistance / 1000)
