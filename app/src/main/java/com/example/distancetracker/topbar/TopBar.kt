@@ -201,7 +201,7 @@ class TopBar(
                 sessionDate.text = session.date
 
                 val sessionDurationTV = newRoute.findViewById<TextView>(R.id.sessionDuration)
-                sessionDurationTV.text = Utility.formatSessionTime(session.duration)
+                sessionDurationTV.text = Utility.formatSessionTime(session.duration.toInt())
 
                 val sessionAvgTV = newRoute.findViewById<TextView>(R.id.sessionAvg)
                 sessionAvgTV.text =
@@ -268,7 +268,7 @@ class TopBar(
         sessionTotalDistance.text = String.format("%.4s km", distance)
 
         val sessionDuration = dialog.findViewById<TextView>(R.id.sessionDuration)
-        sessionDuration.text = Utility.formatSessionTime(route.duration)
+        sessionDuration.text = Utility.formatSessionTime(route.duration.toInt())
 
         val sessionAvg = dialog.findViewById<TextView>(R.id.sessionAvg)
         sessionAvg.text = String.format("%.4s km/h", route.averageSpeed)

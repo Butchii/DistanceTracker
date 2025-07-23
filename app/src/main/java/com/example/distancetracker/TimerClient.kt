@@ -1,6 +1,6 @@
 package com.example.distancetracker
 
-import org.osmdroid.util.GeoPoint
+
 import java.util.Timer
 import java.util.TimerTask
 
@@ -32,6 +32,7 @@ class TimerClient(val recordingService: RecordingService) {
                 if (recordingService.isDistanceHighEnough()) {
                     recordingService.locationClient.totalDistanceInKilometres += (recordingService.locationClient.lastDistance / 1000)
                     recordingService.routePoints.add(recordingService.locationClient.currentLocation)
+                    recordingService.resetPauseCounter()
                 } else {
                     recordingService.increasePauseCounter()
                     recordingService.checkPauseCounter()
@@ -45,8 +46,7 @@ class TimerClient(val recordingService: RecordingService) {
                     recordingService.checkResumeCounter()
                 }
             }
-
-            recordingService.logInformation()
+            recordingService.logData()
 
             recordingService.sendData(
                 getTotalTimeInSeconds(),

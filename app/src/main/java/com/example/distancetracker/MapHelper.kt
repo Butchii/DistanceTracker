@@ -38,7 +38,9 @@ class MapHelper(
 
     private lateinit var locationClient: LocationClient
 
-    private var firstLocation: Boolean = true
+    var routePoints: ArrayList<GeoPoint> = ArrayList()
+
+    var firstLocation: Boolean = true
 
     init {
         Configuration.getInstance()
@@ -108,13 +110,23 @@ class MapHelper(
         map.invalidate()
     }
 
-    fun removeRouteFromMap() {
+    private fun removeRouteFromMap() {
         map.overlays.remove(route)
         route = Polyline()
         map.overlays.add(route)
     }
 
-    fun removeEndMarker() {
+    fun resetMap(){
+        removeRouteFromMap()
+        removeEndMarker()
+        clearRoutePoints()
+    }
+
+    private fun clearRoutePoints(){
+        routePoints.clear()
+    }
+
+    private fun removeEndMarker() {
         map.overlays.remove(endMarker)
     }
 

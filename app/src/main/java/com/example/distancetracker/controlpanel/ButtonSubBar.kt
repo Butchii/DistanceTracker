@@ -138,8 +138,8 @@ class ButtonSubBar(
         FireStore.uploadRoute(
             Route(
                 routeName,
-                distanceTracker.sessionDuration.toString(),
-                distanceTracker.routePoints,
+                distanceTracker.sessionDurationInSeconds.toString(),
+                distanceTracker.mapHelper.routePoints,
                 distanceTracker.sessionAverageSpeed.toString(),
                 distanceTracker.sessionTotalDistance.toString()
             )

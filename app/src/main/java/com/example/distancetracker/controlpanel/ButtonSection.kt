@@ -1,6 +1,7 @@
 package com.example.distancetracker.controlpanel
 
 import android.content.Context
+import android.content.Intent
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -8,6 +9,7 @@ import androidx.core.content.ContextCompat
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.MainActivity
 import com.example.distancetracker.R
+import com.example.distancetracker.RecordingService
 import com.example.distancetracker.Utility
 
 class ButtonSection(
@@ -41,26 +43,33 @@ class ButtonSection(
         sessionBtnDescription = buttonSectionLayout.findViewById(R.id.sessionBtnDescription)
 
         sessionBtn.setOnClickListener {
+
+            val intent = Intent(context, RecordingService::class.java)
+            intent.action = RecordingService.ACTION_RECORD
+
             if (!Utility.isRecordingServiceRunning(context)) {
                 //no session started yet
-                if(Utility.isLocationPermissionGranted(activity)){
+                if (Utility.isLocationPermissionGranted(activity)) {
                     distanceTracker.startSession()
-                }else{
+                    intent.putExtra("latitude", distanceTracker.mapHelper.currentLocation.latitude.toString())
+                    intent.putExtra("longitude", distanceTracker.mapHelper.currentLocation.longitude.toString())
+                } else {
                     Utility.requestLocationPermission(activity)
                 }
             } else {
                 //session started
                 if (distanceTracker.isRecording) {
                     //recording
-                    distanceTracker.pauseSession()
+                    distanceTracker.pauseRecording()
                     enterPauseMode()
                 } else {
                     //paused
-                    distanceTracker.resumeSession()
-                    distanceTracker.topBar.hideTopBarExpand()
+                    distanceTracker.startRecording()
                     enterRecordingMode()
                 }
             }
+
+            context.startService(intent)
         }
     }
 
@@ -86,7 +95,7 @@ class ButtonSection(
             ContextCompat.getString(context, stringId)
     }
 
-    fun reset(){
+    fun reset() {
         changeSessionButtonDescription(R.string.start_session)
         changeSessionButtonIcon(R.drawable.start_icon)
         buttonSubBar.hideButtonBar()

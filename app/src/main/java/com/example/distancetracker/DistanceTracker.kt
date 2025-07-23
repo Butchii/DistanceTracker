@@ -25,18 +25,13 @@ class DistanceTracker(
 
     var isRecording: Boolean = false
 
-    private var sessionDurationInSeconds: Int = 0
+    var sessionDurationInSeconds: Int = 0
     var sessionTotalDistance: Double = 0.0
     var sessionAverageSpeed: Double = 0.0
-    var sessionDuration: Int = 0
     var formattedSessionDuration: String = "0h 0m 0s"
-
-    var routePoints: ArrayList<GeoPoint> = ArrayList()
 
     var isAutoPauseActivated: Boolean = true
     var isAutoResumeActivated: Boolean = true
-
-    private var firstLocation: Boolean = true
 
     init {
         initializeTopBar()
@@ -109,37 +104,17 @@ class DistanceTracker(
             )
     }
 
-    private fun stopRecording() {
+    fun pauseRecording() {
         isRecording = false
     }
 
-    fun pauseSession() {
-        Intent(context, RecordingService::class.java).apply {
-            action = RecordingService.ACTION_RECORD
-            context.startService(this)
-        }
-        stopRecording()
-    }
-
-    private fun stopSession() {
-        stopRecording()
-    }
-
-    fun resumeSession() {
-        startRecording()
-
-        val intent = Intent(context, RecordingService::class.java)
-        intent.action = RecordingService.ACTION_RECORD
-        context.startService(intent)
-    }
-
-    private fun startRecording() {
+    fun startRecording() {
         isRecording = true
+        topBar.hideTopBarExpand()
     }
 
     fun startSession() {
         mapHelper.locationScope.cancel()
-        startRecordingService()
         startRecording()
         mapHelper.showMap()
         mapHelper.centerOnPoint(mapHelper.currentLocation)
@@ -148,39 +123,23 @@ class DistanceTracker(
     }
 
     fun resetSession() {
-        stopSession()
-
-        val intent = Intent(context, RecordingService::class.java).apply {
-            action = "ACTION_RESET"
+        pauseRecording()
+        if (Utility.isRecordingServiceRunning(context)) {
+            stopRecordingService()
         }
-        context.startService(intent)
-
         mapHelper.startLocationUpdates()
 
         controlPanel.reset()
-        firstLocation = true
+        mapHelper.firstLocation = true
 
-        routePoints.clear()
-        mapHelper.removeRouteFromMap()
-        mapHelper.removeEndMarker()
+        mapHelper.resetMap()
     }
 
-    private fun startRecordingService() {
-        val intent = Intent(context, RecordingService::class.java)
-        intent.action = RecordingService.ACTION_RECORD
-        intent.putExtra("latitude", mapHelper.currentLocation.latitude.toString())
-        intent.putExtra("longitude", mapHelper.currentLocation.longitude.toString())
-        context.startService(intent)
-    }
-
-    companion object {
-        const val ACTION_DATA = "package_your_app_DATA"
-        private val filters = arrayOf(ACTION_DATA)
-        private val intentFilter: IntentFilter by lazy {
-            IntentFilter().apply {
-                filters.forEach { addAction(it) }
-            }
+    private fun stopRecordingService() {
+        val intent = Intent(context, RecordingService::class.java).apply {
+            action = "ACTION_STOP"
         }
+        context.startService(intent)
     }
 
     inner class DataBroadCastReceiver : BroadcastReceiver() {
@@ -201,6 +160,8 @@ class DistanceTracker(
         processSessionDuration(intent)
         processLastDistance(intent)
         processTotalDistance(intent)
+        processAverageSpeed(intent)
+        processResetState(intent)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -211,14 +172,13 @@ class DistanceTracker(
                 GeoPoint::class.java
             ) as ArrayList<GeoPoint>
 
-        this.routePoints = routePoints
-
-        if (firstLocation) {
+        mapHelper.routePoints = routePoints
+        if (mapHelper.firstLocation) {
             val startMarkerLocation =
-                GeoPoint(this.routePoints[0].latitude, this.routePoints[0].longitude)
+                GeoPoint(mapHelper.routePoints[0].latitude, mapHelper.routePoints[0].longitude)
             val endMarkerLocation = GeoPoint(
-                this.routePoints[this.routePoints.size - 1].latitude,
-                this.routePoints[this.routePoints.size - 1].longitude
+                mapHelper.routePoints[mapHelper.routePoints.size - 1].latitude,
+                mapHelper.routePoints[mapHelper.routePoints.size - 1].longitude
             )
             mapHelper.updateStartMarkerLocation(
                 GeoPoint(
@@ -227,35 +187,34 @@ class DistanceTracker(
             )
             mapHelper.addEndMarker(endMarkerLocation)
             mapHelper.map.controller.animateTo(endMarkerLocation)
-            firstLocation = false
+            mapHelper.firstLocation = false
         }
         mapHelper.addRouteToMap(routePoints)
-    }
-
-    fun unregisterReceiver() {
-        context.unregisterReceiver(recordingBroadcastReceiver)
     }
 
     private fun processRecordingState(intent: Intent) {
         val isServiceRecording = intent.getBooleanExtra("recording", true)
         if (!isServiceRecording) {
-            stopRecording()
+            pauseRecording()
             controlPanel.buttonSection.enterPauseMode()
+        }
+    }
+
+    private fun processResetState(intent: Intent) {
+        val doReset = intent.getBooleanExtra("reset", true)
+        if (doReset) {
+            resetSession()
         }
     }
 
     private fun processSessionDuration(intent: Intent) {
         val duration = intent.getStringExtra("time")
         if (duration != null) {
-            val formattedDuration = Utility.formatSessionTime(duration)
             sessionDurationInSeconds = duration.toInt()
-            sessionDuration = sessionDurationInSeconds
 
+            val formattedDuration = Utility.formatSessionTime(sessionDurationInSeconds)
             formattedSessionDuration = formattedDuration
             controlPanel.infoSection.updateSessionDuration(formattedDuration)
-            if (sessionDurationInSeconds > 25) {
-                processAverageSpeed(intent)
-            }
         }
     }
 
@@ -298,5 +257,19 @@ class DistanceTracker(
     fun startLocating() {
         mapHelper.startLocationUpdates()
         topBar.showGPSEnabled()
+    }
+
+    fun unregisterReceiver() {
+        context.unregisterReceiver(recordingBroadcastReceiver)
+    }
+
+    companion object {
+        const val ACTION_DATA = "package_your_app_DATA"
+        private val filters = arrayOf(ACTION_DATA)
+        private val intentFilter: IntentFilter by lazy {
+            IntentFilter().apply {
+                filters.forEach { addAction(it) }
+            }
+        }
     }
 }
