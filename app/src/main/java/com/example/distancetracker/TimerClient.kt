@@ -1,6 +1,8 @@
 package com.example.distancetracker
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import java.util.Timer
 import java.util.TimerTask
 
@@ -24,6 +26,7 @@ class TimerClient(val recordingService: RecordingService) {
 
     private fun createTimerTask(
     ) = object : TimerTask() {
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             if (recordingService.isRecording()) {
                 //recording service is on record

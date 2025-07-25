@@ -13,6 +13,7 @@ import com.example.distancetracker.topbar.TopBar
 import kotlinx.coroutines.cancel
 import org.osmdroid.util.GeoPoint
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class DistanceTracker(
     private val distanceTrackerLayout: LinearLayout,
     private val context: Context,
@@ -68,6 +69,7 @@ class DistanceTracker(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun initializeBroadCastReceiver() {
         recordingBroadcastReceiver = DataBroadCastReceiver()
         context.registerReceiver(
@@ -197,7 +199,13 @@ class DistanceTracker(
         if (!isServiceRecording) {
             pauseRecording()
             controlPanel.buttonSection.enterPauseMode()
+        }else{
+            if(!isRecording){
+                startRecording()
+                controlPanel.buttonSection.enterRecordingMode()
+            }
         }
+
     }
 
     private fun processResetState(intent: Intent) {

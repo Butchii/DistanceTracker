@@ -6,9 +6,11 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat.Builder
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +65,7 @@ class RecordingService : Service() {
         createNotificationChannel()
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_RECORD -> checkState(intent)
@@ -80,7 +83,7 @@ class RecordingService : Service() {
     }
 
     fun checkPauseCounter() {
-        if (autoPauseCounter >= 20) {
+        if (autoPauseCounter >= 15) {
             pause()
         }
     }
@@ -215,6 +218,7 @@ class RecordingService : Service() {
         return PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_MUTABLE)
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun sendData(
         sessionDurationInSeconds: Int,
         avgSpeed: Double
@@ -300,6 +304,7 @@ class RecordingService : Service() {
             .addAction(0, "Resume", getRecordPendingIntent())
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun stop() {
         doReset = true
         sendData(timerClient.getTotalTimeInSeconds(), locationClient.totalAverageSpeed)

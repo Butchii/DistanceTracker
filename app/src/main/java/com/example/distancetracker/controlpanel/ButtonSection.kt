@@ -2,9 +2,11 @@ package com.example.distancetracker.controlpanel
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.MainActivity
@@ -12,6 +14,7 @@ import com.example.distancetracker.R
 import com.example.distancetracker.RecordingService
 import com.example.distancetracker.Utility
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class ButtonSection(
     private val buttonSectionLayout: LinearLayout,
     private val context: Context,
@@ -37,6 +40,7 @@ class ButtonSection(
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun initializeSessionBtn() {
         sessionBtn = buttonSectionLayout.findViewById(R.id.sessionBtn)
 
