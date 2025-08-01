@@ -71,6 +71,7 @@ class MapHelper(
     }
 
     fun startLocationUpdates() {
+        Log.d("myTag","started app location updates")
         locationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         locationClient.getLocationUpdates(1000L).catch { e -> e.printStackTrace() }
             .onEach { location ->
@@ -116,13 +117,13 @@ class MapHelper(
         map.overlays.add(route)
     }
 
-    fun resetMap(){
+    fun resetMap() {
         removeRouteFromMap()
         removeEndMarker()
         clearRoutePoints()
     }
 
-    private fun clearRoutePoints(){
+    private fun clearRoutePoints() {
         routePoints.clear()
     }
 

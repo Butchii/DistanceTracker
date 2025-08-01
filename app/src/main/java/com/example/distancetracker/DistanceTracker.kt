@@ -4,16 +4,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
+import android.util.Log
 import android.widget.LinearLayout
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.distancetracker.controlpanel.ControlPanel
 import com.example.distancetracker.topbar.TopBar
 import kotlinx.coroutines.cancel
 import org.osmdroid.util.GeoPoint
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class DistanceTracker(
     private val distanceTrackerLayout: LinearLayout,
     private val context: Context,
@@ -54,6 +52,11 @@ class DistanceTracker(
     private fun isForegroundRunning() {
         if (Utility.isRecordingServiceRunning(context)) {
             //checks if fore ground service is running
+            context.registerReceiver(
+                recordingBroadcastReceiver,
+                intentFilter,
+                AppCompatActivity.RECEIVER_EXPORTED
+            )
             startRecording()
             controlPanel.buttonSection.enterRecordingMode()
         } else {
@@ -69,14 +72,8 @@ class DistanceTracker(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun initializeBroadCastReceiver() {
         recordingBroadcastReceiver = DataBroadCastReceiver()
-        context.registerReceiver(
-            recordingBroadcastReceiver,
-            intentFilter,
-            AppCompatActivity.RECEIVER_EXPORTED
-        )
     }
 
     private fun initializeTopBar() {
@@ -106,7 +103,7 @@ class DistanceTracker(
             )
     }
 
-    fun pauseRecording() {
+    fun stopRecording() {
         isRecording = false
     }
 
@@ -116,6 +113,11 @@ class DistanceTracker(
     }
 
     fun startSession() {
+        context.registerReceiver(
+            recordingBroadcastReceiver,
+            intentFilter,
+            AppCompatActivity.RECEIVER_EXPORTED
+        )
         mapHelper.locationScope.cancel()
         startRecording()
         mapHelper.showMap()
@@ -125,10 +127,12 @@ class DistanceTracker(
     }
 
     fun resetSession() {
-        pauseRecording()
+        context.unregisterReceiver(recordingBroadcastReceiver)
+        stopRecording()
         if (Utility.isRecordingServiceRunning(context)) {
             stopRecordingService()
         }
+
         mapHelper.startLocationUpdates()
 
         controlPanel.reset()
@@ -145,7 +149,6 @@ class DistanceTracker(
     }
 
     inner class DataBroadCastReceiver : BroadcastReceiver() {
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent != null) {
                 when (intent.action) {
@@ -155,7 +158,6 @@ class DistanceTracker(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun processData(intent: Intent) {
         processRecordingState(intent)
         processRoutePoints(intent)
@@ -166,8 +168,7 @@ class DistanceTracker(
         processResetState(intent)
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun processRoutePoints(intent: Intent) {
+    private fun processRoutePoints(intent: Intent) {
         val routePoints =
             intent.getParcelableArrayListExtra(
                 "routePoints",
@@ -197,10 +198,10 @@ class DistanceTracker(
     private fun processRecordingState(intent: Intent) {
         val isServiceRecording = intent.getBooleanExtra("recording", true)
         if (!isServiceRecording) {
-            pauseRecording()
+            stopRecording()
             controlPanel.buttonSection.enterPauseMode()
-        }else{
-            if(!isRecording){
+        } else {
+            if (!isRecording) {
                 startRecording()
                 controlPanel.buttonSection.enterRecordingMode()
             }

@@ -1,6 +1,7 @@
 package com.example.distancetracker.controlpanel
 
 import android.content.Context
+import android.util.Log
 import android.widget.LinearLayout
 import com.example.distancetracker.DistanceTracker
 import com.example.distancetracker.MainActivity

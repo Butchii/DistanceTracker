@@ -6,11 +6,9 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat.Builder
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
@@ -65,11 +63,11 @@ class RecordingService : Service() {
         createNotificationChannel()
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_RECORD -> checkState(intent)
             ACTION_STOP -> stop()
+            ACTION_RESET -> reset()
         }
         return START_STICKY
     }
@@ -211,14 +209,13 @@ class RecordingService : Service() {
         return PendingIntent.getService(this, 0, pauseIntent, PendingIntent.FLAG_MUTABLE)
     }
 
-    private fun getStopPendingIntent(): PendingIntent {
+    private fun getResetPendingIntent(): PendingIntent {
         val stopIntent = Intent(this, RecordingService::class.java).apply {
-            action = "ACTION_STOP"
+            action = "ACTION_RESET"
         }
         return PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_MUTABLE)
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun sendData(
         sessionDurationInSeconds: Int,
         avgSpeed: Double
@@ -242,6 +239,7 @@ class RecordingService : Service() {
     companion object {
         const val ACTION_RECORD = "ACTION_RECORD"
         const val ACTION_STOP = "ACTION_STOP"
+        const val ACTION_RESET = "ACTION_RESET"
     }
 
     private fun logInformation() {
@@ -283,7 +281,7 @@ class RecordingService : Service() {
             .setSmallIcon(R.drawable.avg_icon)
             .setContentIntent(pendingIntent).setOngoing(true)
             .setOngoing(true)
-            .addAction(0, "Reset", getStopPendingIntent())
+            .addAction(0, "Reset", getResetPendingIntent())
             .addAction(0, "Pause", getRecordPendingIntent())
     }
 
@@ -300,12 +298,19 @@ class RecordingService : Service() {
             .setSmallIcon(R.drawable.avg_icon)
             .setContentIntent(pendingIntent).setOngoing(true)
             .setOngoing(true)
-            .addAction(0, "Reset", getStopPendingIntent())
+            .addAction(0, "Reset", getResetPendingIntent())
             .addAction(0, "Resume", getRecordPendingIntent())
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun stop() {
+        sendData(timerClient.getTotalTimeInSeconds(), locationClient.totalAverageSpeed)
+        timerClient.stopTimer()
+        serviceScope.cancel()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    }
+
+    private fun reset(){
         doReset = true
         sendData(timerClient.getTotalTimeInSeconds(), locationClient.totalAverageSpeed)
         timerClient.stopTimer()

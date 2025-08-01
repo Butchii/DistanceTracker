@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.distancetracker"
-        minSdk = 29
+        minSdk = 33
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
