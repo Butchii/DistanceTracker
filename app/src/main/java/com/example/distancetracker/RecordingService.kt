@@ -28,7 +28,7 @@ class RecordingService : Service() {
 
     private val CHANNEL_ID = "123"
 
-    var routePoints: ArrayList<GeoPoint> = ArrayList()
+    private var routePoints: ArrayList<GeoPoint> = ArrayList()
 
     private var recording: Boolean = false
     private var sessionStarted: Boolean = false
@@ -72,27 +72,27 @@ class RecordingService : Service() {
         return START_STICKY
     }
 
-    fun isDistanceHighEnough(): Boolean {
+    private fun isDistanceHighEnough(): Boolean {
         return locationClient.lastDistance > 0.55
     }
 
-    fun increasePauseCounter() {
+    private fun increasePauseCounter() {
         autoPauseCounter++
     }
 
-    fun checkPauseCounter() {
+    private fun checkPauseCounter() {
         if (autoPauseCounter >= 15) {
             pause()
         }
     }
 
-    fun checkResumeCounter() {
+    private fun checkResumeCounter() {
         if (autoResumeCounter >= 5) {
             start()
         }
     }
 
-    fun resetPauseCounter() {
+    private fun resetPauseCounter() {
         autoPauseCounter = 0
     }
 
@@ -125,17 +125,28 @@ class RecordingService : Service() {
                 val lat = location.latitude
                 val long = location.longitude
                 locationClient.calculateDistance(lat, long)
+                locationClient.currentLocation = GeoPoint(lat, long)
 
-                if (isRecording()) {
+                if (isRecording()) { //TODO check
                     if (isDistanceHighEnough()) {
-                        locationClient.currentLocation = GeoPoint(lat, long)
+                        locationClient.totalDistanceInKilometres += (locationClient.lastDistance / 1000)
+                        routePoints.add(locationClient.currentLocation)
+                        resetPauseCounter()
+                    } else {
+                        increasePauseCounter()
+                        checkPauseCounter()
                     }
-                } //TODO  move to timer task?
+                }else{
+                    if (isDistanceHighEnough()) {
+                        increaseResumeCounter()
+                        checkResumeCounter()
+                    }
+                }
             }.launchIn(serviceScope)
         startForeground(1, notification.build())
     }
 
-    fun increaseResumeCounter() {
+    private fun increaseResumeCounter() {
         autoResumeCounter++
     }
 
@@ -189,17 +200,15 @@ class RecordingService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                CHANNEL_ID,
-                "Location Service Channel",
-                NotificationManager.IMPORTANCE_LOW
-            )
+        val serviceChannel = NotificationChannel(
+            CHANNEL_ID,
+            "Location Service Channel",
+            NotificationManager.IMPORTANCE_LOW
+        )
 
-            serviceChannel.setSound(null, null)
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(serviceChannel)
-        }
+        serviceChannel.setSound(null, null)
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(serviceChannel)
     }
 
     private fun getRecordPendingIntent(): PendingIntent {
@@ -310,7 +319,7 @@ class RecordingService : Service() {
         stopSelf()
     }
 
-    private fun reset(){
+    private fun reset() {
         doReset = true
         sendData(timerClient.getTotalTimeInSeconds(), locationClient.totalAverageSpeed)
         timerClient.stopTimer()

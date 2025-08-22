@@ -26,28 +26,13 @@ class TimerClient(val recordingService: RecordingService) {
 
     private fun createTimerTask(
     ) = object : TimerTask() {
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun run() {
             if (recordingService.isRecording()) {
                 //recording service is on record
                 runClock()
                 checkGPSStatus()
-                if (recordingService.isDistanceHighEnough()) {
-                    recordingService.locationClient.totalDistanceInKilometres += (recordingService.locationClient.lastDistance / 1000)
-                    recordingService.routePoints.add(recordingService.locationClient.currentLocation)
-                    recordingService.resetPauseCounter()
-                } else {
-                    recordingService.increasePauseCounter()
-                    recordingService.checkPauseCounter()
-                }
                 recordingService.locationClient.calculateAverageSpeed(sessionSeconds + sessionMinutes * 60 + sessionHours * 3600)
                 recordingService.updateNotification()
-            } else {
-                //recording service is paused
-                if (recordingService.isDistanceHighEnough()) {
-                    recordingService.increaseResumeCounter()
-                    recordingService.checkResumeCounter()
-                }
             }
             recordingService.logData()
 

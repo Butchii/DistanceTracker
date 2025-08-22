@@ -64,7 +64,7 @@ class ButtonSubBar(
         dialog.setContentView(R.layout.save_session_dialog)
 
         val totalDistanceDialog = dialog.findViewById<TextView>(R.id.totalDistance)
-        val totalDistanceMetres = distanceTracker.sessionTotalDistance / 1000
+        val totalDistanceMetres = distanceTracker.sessionTotalDistance
         totalDistanceDialog.text = String.format("%.2f km", totalDistanceMetres)
 
         val sessionTimeDialog = dialog.findViewById<TextView>(R.id.sessionTime)
